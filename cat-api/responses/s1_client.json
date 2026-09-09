@@ -1,0 +1,16 @@
+{
+  "id": "cli_scna7ew7mxdenl3h36zlmkyh6m",
+  "name": "PTOC Sandbox",
+  "email": "jodivi2133@jalunaki.com",
+  "status": "Active",
+  "status_reason": "TAM",
+  "date_created": "2023-12-11T16:12:23Z",
+  "date_last_modified": "2023-12-19T14:04:03Z",
+  "created_by": "sample_account_create@checkout.com",
+  "last_modified_by": "Patrick.OConnor@checkout.com",
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/clients/cli_scna7ew7mxdenl3h36zlmkyh6m"
+    }
+  }
+}

@@ -1,0 +1,657 @@
+{
+  "envelope": {
+    "schema_version": "0.1.0",
+    "profile_id": "prof_cli_scna7ew7mxdenl3h36zlmkyh6m",
+    "client_id": "cli_scna7ew7mxdenl3h36zlmkyh6m",
+    "snapshot_id": "snap_20260729T1939",
+    "generated_at": "2026-07-29T19:39:44Z",
+    "environment": "sandbox",
+    "generator_version": "0.3.0",
+    "staleness": {
+      "type": "point_in_time",
+      "contract": "Configuration may have changed since generated_at. State the snapshot date on config-sensitive answers, and recommend regenerating for high-volatility sections."
+    },
+    "coverage_summary": {
+      "identity": "complete",
+      "entity_structure": "complete",
+      "processing_channels": "complete",
+      "processing_profiles": "complete",
+      "scheme_enablement": "complete",
+      "money_out": "complete",
+      "settlement": "complete",
+      "routing": "complete",
+      "capabilities_matrix": "complete",
+      "risk_and_auth": "complete",
+      "reporting_and_integration": "complete",
+      "glossary": "complete"
+    },
+    "not_available": {
+      "reporting_profiles": "not exposed by the CAT API \u2014 check the Dashboard",
+      "velocity_limits": "not exposed by the CAT API",
+      "pricing": "excluded by policy (commercially sensitive)",
+      "bank_account_numbers": "redacted by policy"
+    }
+  },
+  "identity": {
+    "client_name": "PTOC Sandbox",
+    "legal_name": "PTOC SA",
+    "account_type": "full",
+    "business_model": "PTOC SA",
+    "mccs": [
+      "5999"
+    ],
+    "operating_regions": [
+      "SA"
+    ],
+    "go_live_date": "2025-02-09",
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    }
+  },
+  "entity_structure": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    },
+    "root_entity_id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+    "root_entity": "PTOC Sandbox",
+    "entities": [
+      {
+        "entity_id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+        "name": "PTOC SA",
+        "type": "company",
+        "country_of_incorporation": "SA",
+        "status": "active",
+        "capabilities": {
+          "payments": true,
+          "payouts": false
+        }
+      },
+      {
+        "entity_id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+        "name": "PTOC Sandbox",
+        "type": "company",
+        "country_of_incorporation": "GB",
+        "status": "active"
+      }
+    ]
+  },
+  "processing_channels": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "channels": [
+      {
+        "processing_channel_id": "pc_uawoyrryxkgejhfk6wofeusbnm",
+        "name": "PTOCSA",
+        "entity_id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+        "status": "active",
+        "business_model_type": "merchant",
+        "payment_pricing_profile": "PTOCSA",
+        "services": [
+          "vault"
+        ],
+        "features": {
+          "authorizations": "enabled",
+          "captures": "enabled",
+          "refunds": "enabled",
+          "voids": "enabled",
+          "full_card_api": "enabled",
+          "moto": "disabled",
+          "unreferenced_refunds": "disabled"
+        },
+        "schemes_enabled": [
+          "mada"
+        ],
+        "mids": [
+          {
+            "scheme": "mada",
+            "acquiring_bin": "sabb_mpgs_sa",
+            "descriptor": "sabb_mpgs_sa"
+          }
+        ],
+        "processors": [
+          {
+            "processor_id": "pr_y3zxsostw2de7pvzdtntvlo6a4",
+            "name": "PTOCSAMADA",
+            "scheme": "mada",
+            "acquirer_id": "sabb_mpgs_sa",
+            "acquirer_name": "sabb_mpgs_sa",
+            "merchant_category_code": "5999",
+            "processing_currencies": [
+              "SAR"
+            ],
+            "processing_currencies_summary": {
+              "count": 1,
+              "majors_present": [
+                "SAR"
+              ],
+              "majors_absent": [
+                "USD",
+                "EUR",
+                "GBP",
+                "AED",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "SEK"
+              ]
+            },
+            "mode": "gateway_services",
+            "authorizations": "same_as_pc",
+            "captures": "same_as_pc",
+            "refunds": "same_as_pc",
+            "voids": "same_as_pc",
+            "gws_only": "Yes",
+            "profile_id": "pp_3ftjpvejbifuvgu74nfqyuwbye",
+            "profile_name": "pp_3ftjpvejbifuvgu74nfqyuwbye",
+            "profile_type": "payin",
+            "profile_match": "exact"
+          }
+        ],
+        "aft": {
+          "enabled": false,
+          "coverage": "complete",
+          "reason": "no AFT-capable payin profile matches this channel's processors"
+        },
+        "pay_to_card": {
+          "applicable": false,
+          "reason": "pay-to-card is entity-scoped \u2014 declared by Active payout processing profiles; processing channels carry no pay-to-card capability"
+        },
+        "three_ds": {
+          "enabled": true,
+          "coverage": "complete",
+          "sessions_channel_id": "pc_uawoyrryxkgejhfk6wofeusbnm",
+          "status": "active",
+          "schemes": [
+            {
+              "scheme": "mada",
+              "acquirer_id": "sabb-mpgs",
+              "acquirer_name": "sabb-mpgs",
+              "merchant_category_code": "5999",
+              "protocol_versions": [
+                "2"
+              ],
+              "processor_type": "profile",
+              "mode": "gateway_services"
+            }
+          ]
+        },
+        "mccs": [
+          "5999"
+        ]
+      }
+    ]
+  },
+  "processing_profiles": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "profiles": [
+      {
+        "profile_id": "pp_3ftjpvejbifuvgu74nfqyuwbye",
+        "name": "pp_3ftjpvejbifuvgu74nfqyuwbye",
+        "type": "payin",
+        "scheme": "mada",
+        "acquirer_key": "sabb_mpgs_sa",
+        "processor_key": "cko-mpgs",
+        "merchant_category_code": "5999",
+        "business_model": "MoR",
+        "authorization_validity_period": 7,
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      }
+    ]
+  },
+  "scheme_enablement": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "card_schemes": [],
+    "alternative_payment_methods": [
+      {
+        "name": "mada",
+        "enabled": true
+      }
+    ]
+  },
+  "money_out": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "pay_to_card": {
+      "enabled": false,
+      "scope": "entity"
+    },
+    "payout_routes": [],
+    "payout_routes_summary": {
+      "enabled": 0,
+      "total": 0
+    },
+    "payout_destinations": [
+      {
+        "type": "bank_account"
+      }
+    ],
+    "forex": {
+      "pay_to_card_forex_enabled": false,
+      "coverage": "empty",
+      "reason": "no pay-to-card forex configuration exists for this entity"
+    }
+  },
+  "settlement": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    },
+    "settlement_currencies": [
+      "SAR"
+    ],
+    "currency_accounts": [
+      {
+        "currency_account_id": "ca_ka5dz3cvybrurnlf5afz6etoqy",
+        "currency": "SAR",
+        "entity_id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+        "status": "active"
+      }
+    ]
+  },
+  "routing": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "high"
+    },
+    "payment_routing_rules": [
+      {
+        "rule_id": "rt_lxmttrdscmtuffdr7sdfkqndwq",
+        "status": "Active",
+        "sub_entity_id": "*",
+        "revenue_currency_account_id": "ca_ka5dz3cvybrurnlf5afz6etoqy",
+        "revenue_currency_account_name": "PTOCSA",
+        "fees_currency_account_id": "ca_ka5dz3cvybrurnlf5afz6etoqy",
+        "fees_currency_account_name": "PTOCSA",
+        "date_modified": "2025-02-09T21:08:14Z",
+        "conditions": {
+          "allow_any_processing_channel": true,
+          "allow_any_merchant_category_code": true,
+          "allow_any_processing_currency": true,
+          "allow_any_event_type": true,
+          "allow_any_card_type": true,
+          "allow_any_region": true,
+          "allow_any_banking_partner": true,
+          "allow_any_payment_method": true
+        },
+        "unrestricted": true
+      }
+    ],
+    "payout_routing_rules": []
+  },
+  "capabilities_matrix": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "derived",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "accept_payments": {
+      "countries": [
+        "SA"
+      ],
+      "schemes": [],
+      "currencies": [
+        "SAR"
+      ]
+    },
+    "pay_to_card": {
+      "enabled": false
+    },
+    "notable_gaps": [
+      "Amex not enabled for acceptance.",
+      "No active pay-to-card (payout) processing profiles found."
+    ],
+    "authorization": {
+      "hold_days_by_scheme": {
+        "mada": [
+          7
+        ]
+      }
+    }
+  },
+  "risk_and_auth": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "auth_optimization": {
+      "network_tokens": true
+    },
+    "fraud_tooling": [
+      "risk_tier:premium"
+    ]
+  },
+  "reporting_and_integration": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "notes": "webhooks/workflows via public API (sk)",
+      "volatility": "high"
+    },
+    "integration_types": [
+      "direct_api",
+      "flow"
+    ],
+    "reporting_profiles": [],
+    "workflows": [
+      {
+        "id": "wf_bp53dl3itiuunkpsbidmcefopm",
+        "name": "USD",
+        "active": true,
+        "events": [
+          "client_balances.sub_account_low_balance_threshold_exceeded",
+          "gateway.batch_successful",
+          "gateway.batch_unsuccessful",
+          "gateway.card_verification_declined",
+          "gateway.card_verified",
+          "gateway.payment_approved",
+          "gateway.payment_authentication_failed",
+          "gateway.payment_authorization_increment_declined",
+          "gateway.payment_authorization_incremented",
+          "gateway.payment_canceled",
+          "gateway.payment_capture_declined",
+          "gateway.payment_capture_pending",
+          "gateway.payment_captured",
+          "gateway.payment_declined",
+          "gateway.payment_expired",
+          "gateway.payment_paid",
+          "gateway.payment_pending",
+          "gateway.payment_refund_declined",
+          "gateway.payment_refund_pending",
+          "gateway.payment_refunded",
+          "gateway.payment_retry_scheduled",
+          "gateway.payment_returned",
+          "gateway.payment_void_declined",
+          "gateway.payment_voided"
+        ],
+        "event_count": 24,
+        "endpoints": [
+          "https://webhook.site/08289c25-9be7-4ffc-bcf9-7e0e6f05dbbd"
+        ],
+        "scopes": [
+          {
+            "id": "wfc_ngu7b3cjyuounmn5dkdv3s5q5m",
+            "type": "entity",
+            "entities": [
+              "ent_juznxdro7lhwrf3c5e4wprftgu"
+            ],
+            "created_at": "2025-11-28T12:07:46.996+00:00",
+            "updated_at": "2026-07-20T09:01:10.52+00:00"
+          }
+        ]
+      },
+      {
+        "id": "wf_pcuig72msghu5cudjcmndgbftq",
+        "name": "TEST p500",
+        "active": true,
+        "events": [
+          "card_payout.payment_approved",
+          "card_payout.payment_declined",
+          "gateway.batch_successful",
+          "gateway.batch_unsuccessful",
+          "gateway.card_verification_declined",
+          "gateway.card_verified",
+          "gateway.payment_approved",
+          "gateway.payment_authentication_failed",
+          "gateway.payment_authorization_increment_declined",
+          "gateway.payment_authorization_incremented",
+          "gateway.payment_canceled",
+          "gateway.payment_capture_declined",
+          "gateway.payment_capture_pending",
+          "gateway.payment_captured",
+          "gateway.payment_declined",
+          "gateway.payment_expired",
+          "gateway.payment_paid",
+          "gateway.payment_pending",
+          "gateway.payment_refund_declined",
+          "gateway.payment_refund_pending",
+          "gateway.payment_refunded",
+          "gateway.payment_retry_scheduled",
+          "gateway.payment_returned",
+          "gateway.payment_void_declined",
+          "gateway.payment_void_pending",
+          "gateway.payment_voided"
+        ],
+        "event_count": 26,
+        "endpoints": [
+          "https://webhook.site/c5947431-0884-4929-83f8-e4066f727f96"
+        ],
+        "scopes": [
+          {
+            "id": "wfc_5e7ltuhtnadebpr2hk2pfd5qey",
+            "type": "entity",
+            "entities": [
+              "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "ent_sdur3xs7clfpdgtonhfmufiymm"
+            ],
+            "created_at": "2026-06-23T14:45:13.029+00:00",
+            "updated_at": "2026-06-25T11:42:42.345+00:00"
+          }
+        ]
+      },
+      {
+        "id": "wf_wooombjzcemujjt27feb5dicsa",
+        "name": "Capture test",
+        "active": true,
+        "events": [
+          "gateway.payment_authentication_failed",
+          "gateway.payment_authorized",
+          "gateway.payment_captured",
+          "gateway.payment_pending",
+          "sessions.authentication_approved",
+          "sessions.authentication_attempted",
+          "sessions.authentication_expired",
+          "sessions.authentication_failed",
+          "sessions.authentication_started",
+          "sessions.error_details"
+        ],
+        "event_count": 10,
+        "endpoints": [
+          "https://webhook.site/988f4820-aab4-4c76-adf3-4dc156f21b4e"
+        ],
+        "scopes": [
+          {
+            "id": "wfc_yd67udoidp5utat73j2mjdmxla",
+            "type": "entity",
+            "entities": [
+              "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "ent_sdur3xs7clfpdgtonhfmufiymm"
+            ],
+            "created_at": "2025-11-06T10:07:38.037+00:00",
+            "updated_at": "2025-11-06T10:25:28.954+00:00"
+          },
+          {
+            "id": "wfc_2tfhhdufqcaefh5v3lwx62aium",
+            "type": "processing_channel",
+            "processing_channels": [
+              "pc_ciui77f3mfvephdkq7oh6ppxku",
+              "pc_eslelmxntabejezzb5wfcom3uu",
+              "pc_uawoyrryxkgejhfk6wofeusbnm"
+            ],
+            "created_at": "2025-11-06T10:07:38.037+00:00",
+            "updated_at": "2025-11-06T10:25:28.954+00:00"
+          }
+        ]
+      }
+    ],
+    "webhook_subscriptions": [
+      "card_payout.payment_approved",
+      "card_payout.payment_declined",
+      "client_balances.sub_account_low_balance_threshold_exceeded",
+      "gateway.batch_successful",
+      "gateway.batch_unsuccessful",
+      "gateway.card_verification_declined",
+      "gateway.card_verified",
+      "gateway.payment_approved",
+      "gateway.payment_authentication_failed",
+      "gateway.payment_authorization_increment_declined",
+      "gateway.payment_authorization_incremented",
+      "gateway.payment_authorized",
+      "gateway.payment_canceled",
+      "gateway.payment_capture_declined",
+      "gateway.payment_capture_pending",
+      "gateway.payment_captured",
+      "gateway.payment_declined",
+      "gateway.payment_expired",
+      "gateway.payment_paid",
+      "gateway.payment_pending",
+      "gateway.payment_refund_declined",
+      "gateway.payment_refund_pending",
+      "gateway.payment_refunded",
+      "gateway.payment_retry_scheduled",
+      "gateway.payment_returned",
+      "gateway.payment_void_declined",
+      "gateway.payment_void_pending",
+      "gateway.payment_voided",
+      "sessions.authentication_approved",
+      "sessions.authentication_attempted",
+      "sessions.authentication_expired",
+      "sessions.authentication_failed",
+      "sessions.authentication_started",
+      "sessions.error_details"
+    ],
+    "webhook_endpoints": [
+      "https://webhook.site/08289c25-9be7-4ffc-bcf9-7e0e6f05dbbd",
+      "https://webhook.site/988f4820-aab4-4c76-adf3-4dc156f21b4e",
+      "https://webhook.site/c5947431-0884-4929-83f8-e4066f727f96"
+    ]
+  },
+  "glossary": {
+    "provenance": {
+      "as_of": "2026-07-29T19:39:44Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "notes": "entity-scoped id->name dictionary from configuration?entityId endpoints",
+      "volatility": "low"
+    },
+    "ids": {
+      "AMEX": "AMEX",
+      "AlternativePaymentCancelled": "APM - Alternative Payment Cancelled",
+      "AlternativePaymentCaptureDisputeReturned": "APM - Alternative Payment Capture Dispute Returned",
+      "AlternativePaymentCaptured": "APM - Alternative Payment Captured",
+      "AlternativePaymentCreated": "APM - Alternative Payment Created",
+      "AlternativePaymentDeclined": "APM - Alternative Payment Declined",
+      "AlternativePaymentDisputeResolved": "APM - Alternative Payment Dispute Resolved",
+      "AlternativePaymentExpired": "APM - Alternative Payment Expired",
+      "AlternativePaymentRefundCreated": "APM - Alternative Payment Refund Created",
+      "AlternativePaymentRefundReturned": "APM - Alternative Payment Refund Returned",
+      "AlternativePaymentRefunded": "APM - Alternative Payment Refunded",
+      "AlternativePaymentReturned": "APM - Alternative Payment Returned",
+      "AlternativePaymentVoided": "APM - Alternative Payment Voided",
+      "ArbitrationLost": "Chargebacks - Arbitration Lost",
+      "ArbitrationUnderReview": "Chargebacks - Arbitration Under Review",
+      "ArbitrationWon": "Chargebacks - Arbitration Won",
+      "AuthenticationAbandoned": "Sessions - Authentication Abandoned",
+      "AuthenticationApproved": "Sessions - Authentication Approved",
+      "AuthenticationAttempted": "Sessions - Authentication Attempted",
+      "AuthenticationChallengeAbandoned": "Sessions - Authentication Challenge Abandoned",
+      "AuthenticationChallenged": "Sessions - Authentication Challenged",
+      "AuthenticationDeclined": "Sessions - Authentication Declined",
+      "AuthenticationDispatched": "Sessions - Authentication Dispatched",
+      "AuthenticationExpired": "Sessions - Authentication Expired",
+      "AuthenticationPrimed": "Sessions - Authentication Primed",
+      "AuthenticationRejected": "Sessions - Authentication Rejected",
+      "AuthenticationRequested": "Sessions - Authentication Requested",
+      "AuthenticationUnavailable": "Sessions - Authentication Unavailable",
+      "Charge": "Charge",
+      "ChargeAuthorisationIncrementDeclined": "CardPayments - Charge Authorisation Increment Declined",
+      "ChargeAuthorisationIncremented": "CardPayments - Charge Authorisation Incremented",
+      "ChargeAuthorised": "CardPayments - Charge Authorised",
+      "ChargeCaptureDeclined": "CardPayments - Charge Capture Declined",
+      "ChargeCaptureFailed": "CardPayments - Charge Capture Failed",
+      "ChargeCaptureRiskDeclined": "CardPayments - Charge Capture Risk Declined",
+      "ChargeCaptured": "CardPayments - Charge Captured",
+      "ChargeDeclined": "CardPayments - Charge Declined",
+      "ChargePartiallyCaptured": "CardPayments - Charge Partially Captured",
+      "ChargePartiallyRefunded": "CardPayments - Charge Partially Refunded",
+      "ChargePartiallyVoided": "CardPayments - Charge Partially Voided",
+      "ChargeRefundChargebackDeclined": "CardPayments - Charge Refund Chargeback Declined",
+      "ChargeRefundDeclined": "CardPayments - Charge Refund Declined",
+      "ChargeRefundFailed": "CardPayments - Charge Refund Failed",
+      "ChargeRefunded": "CardPayments - Charge Refunded",
+      "ChargeRequested": "CardPayments - Charge Requested",
+      "ChargeRiskDeclined": "CardPayments - Charge Risk Declined",
+      "ChargeVoidDeclined": "CardPayments - Charge Void Declined",
+      "ChargeVoidFailed": "CardPayments - Charge Void Failed",
+      "ChargeVoided": "CardPayments - Charge Voided",
+      "ChargebackAutoRepresented": "Chargebacks - Chargeback Auto Represented",
+      "ChargebackDisputed": "Chargebacks - Chargeback Disputed",
+      "ChargebackIssued": "Chargebacks - Chargeback Issued",
+      "ChargebackLost": "Chargebacks - Chargeback Lost",
+      "ChargebackRepresented": "Chargebacks - Chargeback Represented",
+      "ChargebackResolvedWithScheme": "Chargebacks - Chargeback Resolved With Scheme",
+      "ChargebackRetrievalRequested": "Chargebacks - Chargeback Retrieval Requested",
+      "ChargebackReversed": "Chargebacks - Chargeback Reversed",
+      "ChargebackUnderReview": "Chargebacks - Chargeback Under Review",
+      "ChargebackWon": "Chargebacks - Chargeback Won",
+      "Credit": "Credit",
+      "Debit": "Debit",
+      "DeferredDebit": "Deferred Debit",
+      "DisputeDetailsAdjusted": "Chargebacks - Dispute Details Adjusted",
+      "Domestic": "Domestic",
+      "IDEAL": "iDEAL",
+      "International": "International",
+      "Intra": "Intra",
+      "JCB": "JCB",
+      "KLARNA": "Klarna",
+      "MBWAY": "MBWay",
+      "Prepaid": "Prepaid",
+      "SEPA": "SEPA",
+      "TAMARA": "Tamara",
+      "WECHATPAY": "WeChat",
+      "ca_ka5dz3cvybrurnlf5afz6etoqy": "PTOCSA",
+      "com.checkout.accelerate_funds_available.transaction": "VAS - Acceleration",
+      "com.checkout.client_settlements.payout.domestic": "VAS - Client Settlements Payout Domestic",
+      "com.checkout.client_settlements.payout.international": "VAS - Client Settlements Payout International",
+      "com.checkout.cost_of_sales.fee.adjustment": "Cost of Sales - Fee Adjustment",
+      "com.checkout.forward.request": "VAS - Vault Forward Request",
+      "com.checkout.ia.payment.optimized": "VAS - Payment Optimized",
+      "com.checkout.network_tokens.provisioned": "VAS - Network Token Provisioned",
+      "com.checkout.network_tokens.updated": "VAS - Network Token Updated",
+      "com.checkout.network_tokens_public.cryptogram": "VAS - Network Token API Cryptogram",
+      "com.checkout.network_tokens_public.provisioned": "VAS - Network Token API Provisioned",
+      "com.checkout.network_tokens_public.retrieved": "VAS - Network Token API Retrieval",
+      "com.checkout.network_tokens_public.updated": "VAS - Network Token API Update",
+      "com.checkout.payout": "VAS - Payout",
+      "com.checkout.rtau.card_updated": "VAS - RTAU Card Updated",
+      "com.checkout.vault.data.export": "VAS - Vault Data Export",
+      "com.checkout.vault.data.storage": "VAS - Vault Data Storage",
+      "integrated_platforms.platform_management.payout": "VAS - Platform Management Payout",
+      "pc_uawoyrryxkgejhfk6wofeusbnm": "PTOCSA",
+      "pp_3ftjpvejbifuvgu74nfqyuwbye": "pp_3ftjpvejbifuvgu74nfqyuwbye - pp_3ftjpvejbifuvgu74nfqyuwbye"
+    }
+  }
+}

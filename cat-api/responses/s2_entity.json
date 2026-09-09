@@ -1,0 +1,45 @@
+{
+  "id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+  "date_created": "2023-12-11T16:12:24Z",
+  "date_modified": "2026-05-05T12:03:19Z",
+  "client_id": "cli_scna7ew7mxdenl3h36zlmkyh6m",
+  "name": "PTOC Sandbox",
+  "doing_business_as": "PTOC Sandbox",
+  "type": "Legal",
+  "region": "Europe",
+  "status": "Active",
+  "company_number": "9999999999",
+  "tax_number": "9999999999",
+  "principal_business_address": {
+    "line1": "54 Portland Place",
+    "city": "London",
+    "postcode": "W1B 1DY",
+    "country_iso3_code": "GBR"
+  },
+  "registered_business_address": {
+    "line1": "54 Portland Place",
+    "city": "London",
+    "postcode": "W1B 1DY",
+    "country_iso3_code": "GBR"
+  },
+  "service_provider": "None",
+  "e_tag": "\"Y3Y9MCZydj03\"",
+  "timezone": "Etc/UTC",
+  "onboards_merchants": false,
+  "referrer": false,
+  "cko_legal_entities": [
+    "cko-ltd-uk"
+  ],
+  "default_cko_legal_entity": "cko-ltd-uk",
+  "business_models": [
+    "direct_seller"
+  ],
+  "funding": {
+    "can_hold_funds": true
+  },
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu"
+    }
+  }
+}

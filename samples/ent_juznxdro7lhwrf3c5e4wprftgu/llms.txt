@@ -1,0 +1,44 @@
+# Checkout.com setup — PTOC Sandbox (as of 2026-09-03T10:24:11Z, SANDBOX)
+# Describes THIS merchant's CKO config. Answer against it; if absent and coverage unknown/partial, say so.
+ACCOUNT: full, business_model=PTOC Sandbox, MCCs 0742, 5192, 5399, 5661, 5815. Regions GB.
+CARD SCHEMES: amex, mastercard, visa. APMs: ideal, klarna, paypal, sofort.
+ENTITY PTOC Sandbox (ent_juznxdro7lhwrf3c5e4wprftgu): country=GB, type=company, payments=True, payouts=True, status=active
+ENTITY PTOC SA (ent_sdur3xs7clfpdgtonhfmufiymm): country=SA, type=company, payments=?, payouts=?, status=active
+CHANNEL Channel 1 (pc_ciui77f3mfvephdkq7oh6ppxku): status=active, business_model=merchant, services=prism, vault, features: authorizations=enabled, captures=enabled, refunds=enabled, voids=enabled, full_card_api=enabled, moto=disabled, unreferenced_refunds=disabled
+  processor Visa Processor 1: scheme=visa, acquirer=Checkout VISA, mcc=5192, mode=complete_processing, auth=same_as_pc, cap=same_as_pc, ref=same_as_pc, void=same_as_pc, gws_only=No, currencies: AED, AFN, AMD, ANG, AOA, ARS, AUD, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CAD, CDF, CHF, CLF, CLP, CNY, COP, CRC, CUP, CVE, CZK, DJF, DKK, DOP, DZD, EEK, EGP, ERN, ETB, EUR, FJD, FKP, GBP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HKD, HNL, HTG, HUF, IDR, ILS, INR, IQD, IRR, ISK, JMD, JOD, JPY, KES, KGS, KHR, KMF, KPW, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LTL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG, SEK, SGD, SHP, SLL, SOS, SRD, STN, SVC, SYP, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS, VES, VND, VUV, WST, XAF, XCD, XOF, XPF, YER, ZAR, ZMK, ZMW, ZWL
+  processor MC Processor 1: scheme=mastercard, acquirer=Checkout Mastercard, mcc=5815, mode=complete_processing, auth=same_as_pc, cap=same_as_pc, ref=same_as_pc, void=same_as_pc, gws_only=No, currencies: AED, AFN, AMD, ANG, AOA, ARS, AUD, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CAD, CDF, CHF, CLF, CLP, CNY, COP, CRC, CUP, CVE, CZK, DJF, DKK, DOP, DZD, EEK, EGP, ERN, ETB, EUR, FJD, FKP, GBP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HKD, HNL, HTG, HUF, IDR, ILS, INR, IQD, IRR, ISK, JMD, JOD, JPY, KES, KGS, KHR, KMF, KPW, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LTL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG, SEK, SGD, SHP, SLL, SOS, SRD, STN, SVC, SYP, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS, VES, VND, VUV, WST, XAF, XCD, XOF, XPF, YER, ZAR, ZMK, ZMW, ZWL
+  processor Amex 5815: scheme=amex, acquirer=cko_amex_gb, mcc=5815, mode=complete_processing, auth=same_as_pc, cap=same_as_pc, ref=same_as_pc, void=same_as_pc, gws_only=No, currencies: AED, AFN, AMD, ANG, AOA, ARS, AUD, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CAD, CDF, CHF, CLP, CNY, COP, CRC, CVE, CZK, DJF, DKK, DOP, DZD, EGP, ETB, EUR, FJD, FKP, GBP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HKD, HNL, HTG, HUF, IDR, ILS, INR, IQD, ISK, JMD, JOD, JPY, KES, KGS, KHR, KMF, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RWF, SAR, SBD, SCR, SEK, SGD, SHP, SLL, SOS, SRD, STN, SVC, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS, VES, VND, VUV, WST, XAF, XCD, XOF, XPF, YER, ZAR, ZMW, ZWL
+  processor iDEAL: scheme=ideal, acquirer=ideal_apm_fr, mcc=5399, mode=complete_processing, auth=N/A, cap=N/A, ref=N/A, void=N/A, gws_only=N/A, currencies: EUR
+  processor sofort: scheme=sofort, acquirer=sofort_apm_fr, mcc=5661, mode=complete_processing, auth=N/A, cap=N/A, ref=N/A, void=N/A, gws_only=N/A, currencies: EUR
+  processor PayPal: scheme=paypal, acquirer=paypal_apm_global, mcc=-, mode=complete_processing, auth=N/A, cap=N/A, ref=N/A, void=N/A, gws_only=N/A, currencies: AUD, CHF, CNY, CZK, DKK, EUR, GBP, HKD, HUF, JPY, MYR, NOK, NZD, PHP, PLN, SEK, SGD, THB, TWD, USD
+  processor Visa AFT: scheme=visa, acquirer=cko_visa_gb, mcc=0742, mode=complete_processing, auth=same_as_pc, cap=same_as_pc, ref=same_as_pc, void=same_as_pc, gws_only=No, currencies: AED, AFN, ALL, AMD, ANG, AOA, ARS, AUD, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CAD, CDF, CHF, CLP, CNY, COP, CRC, CVE, CZK, DJF, DKK, DOP, DZD, EGP, ETB, EUR, FJD, FKP, GBP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HKD, HNL, HTG, HUF, IDR, ILS, INR, IQD, ISK, JMD, JOD, JPY, KES, KGS, KHR, KMF, KRW, KWD, KYD, KZT, LAK, LKR, LRD, LSL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RWF, SAR, SBD, SCR, SEK, SGD, SHP, SLE, SOS, SRD, SSP, STN, SVC, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS, VES, VND, VUV, WST, XAF, XCD, XOF, XPF, YER, ZAR, ZMW, ZWL
+  processor Klarna: scheme=klarna, acquirer=klarna_apm_gb, mcc=5192, mode=complete_processing, auth=N/A, cap=N/A, ref=N/A, void=N/A, gws_only=N/A, currencies: CHF, CZK, DKK, EUR, GBP, NOK, PLN, RON, SEK
+CHANNEL PTOC SBOX Payout (pc_eslelmxntabejezzb5wfcom3uu): status=unknown, business_model=-, services=-, features: -
+  (no processors)
+CHANNEL South Africa Test (pc_v5dvjmf2sxnujpxkatxyritluu): status=unknown, business_model=-, services=-, features: -
+  (no processors)
+CHANNEL Profile PC (pc_xcospfpb44aebbpemakd6eqzsu): status=unknown, business_model=-, services=-, features: -
+  (no processors)
+PROFILE Visa AFT (payin): scheme=visa, acquirer=cko_visa_gb, bin=402121, mcc=0742, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE Klarna (payin): scheme=klarna, acquirer=klarna_apm_gb, bin=-, mcc=5192, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE Visa Payout (payout): scheme=visa, acquirer=cko_visa_gb, bin=435000, mcc=6012, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE PayPal (payin): scheme=paypal, acquirer=paypal_apm_global, bin=-, mcc=-, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE Payout (payout): scheme=visa, acquirer=cko_visa_gb, bin=435000, mcc=4722, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Suspended
+PROFILE Mastercard Payout (payout): scheme=mastercard, acquirer=cko_mc_gb, bin=518489, mcc=6536, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE sofort (payin): scheme=sofort, acquirer=sofort_apm_fr, bin=-, mcc=5661, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE iDEAL (payin): scheme=ideal, acquirer=ideal_apm_fr, bin=-, mcc=5399, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PROFILE Amex Test account (payin): scheme=amex, acquirer=cko_amex_gb, bin=10000000232, mcc=5815, ft_type=-, aft_bai=-, auth_validity=-, quasi_cash=-, sca_exemptions=-, status=Active
+PAY-TO-CARD: enabled=True. schemes=mastercard, visa. ft_types=. mccs=6012, 6536.
+  p2c Visa Payout: visa, FT ?, BIN 435000, MCC 6012, Active
+  p2c Payout: visa, FT ?, BIN 435000, MCC 4722, Suspended
+  p2c Mastercard Payout: mastercard, FT ?, BIN 518489, MCC 6536, Active
+PAYOUT BANK: countries=GB, currencies=GBP
+SETTLEMENT: currencies AED, EUR, GBP. accounts: AED(active); EUR(active); GBP(active); GBP(active)
+NETWORK TOKENS: allowed=None, mode=None
+INTELLIGENT ACCEPTANCE: enabled=None, strategy=None
+RISK: fraud_tooling=risk_tier:premium
+ROUTING: payment_rules=1, payout_rules=1
+  payment-routing  (rt_mjztfuwxpmeuxbcntfryfsqdfi): enabled=None
+  payout-routing  (rt_qxkzmeroinnetenpdshld4awca): enabled=None
+INTEGRATION: types=direct_api, flow, reporting_profiles=-
+COVERAGE: identity=not_collected, entity_structure=not_collected, processing_channels=not_collected, processing_profiles=not_collected, scheme_enablement=not_collected, money_out=not_collected, settlement=not_collected, routing=not_collected, capabilities_matrix=complete, risk_and_auth=not_collected, reporting_and_integration=partial, glossary=not_collected

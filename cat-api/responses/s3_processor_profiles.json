@@ -1,0 +1,34 @@
+{
+  "processing_profiles": [
+    {
+      "value": "pp_vvcvovncyhgebc2uvg5vus4xui",
+      "processor_key": "cko-amex",
+      "label": "Amex Test account - pp_vvcvovncyhgebc2uvg5vus4xui"
+    },
+    {
+      "value": "pp_r4eixa7tx7zudorvxdw46fxx24",
+      "processor_key": "cko-apm",
+      "label": "iDEAL - pp_r4eixa7tx7zudorvxdw46fxx24"
+    },
+    {
+      "value": "pp_qmui4rmgknoevkyunhxxzbtcd4",
+      "processor_key": "cko-apm",
+      "label": "sofort - pp_qmui4rmgknoevkyunhxxzbtcd4"
+    },
+    {
+      "value": "pp_kaohkesmjoze5btajbl7ojhomy",
+      "processor_key": "cko-apm",
+      "label": "PayPal - pp_kaohkesmjoze5btajbl7ojhomy"
+    },
+    {
+      "value": "pp_etao3gtqj4ielk747rttb2uti4",
+      "processor_key": "cko-visa",
+      "label": "Visa AFT - pp_etao3gtqj4ielk747rttb2uti4"
+    },
+    {
+      "value": "pp_hcy5uwghexiu3afltqvxun47me",
+      "processor_key": "cko-apm",
+      "label": "Klarna - pp_hcy5uwghexiu3afltqvxun47me"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 1,
+  "_embedded": {
+    "sessions_processing_channels": [
+      {
+        "id": "pc_ciui77f3mfvephdkq7oh6ppxku",
+        "name": "Channel 1",
+        "status": "active",
+        "date_created": "2023-12-11T16:12:32Z",
+        "business_model": "Merchant",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/sessions-processing-channels/pc_ciui77f3mfvephdkq7oh6ppxku"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "sessions_processing_channels": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/sessions-processing-channels/pc_ciui77f3mfvephdkq7oh6ppxku"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/sessions-processing-channels"
+    },
+    "curies": []
+  }
+}

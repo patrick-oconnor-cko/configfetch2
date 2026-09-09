@@ -1,0 +1,51 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 2,
+  "_embedded": {
+    "entities": [
+      {
+        "id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+        "date_created": "2025-02-09T21:03:41Z",
+        "name": "PTOC SA",
+        "status": "Active",
+        "cko_legal_entity": "cko-ksa-sau",
+        "region": "Middle East and Africa",
+        "country": "Saudi Arabia",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_sdur3xs7clfpdgtonhfmufiymm"
+          }
+        }
+      },
+      {
+        "id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+        "date_created": "2023-12-11T16:12:24Z",
+        "name": "PTOC Sandbox",
+        "status": "Active",
+        "cko_legal_entity": "cko-ltd-uk",
+        "region": "Europe",
+        "country": "United Kingdom",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "entities": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_sdur3xs7clfpdgtonhfmufiymm"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/clients/cli_scna7ew7mxdenl3h36zlmkyh6m/entities"
+    },
+    "curies": []
+  }
+}

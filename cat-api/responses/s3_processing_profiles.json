@@ -1,0 +1,143 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 9,
+  "_embedded": {
+    "processing_profiles": [
+      {
+        "id": "pp_vvcvovncyhgebc2uvg5vus4xui",
+        "name": "Amex Test account",
+        "processor_key": "cko-amex",
+        "acquirer_key": "cko_amex_gb",
+        "business_model": "MoR",
+        "status": "Active",
+        "date_created": "2023-12-11T16:12:36Z",
+        "date_updated": "2024-03-26T16:29:00Z",
+        "processing_type": "payin"
+      },
+      {
+        "id": "pp_k6sd2izvkkyezkcux6kypxulce",
+        "name": "Visa Payout",
+        "processor_key": "cko-visa",
+        "acquirer_key": "cko_visa_gb",
+        "business_model": "MoR",
+        "status": "Active",
+        "date_created": "2024-01-03T13:04:50Z",
+        "date_updated": "2026-04-23T11:41:52Z",
+        "processing_type": "payout"
+      },
+      {
+        "id": "pp_q3rumdjbqcsendyx3uj6hsmlxq",
+        "name": "Mastercard Payout",
+        "processor_key": "cko-mc",
+        "acquirer_key": "cko_mc_gb",
+        "business_model": "MoR",
+        "status": "Active",
+        "date_created": "2024-01-03T13:05:39Z",
+        "date_updated": "2026-04-23T08:34:06Z",
+        "processing_type": "payout"
+      },
+      {
+        "id": "pp_r4eixa7tx7zudorvxdw46fxx24",
+        "name": "iDEAL",
+        "processor_key": "cko-apm",
+        "acquirer_key": "ideal_apm_fr",
+        "business_model": "N/A",
+        "status": "Active",
+        "date_created": "2024-01-08T11:13:33Z",
+        "date_updated": "2026-05-05T15:06:07Z",
+        "processing_type": "payin"
+      },
+      {
+        "id": "pp_qmui4rmgknoevkyunhxxzbtcd4",
+        "name": "sofort",
+        "processor_key": "cko-apm",
+        "acquirer_key": "sofort_apm_fr",
+        "business_model": "N/A",
+        "status": "Active",
+        "date_created": "2024-01-08T12:07:54Z",
+        "date_updated": "2026-05-05T15:08:25Z",
+        "processing_type": "payin"
+      },
+      {
+        "id": "pp_kaohkesmjoze5btajbl7ojhomy",
+        "name": "PayPal",
+        "processor_key": "cko-apm",
+        "acquirer_key": "paypal_apm_global",
+        "business_model": "N/A",
+        "status": "Active",
+        "date_created": "2024-01-09T13:39:14Z",
+        "date_updated": "2026-05-05T15:42:30Z",
+        "processing_type": "payin"
+      },
+      {
+        "id": "pp_nwn2w4jkdsdubcttgxdrzwpvyq",
+        "name": "Payout",
+        "processor_key": "cko-visa",
+        "acquirer_key": "cko_visa_gb",
+        "business_model": "MoR",
+        "status": "Suspended",
+        "date_created": "2024-12-23T14:42:29Z",
+        "date_updated": "2026-04-23T11:39:39Z",
+        "processing_type": "payout"
+      },
+      {
+        "id": "pp_etao3gtqj4ielk747rttb2uti4",
+        "name": "Visa AFT",
+        "processor_key": "cko-visa",
+        "acquirer_key": "cko_visa_gb",
+        "business_model": "MoR",
+        "status": "Active",
+        "date_created": "2025-03-12T14:54:17Z",
+        "date_updated": "2026-04-23T12:21:21Z",
+        "processing_type": "payin"
+      },
+      {
+        "id": "pp_hcy5uwghexiu3afltqvxun47me",
+        "name": "Klarna",
+        "processor_key": "cko-apm",
+        "acquirer_key": "klarna_apm_gb",
+        "business_model": "N/A",
+        "status": "Active",
+        "date_created": "2025-05-14T09:48:40Z",
+        "date_updated": "2026-05-06T10:08:24Z",
+        "processing_type": "payin"
+      }
+    ]
+  },
+  "_links": {
+    "processing_profiles": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_vvcvovncyhgebc2uvg5vus4xui"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_k6sd2izvkkyezkcux6kypxulce"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_q3rumdjbqcsendyx3uj6hsmlxq"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_r4eixa7tx7zudorvxdw46fxx24"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_qmui4rmgknoevkyunhxxzbtcd4"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_kaohkesmjoze5btajbl7ojhomy"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_nwn2w4jkdsdubcttgxdrzwpvyq"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_etao3gtqj4ielk747rttb2uti4"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-profiles/pp_hcy5uwghexiu3afltqvxun47me"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/processing-profiles"
+    },
+    "curies": []
+  }
+}

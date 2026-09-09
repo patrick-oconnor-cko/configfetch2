@@ -1,0 +1,104 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 7,
+  "_embedded": {
+    "access_keys": [
+      {
+        "id": "ack_llre6h5zoi4evfy4aw4dxczcfy",
+        "date_created": "2026-01-05T15:30:43Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_llre6h5zoi4evfy4aw4dxczcfy"
+          }
+        }
+      },
+      {
+        "id": "ack_kyio7gejqcguraqb632qfhtrvy",
+        "key_descriptor": "test222",
+        "date_created": "2025-08-18T12:41:46Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_kyio7gejqcguraqb632qfhtrvy"
+          }
+        }
+      },
+      {
+        "id": "ack_afn4yczk7i7ubmr5ifrwaup7t4",
+        "key_descriptor": "NDT Test",
+        "date_created": "2024-09-23T08:52:24Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_afn4yczk7i7ubmr5ifrwaup7t4"
+          }
+        }
+      },
+      {
+        "id": "ack_zipoxtntb7oedgqwpzo5fwp44m",
+        "date_created": "2024-08-14T15:06:12Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_zipoxtntb7oedgqwpzo5fwp44m"
+          }
+        }
+      },
+      {
+        "id": "ack_urvlov5vxisedeejlb6mgkls2y",
+        "date_created": "2024-08-14T15:02:50Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_urvlov5vxisedeejlb6mgkls2y"
+          }
+        }
+      },
+      {
+        "id": "ack_xhemm222dtmebetrkg4inzuv4e",
+        "date_created": "2024-08-14T14:21:28Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_xhemm222dtmebetrkg4inzuv4e"
+          }
+        }
+      },
+      {
+        "id": "ack_uebi3y5hlrpudl6rvbdduahypi",
+        "key_descriptor": "access",
+        "date_created": "2024-02-06T13:10:32Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_uebi3y5hlrpudl6rvbdduahypi"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "access_keys": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_llre6h5zoi4evfy4aw4dxczcfy"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_kyio7gejqcguraqb632qfhtrvy"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_afn4yczk7i7ubmr5ifrwaup7t4"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_zipoxtntb7oedgqwpzo5fwp44m"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_urvlov5vxisedeejlb6mgkls2y"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_xhemm222dtmebetrkg4inzuv4e"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/access-keys/ack_uebi3y5hlrpudl6rvbdduahypi"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/clients/cli_scna7ew7mxdenl3h36zlmkyh6m/access-keys"
+    },
+    "curies": []
+  }
+}

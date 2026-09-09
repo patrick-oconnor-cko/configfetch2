@@ -1,0 +1,144 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 1,
+  "_embedded": {
+    "pricing_profiles": [
+      {
+        "id": "pp_juznxdro7lhwrf3c5e4wprftgu",
+        "name": "Pricing",
+        "date_created": "2024-01-08T10:59:30Z",
+        "date_modified": "2025-05-13T16:57:47Z",
+        "payment_methods": [
+          {
+            "name": "ideal",
+            "is_collecting": true,
+            "currency": "EUR",
+            "merchant_fees": [
+              {
+                "name": "capture_fixed_fee",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": true,
+                "fee_category": "capture",
+                "is_fx_fee": false
+              },
+              {
+                "name": "fx_markup_fee",
+                "amount": "0.1",
+                "amount_type": "variable",
+                "is_collecting": true,
+                "fee_category": "capture",
+                "is_fx_fee": true
+              },
+              {
+                "name": "gateway_services",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": false,
+                "fee_category": "gateway",
+                "is_fx_fee": false
+              },
+              {
+                "name": "refund_fixed_fee",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": true,
+                "fee_category": "refund",
+                "is_fx_fee": false
+              }
+            ]
+          },
+          {
+            "name": "paypal",
+            "is_collecting": false,
+            "currency": "GBP",
+            "merchant_fees": [
+              {
+                "name": "gateway_services",
+                "amount": "0.01",
+                "amount_type": "fixed",
+                "is_collecting": false,
+                "fee_category": "gateway",
+                "is_fx_fee": false
+              }
+            ]
+          },
+          {
+            "name": "sofort",
+            "is_collecting": true,
+            "currency": "EUR",
+            "merchant_fees": [
+              {
+                "name": "capture_fixed_fee",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": true,
+                "fee_category": "capture",
+                "is_fx_fee": false
+              },
+              {
+                "name": "capture_variable_fee",
+                "amount": "0.1",
+                "amount_type": "variable",
+                "is_collecting": true,
+                "fee_category": "capture",
+                "is_fx_fee": false
+              },
+              {
+                "name": "fx_markup_fee",
+                "amount": "0.1",
+                "amount_type": "variable",
+                "is_collecting": true,
+                "fee_category": "capture",
+                "is_fx_fee": true
+              },
+              {
+                "name": "gateway_services",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": false,
+                "fee_category": "gateway",
+                "is_fx_fee": false
+              },
+              {
+                "name": "refund_fixed_fee",
+                "amount": "0.1",
+                "amount_type": "fixed",
+                "is_collecting": true,
+                "fee_category": "refund",
+                "is_fx_fee": false
+              }
+            ]
+          },
+          {
+            "name": "klarna",
+            "is_collecting": false,
+            "currency": "USD",
+            "merchant_fees": [
+              {
+                "name": "gateway_services",
+                "amount": "0.01",
+                "amount_type": "fixed",
+                "is_collecting": false,
+                "fee_category": "gateway",
+                "is_fx_fee": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "_links": {
+    "pricing_profiles": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/apm-pricing-profiles/pp_juznxdro7lhwrf3c5e4wprftgu"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/apm-pricing-profiles"
+    },
+    "curies": []
+  }
+}

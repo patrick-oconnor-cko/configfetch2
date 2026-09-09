@@ -1,0 +1,33 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 1,
+  "_embedded": {
+    "payout_settings": [
+      {
+        "id": "csi_aqmpuxfuyl4uffe4i4beflhcte",
+        "date_created": "2024-07-03T09:29:10Z",
+        "payment_instrument_id": "src_yfdx36h5ci7uhdqu3xdpyds63a",
+        "currency_account_count": 2,
+        "name": "Payout",
+        "instruction_state": "Active",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/payout-settings/csi_aqmpuxfuyl4uffe4i4beflhcte"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "payout_settings": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/payout-settings/csi_aqmpuxfuyl4uffe4i4beflhcte"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/payout-settings"
+    },
+    "curies": []
+  }
+}

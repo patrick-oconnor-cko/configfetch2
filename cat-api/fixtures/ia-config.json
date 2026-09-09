@@ -1,0 +1,574 @@
+{
+  "endpoints": {
+    "update": {
+      "url": "https://pp-tenet-int.sbox.internal/tenet-config-controller/cat-api/clients/:clientId/form"
+    }
+  },
+  "schema": {
+    "label": "Intelligent acceptance",
+    "form_fields": [
+      {
+        "label": "Intelligent acceptance enabled",
+        "name": "intelligent_acceptance_enabled",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "default_value": false,
+        "value": true
+      },
+      {
+        "label": "Strategy",
+        "name": "strategy",
+        "datatype": "enum",
+        "display_style": "selectMenu",
+        "default_value": "custom_3ds_upgrade",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            }
+          ]
+        },
+        "options": [
+          {
+            "label": "Default",
+            "value": "default_intelligent_acceptance"
+          },
+          {
+            "label": "Custom, 3DS upgrade",
+            "value": "custom_3ds_upgrade"
+          },
+          {
+            "label": "Custom, No 3DS upgrades",
+            "value": "custom_no_3ds_upgrade"
+          },
+          {
+            "label": "Free plan (Shadow)",
+            "value": "shadow_enablement"
+          }
+        ],
+        "required": true,
+        "value": "custom_3ds_upgrade"
+      },
+      {
+        "label": "Description",
+        "name": "description_default_intelligent_acceptance",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "Default: Includes ISO8583 and 3DS optimisations, 3DS upgrade, Network Tokens on the first attempt and fallback where necessary, AFT retries, and exemptions where no liability is impacted, and preferred scheme routing where processors are configured.",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "default_intelligent_acceptance"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Description",
+        "name": "description_custom_3ds_upgrade",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "Custom: Strategy that can be tailored to merchant needs and preferences; it already allows all ISO8583 optimizations, 3DS optimizations, Network Tokens on the first attempt and fallback where necessary, AFT retries, exemptions, and preferred scheme routing where processors are configured. Functionalities can be controlled via the usage of add-ons.\n3DS upgrade: Allows 3DS upgrades.",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_3ds_upgrade"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Description",
+        "name": "description_custom_no_3ds_upgrade",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "Custom: Strategy that can be tailored to merchant needs and preferences; it already allows all ISO8583 optimizations, 3DS optimizations, Network Tokens on the first attempt and fallback where necessary, AFT retries, exemptions, and preferred scheme routing where processors are configured. Functionalities can be controlled via the usage of add-ons.\nNo 3DS upgrades: Does not allow 3DS if not requested explicitly by the merchant",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_no_3ds_upgrade"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Description",
+        "name": "description_shadow_enablement",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "Free plan (Shadow): Enabling a free limited version of Intelligent Acceptance with restricted optimisations. This strategy is different from a free trial which is a limited-time offering of the full Intelligent Acceptance product.",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "shadow_enablement"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Addons enabled",
+        "name": "addons_enabled_custom_3ds_upgrade",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "default_value": true,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_3ds_upgrade"
+            }
+          ]
+        },
+        "value": true
+      },
+      {
+        "label": "Description",
+        "name": "addons_description_custom_3ds_upgrade",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "\u2022 Disable API 3DS: Only honours 3DS decision from Fraud Detection and ignores 3DS requested via API\n\u2022 Smart MCC Routing: Enables smart routing for merchants, leveraging best ranked MCC on first attempt, and second best ranked on subsequent attempts\n\u2022 Disable CVV optimizations (card verification only): Disable optimizations removing CVV values on card verification requests only\n\u2022 Disable CVV optimizations: Disable optimizations removing CVV values\n\u2022 Disables AFT downgrades: Disables AFT downgrades and AFT purchase retries\n\u2022 Disable double authentication retries: Disables double authentication retries\n\u2022 Honour 3RI: Honours 3RI requests from the merchant\n\u2022 Disable authentication downgrades: Disables authentication downgrades\n\u2022 Disable 3DS upgrades on retries for US based issuers: Disables 3DS upgrades on retries for US based issuers\n\u2022 Enable NSF MIT retries: Enable insufficient fund retries on MITs\n\u2022 Disable NSF CIT retries: Disable insufficient fund retries on CITs\n\u2022 Disable Google SPA Authentication: Disables authentication attempts with Google SPA.\n\u2022 Honour AFT requests on the initial attempt: Honours AFT requests on the initial attempt if requested by merchant\n\u2022 Restrict double EMVCo challenge: Disables double EMVCo challenge requests if a successful challenge was completed. Restriction does not apply if the scheme is changed between attempts\n\u2022 Restrict Visa Cat1 retries for MIT transactions: Disables retrying on Visa Category 1 decline codes for MIT transactions\n\u2022 Restrict retries on recommendation code 03/21 for MIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for MIT Mastercard transactions only\n\u2022 Restrict retries on recommendation code 03/21 for CIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for CIT Mastercard transactions only\n\u2022 Restrict Visa Cat1 retries for CIT transactions: Disables retrying on Visa Category 1 decline codes for CIT transactions\n\u2022 Disable 3DS upgrades on card verifs:  Disables 3DS redirection for card verification payments\n\u2022 Restrict 3DS upgrades on first attempt:  Restricts 3DS redirection for first attempts for Visa/Mastercard CITs where possible. Excludes cards issued in France.\n\u2022 Restrict 3DS upgrades on first attempt for US issuers:  Restricts 3DS redirection for first attempts for Visa/Mastercard CITs for US issuers where possible.",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_custom_3ds_upgrade",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_3ds_upgrade"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Addons",
+        "name": "addons_custom_3ds_upgrade",
+        "datatype": "array",
+        "display_style": "multiCheckbox",
+        "default_value": null,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_custom_3ds_upgrade",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_3ds_upgrade"
+            }
+          ]
+        },
+        "options": [
+          {
+            "label": "Disable API 3DS",
+            "value": "disable_upapi_3ds_requests"
+          },
+          {
+            "label": "Smart MCC Routing",
+            "value": "enable_smart_mcc_routing"
+          },
+          {
+            "label": "Disable CVV optimizations (card verification only)",
+            "value": "disable_cvv_optimizations_card_verif_only"
+          },
+          {
+            "label": "Disable CVV optimizations",
+            "value": "disable_cvv_optimizations"
+          },
+          {
+            "label": "Disables AFT downgrades",
+            "value": "disable_aft_downgrades"
+          },
+          {
+            "label": "Disable double authentication retries",
+            "value": "disable_double_authentication_retries"
+          },
+          {
+            "label": "Honour 3RI",
+            "value": "honour_3ri"
+          },
+          {
+            "label": "Disable authentication downgrades",
+            "value": "disable_3ds_downgrades"
+          },
+          {
+            "label": "Disable 3DS upgrades on retries for US based issuers",
+            "value": "disable_3ds_upgrades_on_retries_us_issuers"
+          },
+          {
+            "label": "Enable NSF MIT retries",
+            "value": "enable_nsf_mit_retry"
+          },
+          {
+            "label": "Disable NSF CIT retries",
+            "value": "disable_nsf_cit_retries"
+          },
+          {
+            "label": "Disable Google SPA Authentication",
+            "value": "disable_google_spa"
+          },
+          {
+            "label": "Honour AFT requests on the initial attempt",
+            "value": "honour_aft_initial_attempt"
+          },
+          {
+            "label": "Restrict double EMVCo challenge",
+            "value": "restrict_double_emvco_challenge"
+          },
+          {
+            "label": "Restrict Visa Cat1 retries for MIT transactions",
+            "value": "disable_visa_cat1_retries_mit"
+          },
+          {
+            "label": "Restrict retries on recommendation code 03/21 for MIT Mastercard",
+            "value": "disable_mastercard_03_recommendation_code_retries_mit"
+          },
+          {
+            "label": "Restrict retries on recommendation code 03/21 for CIT Mastercard",
+            "value": "disable_mastercard_03_recommendation_code_retries_cit"
+          },
+          {
+            "label": "Restrict Visa Cat1 retries for CIT transactions",
+            "value": "disable_visa_cat1_retries_cit"
+          },
+          {
+            "label": "Disable 3DS upgrades on card verifs",
+            "value": "disable_3ds_upgrades_card_verif"
+          },
+          {
+            "label": "Restrict 3DS upgrades on first attempt",
+            "value": "restrict_3ds_upgrades_first_attempt"
+          },
+          {
+            "label": "Restrict 3DS upgrades on first attempt for US issuers",
+            "value": "restrict_3ds_upgrades_first_attempt_us_issuers"
+          }
+        ],
+        "value": [
+          "disable_visa_cat1_retries_mit",
+          "enable_nsf_mit_retry"
+        ]
+      },
+      {
+        "label": "Addons enabled",
+        "name": "addons_enabled_custom_no_3ds_upgrade",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "default_value": false,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_no_3ds_upgrade"
+            }
+          ]
+        },
+        "value": false
+      },
+      {
+        "label": "Description",
+        "name": "addons_description_custom_no_3ds_upgrade",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "\u2022 Disable API 3DS: Only honours 3DS decision from Fraud Detection and ignores 3DS requested via API\n\u2022 Smart MCC Routing: Enables smart routing for merchants, leveraging best ranked MCC on first attempt, and second best ranked on subsequent attempts\n\u2022 Disable CVV optimizations (card verification only): Disable optimizations removing CVV values on card verification requests only\n\u2022 Disable CVV optimizations: Disable optimizations removing CVV values\n\u2022 Disables AFT downgrades: Disables AFT downgrades and AFT purchase retries\n\u2022 Disable AVS optimizations: Disable optimizations changing AVS values\n\u2022 Disable double authentication retries: Disables double authentication retries\n\u2022 Honour 3RI: Honours 3RI requests from the merchant\n\u2022 Disable authentication downgrades: Disables authentication downgrades\n\u2022 Enable NSF MIT retries: Enable insufficient fund retries on MITs\n\u2022 Disable NSF CIT retries: Disable insufficient fund retries on CITs\n\u2022 Disable Google SPA Authentication: Disables authentication attempts with Google SPA.\n\u2022 Honour AFT requests on the initial attempt: Honours AFT requests on the initial attempt if requested by merchant\n\u2022 Restrict double EMVCo challenge: Disables double EMVCo challenge requests if a successful challenge was completed. Restriction does not apply if the scheme is changed between attempts\n\u2022 Restrict Visa Cat1 retries for MIT transactions: Disables retrying on Visa Category 1 decline codes for MIT transactions\n\u2022 Restrict retries on recommendation code 03/21 for MIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for MIT Mastercard transactions only\n\u2022 Restrict retries on recommendation code 03/21 for CIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for CIT Mastercard transactions only\n\u2022 Restrict Visa Cat1 retries for CIT transactions: Disables retrying on Visa Category 1 decline codes for CIT transactions\n\u2022 Disable 3DS upgrades on card verifs:  Disables 3DS redirection for card verification payments",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_custom_no_3ds_upgrade",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_no_3ds_upgrade"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Addons",
+        "name": "addons_custom_no_3ds_upgrade",
+        "datatype": "array",
+        "display_style": "multiCheckbox",
+        "default_value": null,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_custom_no_3ds_upgrade",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "custom_no_3ds_upgrade"
+            }
+          ]
+        },
+        "options": [
+          {
+            "label": "Disable API 3DS",
+            "value": "disable_upapi_3ds_requests"
+          },
+          {
+            "label": "Smart MCC Routing",
+            "value": "enable_smart_mcc_routing"
+          },
+          {
+            "label": "Disable CVV optimizations (card verification only)",
+            "value": "disable_cvv_optimizations_card_verif_only"
+          },
+          {
+            "label": "Disable CVV optimizations",
+            "value": "disable_cvv_optimizations"
+          },
+          {
+            "label": "Disables AFT downgrades",
+            "value": "disable_aft_downgrades"
+          },
+          {
+            "label": "Disable AVS optimizations",
+            "value": "disable_avs_optimizations"
+          },
+          {
+            "label": "Disable double authentication retries",
+            "value": "disable_double_authentication_retries"
+          },
+          {
+            "label": "Honour 3RI",
+            "value": "honour_3ri"
+          },
+          {
+            "label": "Disable authentication downgrades",
+            "value": "disable_3ds_downgrades"
+          },
+          {
+            "label": "Enable NSF MIT retries",
+            "value": "enable_nsf_mit_retry"
+          },
+          {
+            "label": "Disable NSF CIT retries",
+            "value": "disable_nsf_cit_retries"
+          },
+          {
+            "label": "Disable Google SPA Authentication",
+            "value": "disable_google_spa"
+          },
+          {
+            "label": "Honour AFT requests on the initial attempt",
+            "value": "honour_aft_initial_attempt"
+          },
+          {
+            "label": "Restrict double EMVCo challenge",
+            "value": "restrict_double_emvco_challenge"
+          },
+          {
+            "label": "Restrict Visa Cat1 retries for MIT transactions",
+            "value": "disable_visa_cat1_retries_mit"
+          },
+          {
+            "label": "Restrict retries on recommendation code 03/21 for MIT Mastercard",
+            "value": "disable_mastercard_03_recommendation_code_retries_mit"
+          },
+          {
+            "label": "Restrict retries on recommendation code 03/21 for CIT Mastercard",
+            "value": "disable_mastercard_03_recommendation_code_retries_cit"
+          },
+          {
+            "label": "Restrict Visa Cat1 retries for CIT transactions",
+            "value": "disable_visa_cat1_retries_cit"
+          },
+          {
+            "label": "Disable 3DS upgrades on card verifs",
+            "value": "disable_3ds_upgrades_card_verif"
+          }
+        ],
+        "value": []
+      },
+      {
+        "label": "Addons enabled",
+        "name": "addons_enabled_shadow_enablement",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "default_value": false,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "shadow_enablement"
+            }
+          ]
+        },
+        "value": false
+      },
+      {
+        "label": "Description",
+        "name": "addons_description_shadow_enablement",
+        "datatype": "string",
+        "display_style": "plainText",
+        "default_value": "\u2022 Enable 3DS upgrades: Enables 3DS redirection for payments where 3DS is not requested by the merchant. This should only be enabled for merchants who are able to handle 3DS redirection.",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_shadow_enablement",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "shadow_enablement"
+            }
+          ]
+        },
+        "value": null
+      },
+      {
+        "label": "Addons",
+        "name": "addons_shadow_enablement",
+        "datatype": "array",
+        "display_style": "multiCheckbox",
+        "default_value": null,
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "addons_enabled_shadow_enablement",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            },
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "shadow_enablement"
+            }
+          ]
+        },
+        "options": [
+          {
+            "label": "Enable 3DS upgrades",
+            "value": "allow_3ds_upgrades"
+          }
+        ],
+        "value": []
+      },
+      {
+        "label": "Percentage of transactions processed by Intelligent Acceptance",
+        "name": "optimized_ratio",
+        "datatype": "string",
+        "display_style": "textField",
+        "default_value": "100",
+        "conditional_render": {
+          "conditions": [
+            {
+              "name": "intelligent_acceptance_enabled",
+              "operator": "=",
+              "value": true
+            }
+          ]
+        },
+        "conditional_read_only": {
+          "conditions": [
+            {
+              "name": "strategy",
+              "operator": "=",
+              "value": "shadow_enablement"
+            }
+          ]
+        },
+        "required": true,
+        "value": "100",
+        "reg_exp": "^\\d+$",
+        "description": "Only change if explicitly requested."
+      }
+    ]
+  }
+}

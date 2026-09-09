@@ -1,0 +1,186 @@
+{
+  "envelope": {
+    "schema_version": "0.1.0",
+    "profile_id": "prof_northwind_prod",
+    "client_id": "cli_northwind_7f3a",
+    "generated_at": "2026-07-09T06:00:00Z",
+    "environment": "production",
+    "generator_version": "0.1.0",
+    "coverage_summary": {
+      "identity": "complete",
+      "entity_structure": "complete",
+      "processing_channels": "complete",
+      "scheme_enablement": "complete",
+      "money_out": "complete",
+      "settlement": "complete",
+      "capabilities_matrix": "complete",
+      "risk_and_auth": "partial",
+      "reporting_and_integration": "partial"
+    }
+  },
+
+  "identity": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "client_name": "Northwind Commerce",
+    "legal_name": "Northwind Commerce Ltd",
+    "account_type": "full",
+    "business_model": "Online brokerage and trading platform. Accepts card deposits from customers and disburses winnings/withdrawals to customer cards (pay-to-card).",
+    "industries": ["financial_services", "brokerage"],
+    "mccs": ["6211"],
+    "operating_regions": ["IT", "CY", "AE", "GB"],
+    "go_live_date": "2024-03-01",
+    "account_manager": "—"
+  },
+
+  "entity_structure": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "root_entity_id": "ent_northwind_root",
+    "root_entity": "Northwind Commerce Ltd",
+    "entities": [
+      {
+        "entity_id": "ent_northwind_root",
+        "name": "Northwind Commerce Ltd",
+        "parent_entity_id": null,
+        "type": "company",
+        "country_of_incorporation": "IT",
+        "status": "active",
+        "capabilities": { "payments": true, "payouts": true },
+        "open_requirements": []
+      }
+    ]
+  },
+
+  "processing_channels": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "channels": [
+      {
+        "processing_channel_id": "pc_it_main",
+        "name": "Northwind IT - Cards",
+        "entity_id": "ent_northwind_root",
+        "status": "active",
+        "mids": [
+          { "scheme": "visa", "mid": "4123001", "acquiring_bin": "412300", "descriptor": "NORTHWIND" },
+          { "scheme": "mastercard", "mid": "5301002", "acquiring_bin": "530100", "descriptor": "NORTHWIND" }
+        ],
+        "schemes_enabled": ["visa", "mastercard"],
+        "currencies": ["EUR", "USD", "GBP"],
+        "mccs": ["6211"],
+        "processing_countries": ["IT"],
+        "auth_config": {
+          "auto_capture": true,
+          "capture_delay_hours": 0,
+          "auth_expiry": { "default_days": 7, "per_scheme": { "visa": 7, "mastercard": 7 } }
+        }
+      },
+      {
+        "processing_channel_id": "pc_fr_cards",
+        "name": "Northwind FR - Cards",
+        "entity_id": "ent_northwind_root",
+        "status": "active",
+        "mids": [
+          { "scheme": "visa", "mid": "4990211", "acquiring_bin": "499021", "descriptor": "NORTHWIND FR" }
+        ],
+        "schemes_enabled": ["visa", "mastercard", "cartes_bancaires"],
+        "currencies": ["EUR"],
+        "mccs": ["6211"],
+        "processing_countries": ["FR"],
+        "auth_config": {
+          "auto_capture": false,
+          "capture_delay_hours": 168,
+          "auth_expiry": { "default_days": 30, "per_scheme": { "visa": 30, "mastercard": 30, "cartes_bancaires": 30 } }
+        }
+      }
+    ]
+  },
+
+  "scheme_enablement": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "card_schemes": [
+      { "scheme": "visa", "enabled": true, "countries": ["IT", "FR"], "channel_ids": ["pc_it_main", "pc_fr_cards"] },
+      { "scheme": "mastercard", "enabled": true, "countries": ["IT", "FR"], "channel_ids": ["pc_it_main", "pc_fr_cards"] },
+      { "scheme": "cartes_bancaires", "enabled": true, "countries": ["FR"], "channel_ids": ["pc_fr_cards"] },
+      { "scheme": "amex", "enabled": false, "countries": [], "channel_ids": [] }
+    ],
+    "alternative_payment_methods": [
+      { "name": "apple_pay", "enabled": true, "countries": ["IT", "FR"], "currencies": ["EUR"] },
+      { "name": "google_pay", "enabled": true, "countries": ["IT", "FR"], "currencies": ["EUR"] }
+    ]
+  },
+
+  "money_out": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "ft_types": [
+      { "code": "FD", "name": "Funding Disbursement", "enabled": true },
+      { "code": "GP", "name": "Gambling Payout", "enabled": false }
+    ],
+    "pay_to_card": {
+      "enabled": true,
+      "corridors": [
+        { "origin_country": "IT", "destination_country": "AE", "schemes": ["visa", "mastercard"], "ft_types": ["FD"], "currencies": ["EUR", "AED"] },
+        { "origin_country": "CY", "destination_country": "AE", "schemes": ["visa"], "ft_types": ["FD"], "currencies": ["EUR"] }
+      ]
+    },
+    "payout_destinations": [
+      { "type": "card", "countries": ["AE", "GB", "IT"], "currencies": ["EUR", "GBP", "AED"] },
+      { "type": "bank_account", "countries": ["IT", "GB"], "currencies": ["EUR", "GBP"] }
+    ],
+    "payout_schedule": { "frequency": "daily", "delay_days": 1 }
+  },
+
+  "settlement": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "complete" },
+    "settlement_model": "net",
+    "settlement_currencies": ["EUR", "GBP"],
+    "settlement_frequency": "daily",
+    "pools": [
+      { "pool_id": "pool_eur", "currency": "EUR", "sub_account_ids": ["sub_it_eur"] },
+      { "pool_id": "pool_gbp", "currency": "GBP", "sub_account_ids": ["sub_gb_gbp"] }
+    ],
+    "reserve_rules": [
+      { "type": "rolling", "percentage": 5, "hold_days": 30 }
+    ],
+    "bank_accounts": [
+      { "country": "IT", "currency": "EUR", "status": "verified" },
+      { "country": "GB", "currency": "GBP", "status": "verified" }
+    ]
+  },
+
+  "capabilities_matrix": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "derived", "coverage": "complete" },
+    "pay_to_card": {
+      "enabled": true,
+      "corridors": [
+        { "origin_country": "IT", "destination_country": "AE", "schemes": ["visa", "mastercard"], "ft_types": ["FD"] },
+        { "origin_country": "CY", "destination_country": "AE", "schemes": ["visa"], "ft_types": ["FD"] }
+      ],
+      "supported_mccs": ["6211"]
+    },
+    "accept_payments": {
+      "countries": ["IT", "FR"],
+      "schemes": ["visa", "mastercard", "cartes_bancaires"],
+      "currencies": ["EUR", "USD", "GBP"]
+    },
+    "notable_gaps": [
+      "Pay-to-card to US (destination_country=US) is NOT configured.",
+      "Amex is NOT enabled on any processing channel.",
+      "No processing channel is configured for USD acquiring in-country (USD accepted on IT channel only as a processing currency)."
+    ]
+  },
+
+  "risk_and_auth": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "partial", "notes": "SCA exemption detail not yet mapped from CAT." },
+    "three_ds": { "enabled": true, "mode": "risk_based", "sca_exemptions_used": ["TRA"] },
+    "auth_optimization": { "network_tokens": true, "account_updater": true, "intelligent_retries": false },
+    "fraud_tooling": ["checkout_fraud_detection"]
+  },
+
+  "reporting_and_integration": {
+    "provenance": { "as_of": "2026-07-09T06:00:00Z", "source": "cat_internal_api", "coverage": "partial", "notes": "Reporting profile names pending confirmation from CAT." },
+    "reporting_profiles": ["daily_settlement_v2"],
+    "reconciliation_model": "payment_id_matched",
+    "report_formats": ["csv"],
+    "webhook_subscriptions": ["payment_captured", "payment_declined", "payout_paid"],
+    "integration_types": ["direct_api"],
+    "api_version": "2023-11-01"
+  }
+}

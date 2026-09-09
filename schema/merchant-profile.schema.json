@@ -1,0 +1,571 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://checkout.com/schemas/merchant-profile/v0.1.0",
+  "title": "CKO Merchant Configuration Profile",
+  "description": "Canonical model summarizing how a merchant is configured on Checkout.com (CAT-level). One JSON model -> rendered to human markdown and a token-tight llms.txt. Every section carries provenance and an as_of timestamp so consumers (LLMs) can reason about freshness and coverage.",
+  "type": "object",
+  "required": ["envelope", "identity", "entity_structure", "processing_channels", "capabilities_matrix"],
+  "properties": {
+    "envelope": { "$ref": "#/$defs/envelope" },
+    "identity": { "$ref": "#/$defs/identity" },
+    "entity_structure": { "$ref": "#/$defs/entity_structure" },
+    "processing_channels": { "$ref": "#/$defs/processing_channels" },
+    "processing_profiles": { "$ref": "#/$defs/processing_profiles" },
+    "scheme_enablement": { "$ref": "#/$defs/scheme_enablement" },
+    "money_out": { "$ref": "#/$defs/money_out" },
+    "settlement": { "$ref": "#/$defs/settlement" },
+    "routing": { "$ref": "#/$defs/routing" },
+    "capabilities_matrix": { "$ref": "#/$defs/capabilities_matrix" },
+    "risk_and_auth": { "$ref": "#/$defs/risk_and_auth" },
+    "reporting_and_integration": { "$ref": "#/$defs/reporting_and_integration" }
+  },
+  "$defs": {
+    "routing_rule": {
+      "type": "object",
+      "properties": {
+        "rule_id": { "type": "string" },
+        "name": { "type": "string" },
+        "priority": { "type": "number" },
+        "enabled": { "type": "boolean" },
+        "conditions_summary": { "type": "string", "description": "Human-readable summary of match conditions (currency, country, scheme, amount, etc.)." },
+        "target": { "type": "string", "description": "Destination processor/acquirer/network the rule routes to." }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Per-section provenance. Stamped on every section so consumers know how fresh and how trustworthy each fact is.",
+      "required": ["as_of", "source", "coverage"],
+      "properties": {
+        "as_of": { "type": "string", "format": "date-time", "description": "When this section's data was last fetched from source." },
+        "source": {
+          "type": "string",
+          "description": "System of record for this section.",
+          "enum": ["cat_internal_api", "public_api", "bigquery_warehouse", "manual", "derived", "unknown"]
+        },
+        "coverage": {
+          "type": "string",
+          "description": "How complete this section is. 'partial'/'unknown' tells the LLM what it must NOT assert.",
+          "enum": ["complete", "partial", "unknown"]
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "country": { "type": "string", "description": "ISO 3166-1 alpha-2 country code.", "pattern": "^[A-Z]{2}$" },
+    "currency": { "type": "string", "description": "ISO 4217 currency code.", "pattern": "^[A-Z]{3}$" },
+    "scheme": {
+      "type": "string",
+      "description": "Card scheme / network.",
+      "enum": ["visa", "mastercard", "amex", "discover", "diners", "jcb", "cartes_bancaires", "unionpay", "other"]
+    },
+
+    "envelope": {
+      "type": "object",
+      "required": ["schema_version", "profile_id", "generated_at", "environment"],
+      "properties": {
+        "schema_version": { "type": "string", "const": "0.1.0" },
+        "profile_id": { "type": "string", "description": "Stable id for this merchant profile (keyed on the CKO client/root entity)." },
+        "client_id": { "type": "string", "description": "CKO client id / account id this profile describes." },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "environment": { "type": "string", "enum": ["production", "sandbox"] },
+        "generator_version": { "type": "string" },
+        "coverage_summary": {
+          "type": "object",
+          "description": "Which sections are complete/partial/unknown, so a consumer can gauge overall trust at a glance.",
+          "additionalProperties": { "type": "string", "enum": ["complete", "partial", "unknown"] }
+        }
+      }
+    },
+
+    "identity": {
+      "type": "object",
+      "description": "High-level business profile. The 'who and what', not the granular config.",
+      "required": ["provenance", "client_name", "account_type"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "client_name": { "type": "string" },
+        "legal_name": { "type": "string" },
+        "account_type": { "type": "string", "enum": ["full", "platform_payfac", "marketplace", "other"] },
+        "business_model": { "type": "string", "description": "Short free-text description of what the merchant does." },
+        "industries": { "type": "array", "items": { "type": "string" } },
+        "mccs": { "type": "array", "items": { "type": "string", "pattern": "^[0-9]{4}$" }, "description": "Merchant category codes in use." },
+        "operating_regions": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+        "go_live_date": { "type": "string", "format": "date" },
+        "account_manager": { "type": "string" }
+      }
+    },
+
+    "entity_structure": {
+      "type": "object",
+      "description": "The account/entity hierarchy. Source: CAT internal / getEntityDetails.",
+      "required": ["provenance", "root_entity", "entities"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "root_entity_id": { "type": "string" },
+        "root_entity": { "type": "string", "description": "Display name of the root entity." },
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["entity_id", "name", "country_of_incorporation"],
+            "properties": {
+              "entity_id": { "type": "string" },
+              "name": { "type": "string" },
+              "parent_entity_id": { "type": ["string", "null"] },
+              "type": { "type": "string", "enum": ["company", "individual", "sub_entity"] },
+              "country_of_incorporation": { "$ref": "#/$defs/country" },
+              "status": { "type": "string", "enum": ["active", "pending", "restricted", "suspended", "unknown"] },
+              "capabilities": {
+                "type": "object",
+                "description": "Entity-level capability flags, mirroring CKO's capabilities object.",
+                "properties": {
+                  "payments": { "type": "boolean" },
+                  "payouts": { "type": "boolean" }
+                }
+              },
+              "open_requirements": {
+                "type": "array",
+                "description": "Outstanding onboarding/compliance requirements, if any.",
+                "items": { "type": "object", "properties": { "type": { "type": "string" }, "priority": { "type": "string" }, "deadline": { "type": "string" } } }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "processing_channels": {
+      "type": "object",
+      "description": "Processing channels and their scheme/MID/auth configuration. Source: CAT internal + list_processing_channels.",
+      "required": ["provenance", "channels"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["processing_channel_id", "name"],
+            "properties": {
+              "processing_channel_id": { "type": "string" },
+              "name": { "type": "string" },
+              "entity_id": { "type": "string", "description": "Entity this channel belongs to." },
+              "status": { "type": "string", "enum": ["active", "inactive", "unknown"] },
+              "business_model_type": { "type": "string", "description": "e.g. merchant, marketplace." },
+              "payment_pricing_profile": { "type": "string", "description": "Name of the payment pricing profile attached to the channel." },
+              "services": { "type": "array", "items": { "type": "string" }, "description": "Channel services, e.g. prism, vault, flow." },
+              "features": {
+                "type": "object",
+                "description": "Channel-level capability switches (enabled/disabled).",
+                "properties": {
+                  "authorizations": { "type": "string" },
+                  "captures": { "type": "string" },
+                  "refunds": { "type": "string" },
+                  "voids": { "type": "string" },
+                  "full_card_api": { "type": "string" },
+                  "moto": { "type": "string" },
+                  "unreferenced_refunds": { "type": "string" }
+                }
+              },
+              "processors": {
+                "type": "array",
+                "description": "Full processor list on the channel (per scheme/acquirer).",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "processor_id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "scheme": { "type": "string" },
+                    "acquirer_id": { "type": "string" },
+                    "acquirer_name": { "type": "string" },
+                    "merchant_category_code": { "type": "string" },
+                    "processing_currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } },
+                    "mode": { "type": "string" },
+                    "authorizations": { "type": "string" },
+                    "captures": { "type": "string" },
+                    "refunds": { "type": "string" },
+                    "voids": { "type": "string" },
+                    "gws_only": { "type": "string" }
+                  }
+                }
+              },
+              "mids": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "scheme": { "type": "string", "description": "Card scheme or payment method on this channel processor (may be an APM)." },
+                    "mid": { "type": "string" },
+                    "acquiring_bin": { "type": "string" },
+                    "descriptor": { "type": "string" }
+                  }
+                }
+              },
+              "schemes_enabled": { "type": "array", "items": { "type": "string" }, "description": "All payment methods on the channel (card schemes and APMs)." },
+              "currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } },
+              "mccs": { "type": "array", "items": { "type": "string", "pattern": "^[0-9]{4}$" } },
+              "processing_countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+              "auth_config": {
+                "type": "object",
+                "description": "Authorization behaviour for this channel.",
+                "properties": {
+                  "auto_capture": { "type": "boolean" },
+                  "capture_delay_hours": { "type": "number" },
+                  "auth_expiry": {
+                    "type": "object",
+                    "description": "Authorization validity window before it expires, optionally per scheme.",
+                    "properties": {
+                      "default_days": { "type": "number" },
+                      "per_scheme": {
+                        "type": "object",
+                        "additionalProperties": { "type": "number" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "processing_profiles": {
+      "type": "object",
+      "description": "Entity-level processing profiles (payin + payout). Source: GET /processing-profiles/v2/{id}. Payin AFT profiles carry AFT settings incl. the Business Application Identifier (BAI).",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "profile_id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string", "description": "payin | payout." },
+              "scheme": { "type": "string" },
+              "acquirer_key": { "type": "string" },
+              "processor_key": { "type": "string" },
+              "acquiring_bin": { "type": "string" },
+              "merchant_category_code": { "type": "string" },
+              "business_model": { "type": "string" },
+              "funds_transfer_type": { "type": "string", "description": "For payout profiles (e.g. FT, C52, FD)." },
+              "aft": {
+                "type": "object",
+                "description": "Account Funding Transaction settings (payin profiles).",
+                "properties": {
+                  "business_application_identifier": { "type": "string", "description": "AFT BAI (e.g. FT, AA, PP)." },
+                  "override_aft_processing": { "type": "string" },
+                  "is_skip_recipient_name_enabled": { "type": "boolean" }
+                }
+              },
+              "authorization_validity_period": { "type": "integer", "description": "Authorization hold validity in days." },
+              "is_quasi_cash": { "type": "boolean" },
+              "me_2_me_settings": {
+                "type": "object",
+                "description": "Merchant-to-merchant settings.",
+                "properties": {
+                  "is_enabled": { "type": "boolean" },
+                  "merchant_name": { "type": "string" },
+                  "card_acceptor_identification_code": { "type": "string" }
+                }
+              },
+              "sca_exemptions_settings": {
+                "type": "object",
+                "description": "SCA exemption flags for the profile.",
+                "properties": {
+                  "enable_transaction_risk_analysis": { "type": "boolean" },
+                  "enable_low_value": { "type": "boolean" },
+                  "enable_secure_corporate_payment": { "type": "boolean" },
+                  "enable_3ds_outage": { "type": "boolean" },
+                  "enable_trusted_listing": { "type": "boolean" },
+                  "enable_sca_delegation": { "type": "boolean" }
+                }
+              },
+              "acceptance_mode": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "scheme_enablement": {
+      "type": "object",
+      "description": "Which schemes and alternative payment methods are enabled, and where. Source: CAT internal + /payment-methods.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "card_schemes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scheme": { "$ref": "#/$defs/scheme" },
+              "enabled": { "type": "boolean" },
+              "countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+              "channel_ids": { "type": "array", "items": { "type": "string" }, "description": "PCs on which this scheme is enabled; empty = all." }
+            }
+          }
+        },
+        "alternative_payment_methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "e.g. apple_pay, google_pay, ideal, klarna." },
+              "enabled": { "type": "boolean" },
+              "countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+              "currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } }
+            }
+          }
+        }
+      }
+    },
+
+    "money_out": {
+      "type": "object",
+      "description": "Payouts / disbursements configuration. Source: CAT internal + payment-instruments/payout-schedules.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "ft_types": {
+          "type": "array",
+          "description": "Enabled fund transfer types (e.g. FD = Funding Disbursement).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "name": { "type": "string" },
+              "enabled": { "type": "boolean" }
+            }
+          }
+        },
+        "pay_to_card": {
+          "type": "object",
+          "description": "Pay-to-card is configured via processing profiles with processing_type=payout. Corridors require the pay-to-card-entity config endpoint (may be unavailable).",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "enabled_schemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
+            "supported_mccs": { "type": "array", "items": { "type": "string" } },
+            "ft_types": { "type": "array", "items": { "type": "string" }, "description": "Funds transfer types across active payout profiles (e.g. FT, C52)." },
+            "origination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" }, "description": "Union of approved origination countries." },
+            "destination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" }, "description": "Union of approved destination countries." },
+            "processors": {
+              "type": "array",
+              "description": "Payout-type processing profiles (the pay-to-card processors).",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "profile_id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "scheme": { "$ref": "#/$defs/scheme" },
+                  "acquiring_bin": { "type": "string" },
+                  "merchant_category_code": { "type": "string" },
+                  "card_acceptor_identification_code": { "type": "string" },
+                  "funds_transfer_type": { "type": "string" },
+                  "business_model": { "type": "string" },
+                  "acceptance_mode": { "type": "string" },
+                  "checkout_legal_entity_code": { "type": "string" },
+                  "status": { "type": "string" },
+                  "origination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+                  "destination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" } }
+                }
+              }
+            },
+            "corridors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["origin_country", "destination_country"],
+                "properties": {
+                  "origin_country": { "$ref": "#/$defs/country" },
+                  "destination_country": { "$ref": "#/$defs/country" },
+                  "schemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
+                  "ft_types": { "type": "array", "items": { "type": "string" } },
+                  "currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } }
+                }
+              }
+            }
+          }
+        },
+        "payout_destinations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["bank_account", "card"] },
+              "countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+              "currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } }
+            }
+          }
+        },
+        "payout_schedule": {
+          "type": "object",
+          "properties": {
+            "frequency": { "type": "string", "enum": ["daily", "weekly", "monthly", "on_demand", "unknown"] },
+            "delay_days": { "type": "number" }
+          }
+        },
+        "forex": {
+          "type": "object",
+          "description": "Forex configuration relevant to money-out. Source: /entities/:entityId/forex-pay-to-card, /entities/:entityId/forex-instant-liquidity.",
+          "properties": {
+            "instant_liquidity_enabled": { "type": "boolean" },
+            "pay_to_card_forex_enabled": { "type": "boolean" },
+            "supported_pairs": { "type": "array", "items": { "type": "string", "description": "e.g. EUR->AED" } }
+          }
+        }
+      }
+    },
+
+    "settlement": {
+      "type": "object",
+      "description": "Settlement model and funds structure. Source: CAT internal + pools/reserve-rules.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "settlement_model": { "type": "string", "description": "e.g. gross, net, scheme-funded, merchant-funded." },
+        "settlement_currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } },
+        "settlement_frequency": { "type": "string", "enum": ["daily", "weekly", "monthly", "unknown"] },
+        "pools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pool_id": { "type": "string" },
+              "currency": { "$ref": "#/$defs/currency" },
+              "sub_account_ids": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "reserve_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "percentage": { "type": "number" },
+              "hold_days": { "type": "number" }
+            }
+          }
+        },
+        "bank_accounts": {
+          "type": "array",
+          "items": { "type": "object", "properties": { "country": { "$ref": "#/$defs/country" }, "currency": { "$ref": "#/$defs/currency" }, "status": { "type": "string" } } }
+        },
+        "currency_accounts": {
+          "type": "array",
+          "description": "Currency (holding) accounts. Source: /entities/:entityId/currency-accounts.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "currency_account_id": { "type": "string" },
+              "currency": { "$ref": "#/$defs/currency" },
+              "entity_id": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "routing": {
+      "type": "object",
+      "description": "Payment, payout, and pay-to-card routing rules. Source: CAT internal *-routing-rules endpoints.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "payment_routing_rules": { "type": "array", "items": { "$ref": "#/$defs/routing_rule" } },
+        "payout_routing_rules": { "type": "array", "items": { "$ref": "#/$defs/routing_rule" } },
+        "pay_to_card_routing_rules": { "type": "array", "items": { "$ref": "#/$defs/routing_rule" } }
+      }
+    },
+
+    "capabilities_matrix": {
+      "type": "object",
+      "description": "DERIVED layer. Pre-computed answers to common 'what can I do' questions so the LLM reads a boolean/corridor instead of inferring from raw config.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "pay_to_card": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "schemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
+            "ft_types": { "type": "array", "items": { "type": "string" } },
+            "origination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+            "destination_countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+            "supported_mccs": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "accept_payments": {
+          "type": "object",
+          "properties": {
+            "countries": { "type": "array", "items": { "$ref": "#/$defs/country" } },
+            "schemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
+            "currencies": { "type": "array", "items": { "$ref": "#/$defs/currency" } }
+          }
+        },
+        "authorization": {
+          "type": "object",
+          "description": "Derived authorization facts.",
+          "properties": {
+            "hold_days_by_scheme": {
+              "type": "object",
+              "description": "Authorization hold validity (days) per scheme, derived from processing profiles.",
+              "additionalProperties": { "type": "array", "items": { "type": "integer" } }
+            }
+          }
+        },
+        "notable_gaps": {
+          "type": "array",
+          "description": "Explicit 'you are NOT configured for X' statements, to prevent false positives.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "risk_and_auth": {
+      "type": "object",
+      "description": "3DS, SCA and authorization-optimization configuration.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "three_ds": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "mode": { "type": "string", "enum": ["always", "risk_based", "off", "unknown"] },
+            "sca_exemptions_used": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "auth_optimization": {
+          "type": "object",
+          "properties": {
+            "network_tokens": { "type": "boolean" },
+            "account_updater": { "type": "boolean" },
+            "intelligent_retries": { "type": "boolean" }
+          }
+        },
+        "fraud_tooling": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "reporting_and_integration": {
+      "type": "object",
+      "description": "Reporting/reconciliation profile and integration surface.",
+      "required": ["provenance"],
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "reporting_profiles": { "type": "array", "items": { "type": "string" } },
+        "reconciliation_model": { "type": "string" },
+        "report_formats": { "type": "array", "items": { "type": "string" } },
+        "webhook_subscriptions": { "type": "array", "items": { "type": "string" }, "description": "Event types subscribed via Workflows (source.event, e.g. gateway.payment_captured)." },
+        "webhook_endpoints": { "type": "array", "items": { "type": "string" } },
+        "workflows": { "type": "array", "items": { "type": "object", "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "active": { "type": "boolean" } } } },
+        "integration_types": { "type": "array", "items": { "type": "string", "enum": ["direct_api", "flow", "hpp", "mobile_sdk", "plugin", "other"] } },
+        "api_version": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "payment_instrument": {
+    "id": "src_yfdx36h5ci7uhdqu3xdpyds63a",
+    "date_created": "2024-01-02T16:38:11Z",
+    "vault_account_id": "vact_hemcl6vgqveuhatnh37umqruhi",
+    "instrument_type": "bank_account",
+    "currency_code": "GBP",
+    "account_holder_details": {
+      "company_name": "PTOC Sandbox INC",
+      "address": {
+        "line1": "54 Portland Place",
+        "city": "London",
+        "postcode": "W1B 1DY",
+        "country_iso3_code": "GBR"
+      }
+    },
+    "bank_details": {
+      "bank_name": "Branch Bank Name Simulated",
+      "branch_name": "Branch Name Simulated",
+      "bank_code": "112233",
+      "account_type": "None",
+      "account_number": "00005555",
+      "address": {
+        "line1": "Branch Street Name Simulated",
+        "city": "Branch City Simulated",
+        "postcode": "Branch PostZip Simulated",
+        "country_iso3_code": "GBR"
+      }
+    }
+  },
+  "payout_schedule": {
+    "id": "csi_aqmpuxfuyl4uffe4i4beflhcte",
+    "date_created": "2024-07-03T09:29:10Z",
+    "date_modified": "2024-07-03T09:29:10Z",
+    "version": 0,
+    "name": "Payout",
+    "threshold_amount": 1000000000.0,
+    "cron_schedule": "0 2 * * 1-5",
+    "currency_account_ids": [
+      "ca_fpztykcwydwubiebbnkpkaq2bm",
+      "ca_xd7v5anhc7kuhgy4qvaasvo3ei"
+    ],
+    "payment_network": "",
+    "scheduler_ids": [],
+    "settlement_type": "Legacy",
+    "carry_forward_enabled": false,
+    "instruction_state": "Active",
+    "balance_minimum": 0.0
+  },
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/payout-settings/csi_aqmpuxfuyl4uffe4i4beflhcte"
+    }
+  }
+}

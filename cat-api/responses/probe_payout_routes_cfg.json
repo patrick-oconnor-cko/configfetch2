@@ -1,0 +1,504 @@
+{
+  "countries": [
+    {
+      "label": "Andorra",
+      "value": "AND",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Albania",
+      "value": "ALB",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Austria",
+      "value": "AUT",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Belgium",
+      "value": "BEL",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Bulgaria",
+      "value": "BGR",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Saint Barthelemy",
+      "value": "BLM",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Switzerland",
+      "value": "CHE",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Cyprus",
+      "value": "CYP",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Czech Republic",
+      "value": "CZE",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Germany",
+      "value": "DEU",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Denmark",
+      "value": "DNK",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Estonia",
+      "value": "EST",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Spain",
+      "value": "ESP",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Finland",
+      "value": "FIN",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "France",
+      "value": "FRA",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "United Kingdom",
+      "value": "GBR",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Guernsey",
+      "value": "GGY",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Gibraltar",
+      "value": "GIB",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Greece",
+      "value": "GRC",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Croatia",
+      "value": "HRV",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Hungary",
+      "value": "HUN",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Ireland",
+      "value": "IRL",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Isle of Man",
+      "value": "IMN",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Iceland",
+      "value": "ISL",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Italy",
+      "value": "ITA",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Jersey",
+      "value": "JEY",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Liechtenstein",
+      "value": "LIE",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Lithuania",
+      "value": "LTU",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Luxembourg",
+      "value": "LUX",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Latvia",
+      "value": "LVA",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Monaco",
+      "value": "MCO",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Moldova",
+      "value": "MDA",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Montenegro",
+      "value": "MNE",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Saint Martin",
+      "value": "MAF",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Macedonia",
+      "value": "MKD",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Malta",
+      "value": "MLT",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Netherlands",
+      "value": "NLD",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Norway",
+      "value": "NOR",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Poland",
+      "value": "POL",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Saint Pierre and Miquelon",
+      "value": "SPM",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Portugal",
+      "value": "PRT",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Reunion",
+      "value": "REU",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Romania",
+      "value": "ROU",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Serbia",
+      "value": "SRB",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Sweden",
+      "value": "SWE",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Slovenia",
+      "value": "SVN",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Slovakia",
+      "value": "SVK",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "San Marino",
+      "value": "SMR",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Vatican",
+      "value": "VAT",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    },
+    {
+      "label": "Mayotte",
+      "value": "MYT",
+      "currencies": [
+        {
+          "label": "EUR",
+          "value": "EUR"
+        }
+      ]
+    }
+  ]
+}

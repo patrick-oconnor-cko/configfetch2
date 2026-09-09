@@ -1,0 +1,411 @@
+{
+  "processing_channels": [
+    {
+      "label": "Channel 1",
+      "value": "pc_ciui77f3mfvephdkq7oh6ppxku"
+    },
+    {
+      "label": "PTOC SBOX Payout",
+      "value": "pc_eslelmxntabejezzb5wfcom3uu"
+    },
+    {
+      "label": "Profile PC",
+      "value": "pc_xcospfpb44aebbpemakd6eqzsu"
+    },
+    {
+      "label": "South Africa Test",
+      "value": "pc_v5dvjmf2sxnujpxkatxyritluu"
+    }
+  ],
+  "currency_accounts": [
+    {
+      "label": "NEWDAY CARDS LTD GBP- Revenue- HSBC \u2013 MO",
+      "value": "ca_e2dsy22ixb5endsc7lkjepyzcq"
+    },
+    {
+      "label": "Currency Account EUR",
+      "value": "ca_kyiqw3tirhte7dqizy6ezh5sv4"
+    },
+    {
+      "label": "Fees",
+      "value": "ca_fpztykcwydwubiebbnkpkaq2bm"
+    },
+    {
+      "label": "Currency Account 1",
+      "value": "ca_xd7v5anhc7kuhgy4qvaasvo3ei"
+    }
+  ],
+  "event_types": [
+    {
+      "label": "Chargebacks - Arbitration Lost",
+      "value": "ArbitrationLost"
+    },
+    {
+      "label": "Chargebacks - Arbitration Under Review",
+      "value": "ArbitrationUnderReview"
+    },
+    {
+      "label": "Chargebacks - Arbitration Won",
+      "value": "ArbitrationWon"
+    },
+    {
+      "label": "Chargebacks - Chargeback Auto Represented",
+      "value": "ChargebackAutoRepresented"
+    },
+    {
+      "label": "Chargebacks - Chargeback Disputed",
+      "value": "ChargebackDisputed"
+    },
+    {
+      "label": "Chargebacks - Chargeback Issued",
+      "value": "ChargebackIssued"
+    },
+    {
+      "label": "Chargebacks - Chargeback Lost",
+      "value": "ChargebackLost"
+    },
+    {
+      "label": "Chargebacks - Chargeback Resolved With Scheme",
+      "value": "ChargebackResolvedWithScheme"
+    },
+    {
+      "label": "Chargebacks - Chargeback Represented",
+      "value": "ChargebackRepresented"
+    },
+    {
+      "label": "Chargebacks - Chargeback Retrieval Requested",
+      "value": "ChargebackRetrievalRequested"
+    },
+    {
+      "label": "Chargebacks - Chargeback Reversed",
+      "value": "ChargebackReversed"
+    },
+    {
+      "label": "Chargebacks - Chargeback Under Review",
+      "value": "ChargebackUnderReview"
+    },
+    {
+      "label": "Chargebacks - Chargeback Won",
+      "value": "ChargebackWon"
+    },
+    {
+      "label": "Chargebacks - Dispute Details Adjusted",
+      "value": "DisputeDetailsAdjusted"
+    },
+    {
+      "label": "Sessions - Authentication Requested",
+      "value": "AuthenticationRequested"
+    },
+    {
+      "label": "Sessions - Authentication Expired",
+      "value": "AuthenticationExpired"
+    },
+    {
+      "label": "Sessions - Authentication Challenge Abandoned",
+      "value": "AuthenticationChallengeAbandoned"
+    },
+    {
+      "label": "Sessions - Authentication Abandoned",
+      "value": "AuthenticationAbandoned"
+    },
+    {
+      "label": "Sessions - Authentication Primed",
+      "value": "AuthenticationPrimed"
+    },
+    {
+      "label": "Sessions - Authentication Dispatched",
+      "value": "AuthenticationDispatched"
+    },
+    {
+      "label": "Sessions - Authentication Approved",
+      "value": "AuthenticationApproved"
+    },
+    {
+      "label": "Sessions - Authentication Attempted",
+      "value": "AuthenticationAttempted"
+    },
+    {
+      "label": "Sessions - Authentication Challenged",
+      "value": "AuthenticationChallenged"
+    },
+    {
+      "label": "Sessions - Authentication Declined",
+      "value": "AuthenticationDeclined"
+    },
+    {
+      "label": "Sessions - Authentication Rejected",
+      "value": "AuthenticationRejected"
+    },
+    {
+      "label": "Sessions - Authentication Unavailable",
+      "value": "AuthenticationUnavailable"
+    },
+    {
+      "label": "CardPayments - Charge Authorised",
+      "value": "ChargeAuthorised"
+    },
+    {
+      "label": "CardPayments - Charge Capture Declined",
+      "value": "ChargeCaptureDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Captured",
+      "value": "ChargeCaptured"
+    },
+    {
+      "label": "CardPayments - Charge Capture Failed",
+      "value": "ChargeCaptureFailed"
+    },
+    {
+      "label": "CardPayments - Charge Capture Risk Declined",
+      "value": "ChargeCaptureRiskDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Declined",
+      "value": "ChargeDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Partially Refunded",
+      "value": "ChargePartiallyRefunded"
+    },
+    {
+      "label": "CardPayments - Charge Refund Chargeback Declined",
+      "value": "ChargeRefundChargebackDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Refund Declined",
+      "value": "ChargeRefundDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Refunded",
+      "value": "ChargeRefunded"
+    },
+    {
+      "label": "CardPayments - Charge Refund Failed",
+      "value": "ChargeRefundFailed"
+    },
+    {
+      "label": "CardPayments - Charge Requested",
+      "value": "ChargeRequested"
+    },
+    {
+      "label": "CardPayments - Charge Risk Declined",
+      "value": "ChargeRiskDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Void Declined",
+      "value": "ChargeVoidDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Voided",
+      "value": "ChargeVoided"
+    },
+    {
+      "label": "CardPayments - Charge Void Failed",
+      "value": "ChargeVoidFailed"
+    },
+    {
+      "label": "CardPayments - Charge Authorisation Incremented",
+      "value": "ChargeAuthorisationIncremented"
+    },
+    {
+      "label": "CardPayments - Charge Authorisation Increment Declined",
+      "value": "ChargeAuthorisationIncrementDeclined"
+    },
+    {
+      "label": "CardPayments - Charge Partially Captured",
+      "value": "ChargePartiallyCaptured"
+    },
+    {
+      "label": "CardPayments - Charge Partially Voided",
+      "value": "ChargePartiallyVoided"
+    },
+    {
+      "label": "VAS - RTAU Card Updated",
+      "value": "com.checkout.rtau.card_updated"
+    },
+    {
+      "label": "VAS - Network Token Provisioned",
+      "value": "com.checkout.network_tokens.provisioned"
+    },
+    {
+      "label": "VAS - Network Token Updated",
+      "value": "com.checkout.network_tokens.updated"
+    },
+    {
+      "label": "VAS - Payment Optimized",
+      "value": "com.checkout.ia.payment.optimized"
+    },
+    {
+      "label": "VAS - Platform Management Payout",
+      "value": "integrated_platforms.platform_management.payout"
+    },
+    {
+      "label": "VAS - Client Settlements Payout Domestic",
+      "value": "com.checkout.client_settlements.payout.domestic"
+    },
+    {
+      "label": "VAS - Client Settlements Payout International",
+      "value": "com.checkout.client_settlements.payout.international"
+    },
+    {
+      "label": "VAS - Payout",
+      "value": "com.checkout.payout"
+    },
+    {
+      "label": "VAS - Network Token API Provisioned",
+      "value": "com.checkout.network_tokens_public.provisioned"
+    },
+    {
+      "label": "VAS - Network Token API Cryptogram",
+      "value": "com.checkout.network_tokens_public.cryptogram"
+    },
+    {
+      "label": "VAS - Network Token API Retrieval",
+      "value": "com.checkout.network_tokens_public.retrieved"
+    },
+    {
+      "label": "VAS - Network Token API Update",
+      "value": "com.checkout.network_tokens_public.updated"
+    },
+    {
+      "label": "VAS - Vault Forward Request",
+      "value": "com.checkout.forward.request"
+    },
+    {
+      "label": "VAS - Vault Data Storage",
+      "value": "com.checkout.vault.data.storage"
+    },
+    {
+      "label": "VAS - Vault Data Export",
+      "value": "com.checkout.vault.data.export"
+    },
+    {
+      "label": "VAS - Acceleration",
+      "value": "com.checkout.accelerate_funds_available.transaction"
+    },
+    {
+      "label": "Cost of Sales - Fee Adjustment",
+      "value": "com.checkout.cost_of_sales.fee.adjustment"
+    },
+    {
+      "label": "APM - Alternative Payment Created",
+      "value": "AlternativePaymentCreated"
+    },
+    {
+      "label": "APM - Alternative Payment Captured",
+      "value": "AlternativePaymentCaptured"
+    },
+    {
+      "label": "APM - Alternative Payment Refund Created",
+      "value": "AlternativePaymentRefundCreated"
+    },
+    {
+      "label": "APM - Alternative Payment Refunded",
+      "value": "AlternativePaymentRefunded"
+    },
+    {
+      "label": "APM - Alternative Payment Refund Returned",
+      "value": "AlternativePaymentRefundReturned"
+    },
+    {
+      "label": "APM - Alternative Payment Returned",
+      "value": "AlternativePaymentReturned"
+    },
+    {
+      "label": "APM - Alternative Payment Capture Dispute Returned",
+      "value": "AlternativePaymentCaptureDisputeReturned"
+    },
+    {
+      "label": "APM - Alternative Payment Expired",
+      "value": "AlternativePaymentExpired"
+    },
+    {
+      "label": "APM - Alternative Payment Declined",
+      "value": "AlternativePaymentDeclined"
+    },
+    {
+      "label": "APM - Alternative Payment Cancelled",
+      "value": "AlternativePaymentCancelled"
+    },
+    {
+      "label": "APM - Alternative Payment Voided",
+      "value": "AlternativePaymentVoided"
+    },
+    {
+      "label": "APM - Alternative Payment Dispute Resolved",
+      "value": "AlternativePaymentDisputeResolved"
+    }
+  ],
+  "card_types": [
+    {
+      "label": "Credit",
+      "value": "Credit"
+    },
+    {
+      "label": "Debit",
+      "value": "Debit"
+    },
+    {
+      "label": "Prepaid",
+      "value": "Prepaid"
+    },
+    {
+      "label": "Charge",
+      "value": "Charge"
+    },
+    {
+      "label": "Deferred Debit",
+      "value": "DeferredDebit"
+    }
+  ],
+  "regions": [
+    {
+      "label": "Domestic",
+      "value": "Domestic"
+    },
+    {
+      "label": "Intra",
+      "value": "Intra"
+    },
+    {
+      "label": "International",
+      "value": "International"
+    }
+  ],
+  "banking_partners": [],
+  "payment_methods": [
+    {
+      "label": "JCB",
+      "value": "JCB"
+    },
+    {
+      "label": "Klarna",
+      "value": "KLARNA"
+    },
+    {
+      "label": "AMEX",
+      "value": "AMEX"
+    },
+    {
+      "label": "SEPA",
+      "value": "SEPA"
+    },
+    {
+      "label": "MBWay",
+      "value": "MBWAY"
+    },
+    {
+      "label": "iDEAL",
+      "value": "IDEAL"
+    },
+    {
+      "label": "WeChat",
+      "value": "WECHATPAY"
+    },
+    {
+      "label": "Tamara",
+      "value": "TAMARA"
+    }
+  ]
+}

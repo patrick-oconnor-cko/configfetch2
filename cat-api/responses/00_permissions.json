@@ -1,0 +1,8 @@
+{
+  "name": "Patrick OConnor",
+  "role": "Support User",
+  "groups": [
+    "App.Atlas.CAT.Sandbox.Support",
+    "App.Atlas.CAT.Sandbox.E2ETest"
+  ]
+}

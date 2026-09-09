@@ -1,0 +1,1487 @@
+{
+  "envelope": {
+    "schema_version": "0.1.0",
+    "profile_id": "prof_cli_scna7ew7mxdenl3h36zlmkyh6m",
+    "client_id": "cli_scna7ew7mxdenl3h36zlmkyh6m",
+    "snapshot_id": "snap_20260804T1638",
+    "generated_at": "2026-08-04T16:38:47Z",
+    "environment": "sandbox",
+    "generator_version": "0.3.0",
+    "staleness": {
+      "type": "point_in_time",
+      "contract": "Configuration may have changed since generated_at. State the snapshot date on config-sensitive answers, and recommend regenerating for high-volatility sections."
+    },
+    "coverage_summary": {
+      "identity": "complete",
+      "entity_structure": "complete",
+      "processing_channels": "complete",
+      "processing_profiles": "complete",
+      "scheme_enablement": "complete",
+      "money_out": "complete",
+      "settlement": "complete",
+      "routing": "complete",
+      "capabilities_matrix": "complete",
+      "risk_and_auth": "complete",
+      "reporting_and_integration": "partial",
+      "glossary": "complete"
+    },
+    "not_available": {
+      "velocity_limits": {
+        "state": "not_available",
+        "reason": "not exposed by the CAT API"
+      },
+      "pay_to_card_ft_corridors": {
+        "state": "unavailable",
+        "reason": "CAT pay-to-card-schemes endpoint returns 503; corridors are derived from payout profile custom_settings instead"
+      },
+      "pricing": {
+        "state": "excluded",
+        "reason": "commercially sensitive"
+      },
+      "bank_account_numbers": {
+        "state": "redacted",
+        "reason": "policy \u2014 instrument type, currency and bank name are surfaced instead"
+      }
+    }
+  },
+  "identity": {
+    "client_name": "PTOC Sandbox",
+    "legal_name": "PTOC - UK LTD",
+    "account_type": "full",
+    "business_model": "PTOC UK LTD",
+    "mccs": [
+      "5137",
+      "7311"
+    ],
+    "operating_regions": [
+      "GB"
+    ],
+    "go_live_date": "2026-08-04",
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    }
+  },
+  "entity_structure": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    },
+    "root_entity_id": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+    "root_entity": "PTOC Sandbox",
+    "root_timezone": "Europe/London",
+    "entities": [
+      {
+        "entity_id": "ent_sdur3xs7clfpdgtonhfmufiymm",
+        "name": "PTOC SA",
+        "type": "company",
+        "country_of_incorporation": "SA",
+        "status": "active",
+        "timezone": "Asia/Riyadh",
+        "region": "Middle East and Africa",
+        "date_created": "2025-02-09T21:03:41Z",
+        "doing_business_as": "PTOC SA",
+        "cko_legal_entity": "cko-ksa-sau",
+        "cko_legal_entities": [
+          "cko-ksa-sau"
+        ],
+        "business_models": [
+          "direct_seller"
+        ],
+        "registered_business_address": {
+          "line1": "999 Smith Street",
+          "city": "London",
+          "postcode": "SE10 8TE",
+          "country_iso3_code": "SAU"
+        },
+        "principal_business_address": {
+          "line1": "123 fake street",
+          "city": "Beantown",
+          "postcode": "SE10 8TE",
+          "country_iso3_code": "SAU"
+        }
+      },
+      {
+        "entity_id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+        "name": "PTOC Sandbox",
+        "type": "company",
+        "country_of_incorporation": "GB",
+        "status": "active",
+        "timezone": "Etc/UTC",
+        "region": "Europe",
+        "date_created": "2023-12-11T16:12:24Z",
+        "doing_business_as": "PTOC Sandbox",
+        "cko_legal_entity": "cko-ltd-uk",
+        "cko_legal_entities": [
+          "cko-ltd-uk"
+        ],
+        "business_models": [
+          "direct_seller"
+        ],
+        "registered_business_address": {
+          "line1": "54 Portland Place",
+          "city": "London",
+          "postcode": "W1B 1DY",
+          "country_iso3_code": "GBR"
+        },
+        "principal_business_address": {
+          "line1": "54 Portland Place",
+          "city": "London",
+          "postcode": "W1B 1DY",
+          "country_iso3_code": "GBR"
+        }
+      },
+      {
+        "entity_id": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+        "name": "PTOC - UK LTD",
+        "type": "company",
+        "country_of_incorporation": "GB",
+        "status": "active",
+        "timezone": "Europe/London",
+        "region": "Europe",
+        "date_created": "2026-08-04T11:03:27Z",
+        "doing_business_as": "PTOC UK LTD",
+        "display_name": "PTOC UK LTD",
+        "processing_urls": [
+          "http://www.PTOCUK.com"
+        ],
+        "cko_legal_entity": "cko-ltd-uk",
+        "cko_legal_entities": [
+          "cko-ltd-uk"
+        ],
+        "business_models": [
+          "merchant"
+        ],
+        "registered_business_address": {
+          "line1": "99 Wenlock Works",
+          "line2": "Shepherdess Walk",
+          "city": "London",
+          "postcode": "N1 7BQ",
+          "country_iso3_code": "GBR"
+        },
+        "principal_business_address": {
+          "line1": "Wenlock Works",
+          "line2": "Shepherdess Walk",
+          "city": "London",
+          "postcode": "N1 7BQ",
+          "country_iso3_code": "GBR"
+        },
+        "capabilities": {
+          "payments": true,
+          "payouts": true
+        }
+      }
+    ]
+  },
+  "processing_channels": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "channels": [
+      {
+        "processing_channel_id": "pc_g6p2adehraje5mvumnna3qvtai",
+        "name": "PTOC UK LTD",
+        "entity_id": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+        "status": "active",
+        "business_model_type": "merchant",
+        "payment_pricing_profile": "Cards",
+        "services": [
+          "vault"
+        ],
+        "features": {
+          "authorizations": "enabled",
+          "captures": "enabled",
+          "refunds": "enabled",
+          "voids": "enabled",
+          "full_card_api": "enabled",
+          "moto": "disabled",
+          "unreferenced_refunds": "disabled"
+        },
+        "schemes_enabled": [
+          "mastercard",
+          "visa"
+        ],
+        "mids": [
+          {
+            "scheme": "visa",
+            "acquiring_bin": "cko_visa_gb",
+            "descriptor": "cko_visa_gb"
+          },
+          {
+            "scheme": "visa",
+            "acquiring_bin": "cko_visa_gb",
+            "descriptor": "cko_visa_gb"
+          },
+          {
+            "scheme": "mastercard",
+            "acquiring_bin": "cko_mc_gb",
+            "descriptor": "cko_mc_gb"
+          },
+          {
+            "scheme": "mastercard",
+            "acquiring_bin": "cko_mc_gb",
+            "descriptor": "cko_mc_gb"
+          }
+        ],
+        "processors": [
+          {
+            "processor_id": "pr_ni36ahdkr3ielpjkwh3a5dfavy",
+            "name": "Visa UK Clothes",
+            "scheme": "visa",
+            "acquirer_id": "cko_visa_gb",
+            "acquirer_name": "cko_visa_gb",
+            "merchant_category_code": "5137",
+            "processing_currencies": [
+              "GBP"
+            ],
+            "processing_currencies_summary": {
+              "count": 1,
+              "majors_present": [
+                "GBP"
+              ],
+              "majors_absent": [
+                "USD",
+                "EUR",
+                "AED",
+                "SAR",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "SEK"
+              ]
+            },
+            "mode": "complete_processing",
+            "authorizations": "same_as_pc",
+            "captures": "same_as_pc",
+            "refunds": "same_as_pc",
+            "voids": "same_as_pc",
+            "gws_only": "No",
+            "profile_id": "pp_4z4nibkjb54ubacxj43tvzav7i",
+            "profile_name": "Visa Pay in UK",
+            "profile_type": "payin",
+            "profile_match": "exact"
+          },
+          {
+            "processor_id": "pr_bc4taxiur36e5jppstactqqt3u",
+            "name": "Visa VAS",
+            "scheme": "visa",
+            "acquirer_id": "cko_visa_gb",
+            "acquirer_name": "cko_visa_gb",
+            "merchant_category_code": "7311",
+            "processing_currencies": [
+              "GBP"
+            ],
+            "processing_currencies_summary": {
+              "count": 1,
+              "majors_present": [
+                "GBP"
+              ],
+              "majors_absent": [
+                "USD",
+                "EUR",
+                "AED",
+                "SAR",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "SEK"
+              ]
+            },
+            "mode": "complete_processing",
+            "authorizations": "same_as_pc",
+            "captures": "same_as_pc",
+            "refunds": "same_as_pc",
+            "voids": "same_as_pc",
+            "gws_only": "No",
+            "profile_id": "pp_tux5fgrkuuiu3c525t4cbfw2dy",
+            "profile_name": "Visa VAS",
+            "profile_type": "payin",
+            "profile_match": "exact"
+          },
+          {
+            "processor_id": "pr_h4drafbusgiedkbu66q7kzygbu",
+            "name": "MC Pay In",
+            "scheme": "mastercard",
+            "acquirer_id": "cko_mc_gb",
+            "acquirer_name": "cko_mc_gb",
+            "merchant_category_code": "5137",
+            "processing_currencies": [
+              "GBP"
+            ],
+            "processing_currencies_summary": {
+              "count": 1,
+              "majors_present": [
+                "GBP"
+              ],
+              "majors_absent": [
+                "USD",
+                "EUR",
+                "AED",
+                "SAR",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "SEK"
+              ]
+            },
+            "mode": "complete_processing",
+            "authorizations": "same_as_pc",
+            "captures": "same_as_pc",
+            "refunds": "same_as_pc",
+            "voids": "same_as_pc",
+            "gws_only": "No",
+            "profile_id": "pp_bocinwms4qkuddn2e752rv65gm",
+            "profile_name": "Mastercard Payin",
+            "profile_type": "payin",
+            "profile_match": "exact"
+          },
+          {
+            "processor_id": "pr_y3ycagaugyoevcj4q6pkjn3zeq",
+            "name": "MC VAS",
+            "scheme": "mastercard",
+            "acquirer_id": "cko_mc_gb",
+            "acquirer_name": "cko_mc_gb",
+            "merchant_category_code": "7311",
+            "processing_currencies": [
+              "GBP"
+            ],
+            "processing_currencies_summary": {
+              "count": 1,
+              "majors_present": [
+                "GBP"
+              ],
+              "majors_absent": [
+                "USD",
+                "EUR",
+                "AED",
+                "SAR",
+                "JPY",
+                "AUD",
+                "CAD",
+                "CHF",
+                "SEK"
+              ]
+            },
+            "mode": "complete_processing",
+            "authorizations": "same_as_pc",
+            "captures": "same_as_pc",
+            "refunds": "same_as_pc",
+            "voids": "same_as_pc",
+            "gws_only": "No",
+            "profile_id": "pp_icpo4jwmjmbeff6gyyq4ibg44a",
+            "profile_name": "Mastercard VAS",
+            "profile_type": "payin",
+            "profile_match": "exact"
+          }
+        ],
+        "aft": {
+          "enabled": true,
+          "coverage": "complete",
+          "profile_id": "pp_4z4nibkjb54ubacxj43tvzav7i",
+          "profile_name": "Visa Pay in UK",
+          "business_application_identifier": "FT",
+          "authorization_validity_period": 10,
+          "sca_exemptions_settings": {
+            "enable_transaction_risk_analysis": true,
+            "enable_low_value": true,
+            "enable_secure_corporate_payment": true,
+            "enable_3ds_outage": false,
+            "enable_trusted_listing": true,
+            "enable_sca_delegation": true
+          },
+          "match": "exact"
+        },
+        "pay_to_card": {
+          "applicable": false,
+          "reason": "pay-to-card is entity-scoped \u2014 declared by Active payout processing profiles; processing channels carry no pay-to-card capability"
+        },
+        "three_ds": {
+          "enabled": true,
+          "coverage": "complete",
+          "sessions_channel_id": "pc_g6p2adehraje5mvumnna3qvtai",
+          "status": "active",
+          "schemes": [
+            {
+              "scheme": "visa",
+              "acquirer_id": "cko-visa",
+              "acquirer_name": "Checkout VISA",
+              "merchant_category_code": "5137",
+              "protocol_versions": [
+                "2"
+              ],
+              "processor_type": "profile",
+              "mode": "complete_processing"
+            },
+            {
+              "scheme": "visa",
+              "acquirer_id": "cko-visa",
+              "acquirer_name": "Checkout VISA",
+              "merchant_category_code": "7311",
+              "protocol_versions": [
+                "2"
+              ],
+              "processor_type": "profile",
+              "mode": "complete_processing"
+            },
+            {
+              "scheme": "mastercard",
+              "acquirer_id": "cko-mc",
+              "acquirer_name": "cko-mc",
+              "merchant_category_code": "5137",
+              "protocol_versions": [
+                "2"
+              ],
+              "processor_type": "profile",
+              "mode": "complete_processing"
+            },
+            {
+              "scheme": "mastercard",
+              "acquirer_id": "cko-mc",
+              "acquirer_name": "cko-mc",
+              "merchant_category_code": "7311",
+              "protocol_versions": [
+                "2"
+              ],
+              "processor_type": "profile",
+              "mode": "complete_processing"
+            }
+          ]
+        },
+        "mccs": [
+          "5137",
+          "7311"
+        ]
+      }
+    ]
+  },
+  "processing_profiles": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "profiles": [
+      {
+        "profile_id": "pp_4z4nibkjb54ubacxj43tvzav7i",
+        "name": "Visa Pay in UK",
+        "type": "payin",
+        "scheme": "visa",
+        "acquirer_key": "cko_visa_gb",
+        "processor_key": "cko-visa",
+        "acquiring_bin": "402121",
+        "merchant_category_code": "5137",
+        "merchant_category_codes": [
+          "5137"
+        ],
+        "currencies": [
+          "GBP"
+        ],
+        "aft_enabled": true,
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "card_acceptor_country_code": "GB",
+        "enable_recipient_details_submission": false,
+        "aft": {
+          "business_application_identifier": "FT",
+          "override_aft_processing": "none",
+          "is_skip_recipient_name_enabled": true
+        },
+        "authorization_validity_period": 10,
+        "is_quasi_cash": false,
+        "me_2_me_settings": {
+          "is_enabled": false,
+          "merchant_name": "",
+          "card_acceptor_identification_code": ""
+        },
+        "sca_exemptions_settings": {
+          "enable_transaction_risk_analysis": true,
+          "enable_low_value": true,
+          "enable_secure_corporate_payment": true,
+          "enable_3ds_outage": false,
+          "enable_trusted_listing": true,
+          "enable_sca_delegation": true
+        },
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      },
+      {
+        "profile_id": "pp_bocinwms4qkuddn2e752rv65gm",
+        "name": "Mastercard Payin",
+        "type": "payin",
+        "scheme": "mastercard",
+        "acquirer_key": "cko_mc_gb",
+        "processor_key": "cko-mc",
+        "acquiring_bin": "518489",
+        "merchant_category_code": "5137",
+        "merchant_category_codes": [
+          "5137"
+        ],
+        "currencies": [
+          "GBP"
+        ],
+        "aft_enabled": false,
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "card_acceptor_country_code": "GB",
+        "aft": {
+          "override_aft_processing": "none"
+        },
+        "authorization_validity_period": 7,
+        "sca_exemptions_settings": {
+          "enable_transaction_risk_analysis": true,
+          "enable_low_value": true,
+          "enable_secure_corporate_payment": true,
+          "enable_3ds_outage": true,
+          "enable_trusted_listing": false,
+          "enable_sca_delegation": true
+        },
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      },
+      {
+        "profile_id": "pp_i7kydz6e7jvetar5lilkieii6u",
+        "name": "Visa PTC",
+        "type": "payout",
+        "scheme": "visa",
+        "acquirer_key": "cko_visa_gb",
+        "processor_key": "cko-visa",
+        "acquiring_bin": "435000",
+        "merchant_category_code": "6051",
+        "merchant_category_codes": [
+          "6051"
+        ],
+        "origination_countries": [
+          "GB"
+        ],
+        "destination_countries": [
+          "AE",
+          "DE",
+          "FR",
+          "GB"
+        ],
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "funds_transfer_type": "FT",
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      },
+      {
+        "profile_id": "pp_icpo4jwmjmbeff6gyyq4ibg44a",
+        "name": "Mastercard VAS",
+        "type": "payin",
+        "scheme": "mastercard",
+        "acquirer_key": "cko_mc_gb",
+        "processor_key": "cko-mc",
+        "acquiring_bin": "518489",
+        "merchant_category_code": "7311",
+        "merchant_category_codes": [
+          "7311"
+        ],
+        "currencies": [
+          "GBP"
+        ],
+        "aft_enabled": false,
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "card_acceptor_country_code": "GB",
+        "aft": {
+          "override_aft_processing": "none"
+        },
+        "authorization_validity_period": 7,
+        "sca_exemptions_settings": {
+          "enable_transaction_risk_analysis": true,
+          "enable_low_value": true,
+          "enable_secure_corporate_payment": true,
+          "enable_3ds_outage": true,
+          "enable_trusted_listing": false,
+          "enable_sca_delegation": true
+        },
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      },
+      {
+        "profile_id": "pp_oiiokgt5eg6ufiiezrh2jc4gx4",
+        "name": "MC PTC",
+        "type": "payout",
+        "scheme": "mastercard",
+        "acquirer_key": "cko_mc_gb",
+        "processor_key": "cko-mc",
+        "acquiring_bin": "518489",
+        "merchant_category_code": "6536",
+        "merchant_category_codes": [
+          "6536"
+        ],
+        "origination_countries": [
+          "GB"
+        ],
+        "destination_countries": [
+          "DE",
+          "FR",
+          "GB"
+        ],
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "funds_transfer_type": "C52",
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      },
+      {
+        "profile_id": "pp_tux5fgrkuuiu3c525t4cbfw2dy",
+        "name": "Visa VAS",
+        "type": "payin",
+        "scheme": "visa",
+        "acquirer_key": "cko_visa_gb",
+        "processor_key": "cko-visa",
+        "acquiring_bin": "402121",
+        "merchant_category_code": "7311",
+        "merchant_category_codes": [
+          "7311"
+        ],
+        "currencies": [
+          "GBP"
+        ],
+        "aft_enabled": false,
+        "card_acceptor_identification_code": "892769",
+        "business_model": "MoR",
+        "card_acceptor_country_code": "GB",
+        "enable_recipient_details_submission": false,
+        "aft": {
+          "override_aft_processing": "none",
+          "is_skip_recipient_name_enabled": true
+        },
+        "authorization_validity_period": 10,
+        "is_quasi_cash": false,
+        "me_2_me_settings": {
+          "is_enabled": false,
+          "merchant_name": "",
+          "card_acceptor_identification_code": ""
+        },
+        "sca_exemptions_settings": {
+          "enable_transaction_risk_analysis": true,
+          "enable_low_value": true,
+          "enable_secure_corporate_payment": true,
+          "enable_3ds_outage": false,
+          "enable_trusted_listing": true,
+          "enable_sca_delegation": true
+        },
+        "acceptance_mode": "e_commerce",
+        "status": "Active"
+      }
+    ]
+  },
+  "scheme_enablement": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "card_schemes": [
+      {
+        "scheme": "mastercard",
+        "enabled": true
+      },
+      {
+        "scheme": "visa",
+        "enabled": true
+      }
+    ],
+    "alternative_payment_methods": []
+  },
+  "money_out": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "pay_to_card": {
+      "enabled": true,
+      "scope": "entity",
+      "enabled_schemes": [
+        "mastercard",
+        "visa"
+      ],
+      "supported_mccs": [
+        "6051",
+        "6536"
+      ],
+      "ft_types": [
+        "C52",
+        "FT"
+      ],
+      "origination_countries": [
+        "GB"
+      ],
+      "destination_countries": [
+        "AE",
+        "DE",
+        "FR",
+        "GB"
+      ],
+      "origination_summary": {
+        "count": 1,
+        "is_global": false,
+        "includes": [
+          "GB"
+        ],
+        "excludes": [
+          "US",
+          "AE",
+          "FR",
+          "SA",
+          "DE",
+          "IN",
+          "BR",
+          "CN",
+          "JP"
+        ]
+      },
+      "destination_summary": {
+        "count": 4,
+        "is_global": false,
+        "includes": [
+          "GB",
+          "AE",
+          "FR",
+          "DE"
+        ],
+        "excludes": [
+          "US",
+          "SA",
+          "IN",
+          "BR",
+          "CN",
+          "JP"
+        ]
+      },
+      "processors": [
+        {
+          "profile_id": "pp_i7kydz6e7jvetar5lilkieii6u",
+          "name": "Visa PTC",
+          "scheme": "visa",
+          "acquiring_bin": "435000",
+          "merchant_category_code": "6051",
+          "card_acceptor_identification_code": "892769",
+          "funds_transfer_type": "FT",
+          "business_model": "MoR",
+          "acceptance_mode": "e_commerce",
+          "checkout_legal_entity_code": "cko-ltd-uk",
+          "status": "Active",
+          "origination_countries": [
+            "GB"
+          ],
+          "destination_countries": [
+            "AE",
+            "DE",
+            "FR",
+            "GB"
+          ]
+        },
+        {
+          "profile_id": "pp_oiiokgt5eg6ufiiezrh2jc4gx4",
+          "name": "MC PTC",
+          "scheme": "mastercard",
+          "acquiring_bin": "518489",
+          "merchant_category_code": "6536",
+          "card_acceptor_identification_code": "892769",
+          "funds_transfer_type": "C52",
+          "business_model": "MoR",
+          "acceptance_mode": "e_commerce",
+          "checkout_legal_entity_code": "cko-ltd-uk",
+          "status": "Active",
+          "origination_countries": [
+            "GB"
+          ],
+          "destination_countries": [
+            "DE",
+            "FR",
+            "GB"
+          ]
+        }
+      ]
+    },
+    "payout_routes": [],
+    "payout_routes_summary": {
+      "enabled": 0,
+      "total": 51
+    },
+    "payout_destinations": [
+      {
+        "type": "bank_account"
+      }
+    ],
+    "forex": {
+      "pay_to_card_forex_enabled": true,
+      "coverage": "complete"
+    }
+  },
+  "settlement": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "low"
+    },
+    "settlement_currencies": [
+      "GBP"
+    ],
+    "currency_accounts": [
+      {
+        "currency_account_id": "ca_ffa3ltqlinxu3nrj7oy2ebjrae",
+        "currency": "GBP",
+        "name": "PTOC UK LTD Chargebacks",
+        "status": "active"
+      },
+      {
+        "currency_account_id": "ca_4ianzcgb6qounnpr3sjv2wetdm",
+        "currency": "GBP",
+        "name": "PTOC UK LTD Revenue",
+        "status": "active"
+      },
+      {
+        "currency_account_id": "ca_dc7erxk7yjleng7qoft7jj2kia",
+        "currency": "GBP",
+        "name": "PTOC UK LTD fees",
+        "status": "active"
+      }
+    ],
+    "payout_instructions": [
+      {
+        "instruction_id": "csi_lglova2nobsuzeytmuttslf4ii",
+        "name": "PTOC UK",
+        "date_created": "2026-08-04T11:26:18Z",
+        "date_modified": "2026-08-04T16:12:07Z",
+        "instrument": {
+          "instrument_id": "src_winl4w7brvwuloyrhyoqz2wru4",
+          "instrument_type": "bank_account",
+          "currency": "GBP",
+          "vault_account_id": "vact_hemcl6vgqveuhatnh37umqruhi",
+          "account_holder": "PTOC123",
+          "bank_name": "Branch Bank Name Simulated",
+          "branch_name": "Branch Name Simulated",
+          "account_type": "None",
+          "redacted_fields": [
+            "account_number",
+            "bank_code"
+          ]
+        },
+        "frequency_derived": "weekdays (Mon\u2013Fri) at 02:00",
+        "schedule": {
+          "threshold_amount": 0.0,
+          "cron_schedule": "0 2 * * 1-5",
+          "currency_account_ids": [
+            "ca_4ianzcgb6qounnpr3sjv2wetdm"
+          ],
+          "settlement_type": "Legacy",
+          "carry_forward_enabled": false,
+          "instruction_state": "Active",
+          "balance_minimum": 0.0
+        }
+      }
+    ]
+  },
+  "routing": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "high"
+    },
+    "payment_routing_rules": [
+      {
+        "rule_id": "rt_mhi7u3i4qqrevmf76m2hvxj4pq",
+        "status": "Active",
+        "sub_entity_id": "*",
+        "revenue_currency_account_id": "ca_ffa3ltqlinxu3nrj7oy2ebjrae",
+        "revenue_currency_account_name": "PTOC UK LTD Chargebacks",
+        "fees_currency_account_id": "ca_dc7erxk7yjleng7qoft7jj2kia",
+        "fees_currency_account_name": "PTOC UK LTD fees",
+        "date_modified": "2026-08-04T11:17:57Z",
+        "conditions": {
+          "allow_any_processing_channel": true,
+          "allow_any_merchant_category_code": true,
+          "allow_any_processing_currency": true,
+          "allow_any_event_type": false,
+          "allow_any_card_type": true,
+          "allow_any_region": true,
+          "allow_any_banking_partner": true,
+          "allow_any_payment_method": true
+        },
+        "unrestricted": false
+      },
+      {
+        "rule_id": "rt_qzovsjkjcsjuzfnaptn65unfwe",
+        "status": "Active",
+        "sub_entity_id": "*",
+        "revenue_currency_account_id": "ca_4ianzcgb6qounnpr3sjv2wetdm",
+        "revenue_currency_account_name": "PTOC UK LTD Revenue",
+        "fees_currency_account_id": "ca_dc7erxk7yjleng7qoft7jj2kia",
+        "fees_currency_account_name": "PTOC UK LTD fees",
+        "date_modified": "2026-08-04T11:17:20Z",
+        "conditions": {
+          "allow_any_processing_channel": true,
+          "allow_any_merchant_category_code": true,
+          "allow_any_processing_currency": true,
+          "allow_any_event_type": true,
+          "allow_any_card_type": true,
+          "allow_any_region": true,
+          "allow_any_banking_partner": true,
+          "allow_any_payment_method": true
+        },
+        "unrestricted": true
+      }
+    ],
+    "payout_routing_rules": [
+      {
+        "rule_id": "rt_dkxjq5eshipedoxwhx6fzupz5i",
+        "status": "Active",
+        "entity_id": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+        "sub_entity_id": "*",
+        "source_identifier": "ca_4ianzcgb6qounnpr3sjv2wetdm",
+        "revenue_currency_account_id": "ca_4ianzcgb6qounnpr3sjv2wetdm",
+        "revenue_currency_account_name": "PTOC UK LTD Revenue",
+        "fees_currency_account_id": "ca_dc7erxk7yjleng7qoft7jj2kia",
+        "fees_currency_account_name": "PTOC UK LTD fees",
+        "date_modified": "2026-08-04T11:23:55Z"
+      }
+    ]
+  },
+  "capabilities_matrix": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "derived",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "accept_payments": {
+      "countries": [
+        "GB"
+      ],
+      "schemes": [
+        "mastercard",
+        "visa"
+      ],
+      "currencies": [
+        "GBP"
+      ]
+    },
+    "pay_to_card": {
+      "enabled": true,
+      "schemes": [
+        "mastercard",
+        "visa"
+      ],
+      "ft_types": [
+        "C52",
+        "FT"
+      ],
+      "origination_countries": [
+        "GB"
+      ],
+      "destination_countries": [
+        "AE",
+        "DE",
+        "FR",
+        "GB"
+      ],
+      "supported_mccs": [
+        "6051",
+        "6536"
+      ]
+    },
+    "notable_gaps": [
+      "Amex not enabled for acceptance."
+    ],
+    "authorization": {
+      "hold_days_by_scheme": {
+        "mastercard": [
+          7
+        ],
+        "visa": [
+          10
+        ]
+      }
+    }
+  },
+  "risk_and_auth": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "volatility": "medium"
+    },
+    "network_tokens": {
+      "scope": "client",
+      "allowed": false,
+      "default_billed_entity_id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+      "default_billed_entity_name": "PTOC Sandbox",
+      "provisioning_enabled": true,
+      "provisioning_state_raw": "active",
+      "provisioning_mode": "Synchronous",
+      "provisioning_mode_raw": "sync",
+      "schemes": [
+        {
+          "scheme": "visa",
+          "transactions_enabled": true,
+          "onboarded_on": "21 Jul 2026",
+          "trid": "133700200",
+          "aft_enabled": true,
+          "nt_updates_enabled": true,
+          "raw_status": "Onboarded to VISA on 21 Jul 2026, TRID: 133700200, AFT enabled, NT updates enabled"
+        },
+        {
+          "scheme": "mastercard",
+          "transactions_enabled": true,
+          "onboarded_on": "21 Jul 2026",
+          "trid": "98765400200",
+          "raw_status": "Onboarded to Mastercard on 21 Jul 2026, TRID: 98765400200"
+        }
+      ]
+    },
+    "intelligent_acceptance": {
+      "scope": "client",
+      "enabled": true,
+      "strategy": "custom_3ds_upgrade",
+      "strategy_label": "Custom, 3DS upgrade",
+      "strategy_description": "Custom: Strategy that can be tailored to merchant needs and preferences; it already allows all ISO8583 optimizations, 3DS optimizations, Network Tokens on the first attempt and fallback where necessary, AFT retries, exemptions, and preferred scheme routing where processors are configured. Functionalities can be controlled via the usage of add-ons.\n3DS upgrade: Allows 3DS upgrades.",
+      "strategies_available": [
+        "Default",
+        "Custom, 3DS upgrade",
+        "Custom, No 3DS upgrades",
+        "Free plan (Shadow)"
+      ],
+      "addons_enabled": true,
+      "addons_description": "\u2022 Disable API 3DS: Only honours 3DS decision from Fraud Detection and ignores 3DS requested via API\n\u2022 Smart MCC Routing: Enables smart routing for merchants, leveraging best ranked MCC on first attempt, and second best ranked on subsequent attempts\n\u2022 Disable CVV optimizations (card verification only): Disable optimizations removing CVV values on card verification requests only\n\u2022 Disable CVV optimizations: Disable optimizations removing CVV values\n\u2022 Disables AFT downgrades: Disables AFT downgrades and AFT purchase retries\n\u2022 Disable double authentication retries: Disables double authentication retries\n\u2022 Honour 3RI: Honours 3RI requests from the merchant\n\u2022 Disable authentication downgrades: Disables authentication downgrades\n\u2022 Disable 3DS upgrades on retries for US based issuers: Disables 3DS upgrades on retries for US based issuers\n\u2022 Enable NSF MIT retries: Enable insufficient fund retries on MITs\n\u2022 Disable NSF CIT retries: Disable insufficient fund retries on CITs\n\u2022 Disable Google SPA Authentication: Disables authentication attempts with Google SPA.\n\u2022 Honour AFT requests on the initial attempt: Honours AFT requests on the initial attempt if requested by merchant\n\u2022 Restrict double EMVCo challenge: Disables double EMVCo challenge requests if a successful challenge was completed. Restriction does not apply if the scheme is changed between attempts\n\u2022 Restrict Visa Cat1 retries for MIT transactions: Disables retrying on Visa Category 1 decline codes for MIT transactions\n\u2022 Restrict retries on recommendation code 03/21 for MIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for MIT Mastercard transactions only\n\u2022 Restrict retries on recommendation code 03/21 for CIT Mastercard: Restrict all retries if the previous attempt's recommendation code was 03 or 21 for CIT Mastercard transactions only\n\u2022 Restrict Visa Cat1 retries for CIT transactions: Disables retrying on Visa Category 1 decline codes for CIT transactions\n\u2022 Disable 3DS upgrades on card verifs:  Disables 3DS redirection for card verification payments\n\u2022 Restrict 3DS upgrades on first attempt:  Restricts 3DS redirection for first attempts for Visa/Mastercard CITs where possible. Excludes cards issued in France.\n\u2022 Restrict 3DS upgrades on first attempt for US issuers:  Restricts 3DS redirection for first attempts for Visa/Mastercard CITs for US issuers where possible.",
+      "addons": [
+        {
+          "value": "disable_visa_cat1_retries_mit",
+          "label": "Restrict Visa Cat1 retries for MIT transactions",
+          "description": "Disables retrying on Visa Category 1 decline codes for MIT transactions"
+        },
+        {
+          "value": "enable_nsf_mit_retry",
+          "label": "Enable NSF MIT retries",
+          "description": "Enable insufficient fund retries on MITs"
+        }
+      ],
+      "addons_available": [
+        {
+          "value": "disable_upapi_3ds_requests",
+          "label": "Disable API 3DS"
+        },
+        {
+          "value": "enable_smart_mcc_routing",
+          "label": "Smart MCC Routing"
+        },
+        {
+          "value": "disable_cvv_optimizations_card_verif_only",
+          "label": "Disable CVV optimizations (card verification only)"
+        },
+        {
+          "value": "disable_cvv_optimizations",
+          "label": "Disable CVV optimizations"
+        },
+        {
+          "value": "disable_aft_downgrades",
+          "label": "Disables AFT downgrades"
+        },
+        {
+          "value": "disable_double_authentication_retries",
+          "label": "Disable double authentication retries"
+        },
+        {
+          "value": "honour_3ri",
+          "label": "Honour 3RI"
+        },
+        {
+          "value": "disable_3ds_downgrades",
+          "label": "Disable authentication downgrades"
+        },
+        {
+          "value": "disable_3ds_upgrades_on_retries_us_issuers",
+          "label": "Disable 3DS upgrades on retries for US based issuers"
+        },
+        {
+          "value": "enable_nsf_mit_retry",
+          "label": "Enable NSF MIT retries"
+        },
+        {
+          "value": "disable_nsf_cit_retries",
+          "label": "Disable NSF CIT retries"
+        },
+        {
+          "value": "disable_google_spa",
+          "label": "Disable Google SPA Authentication"
+        },
+        {
+          "value": "honour_aft_initial_attempt",
+          "label": "Honour AFT requests on the initial attempt"
+        },
+        {
+          "value": "restrict_double_emvco_challenge",
+          "label": "Restrict double EMVCo challenge"
+        },
+        {
+          "value": "disable_visa_cat1_retries_mit",
+          "label": "Restrict Visa Cat1 retries for MIT transactions"
+        },
+        {
+          "value": "disable_mastercard_03_recommendation_code_retries_mit",
+          "label": "Restrict retries on recommendation code 03/21 for MIT Mastercard"
+        },
+        {
+          "value": "disable_mastercard_03_recommendation_code_retries_cit",
+          "label": "Restrict retries on recommendation code 03/21 for CIT Mastercard"
+        },
+        {
+          "value": "disable_visa_cat1_retries_cit",
+          "label": "Restrict Visa Cat1 retries for CIT transactions"
+        },
+        {
+          "value": "disable_3ds_upgrades_card_verif",
+          "label": "Disable 3DS upgrades on card verifs"
+        },
+        {
+          "value": "restrict_3ds_upgrades_first_attempt",
+          "label": "Restrict 3DS upgrades on first attempt"
+        },
+        {
+          "value": "restrict_3ds_upgrades_first_attempt_us_issuers",
+          "label": "Restrict 3DS upgrades on first attempt for US issuers"
+        }
+      ],
+      "addons_available_count": 21,
+      "optimized_ratio": "100"
+    },
+    "real_time_account_updater": {
+      "scope": "client",
+      "billed_entity_id": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+      "billed_entity_name": "PTOC - UK LTD",
+      "mcc": "7311",
+      "mcc_label": "7311 - Advertising Services",
+      "schemes": [
+        {
+          "scheme": "Mastercard",
+          "settings": [
+            {
+              "name": "schemes.activate_mastercard_push",
+              "label": "Activate Store & Update",
+              "value": true,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.activate_mastercard_pull",
+              "label": "Activate Update & Retry (Standalone)",
+              "value": true,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.mastercard_pull_reminder",
+              "label": "Reminder!",
+              "value": "For correct work of RTAU Mastercard Update & Retry, merchant's processing configuration across all Mastercard processing channels has to be configured on a profile processor/processing profile, not manual processor.",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.scheme_merchant_id",
+              "label": "Scheme merchant id / CAID",
+              "value": "000023456543456",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.mastercard_push_status",
+              "label": "Mastercard Store & Update registration status",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.mastercard_pull_status",
+              "label": "Mastercard Update & Retry registration status",
+              "is_switch": false
+            }
+          ]
+        },
+        {
+          "scheme": "Visa",
+          "settings": [
+            {
+              "name": "schemes.activate_visa",
+              "label": "Activate Visa Rtau",
+              "value": true,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.activate_visa_pull",
+              "label": "Activate Visa Standalone",
+              "value": false,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.scheme_merchant_id",
+              "label": "Scheme merchant id / CAID",
+              "value": "000023456543456",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.visa_status",
+              "label": "Visa Rtau registration status",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.visa_pull_status",
+              "label": "Visa Standalone registration status",
+              "is_switch": false
+            }
+          ]
+        },
+        {
+          "scheme": "American Express",
+          "settings": [
+            {
+              "name": "schemes.activate_amex",
+              "label": "Activate Amex Batch Account Updater (Standalone)",
+              "value": false,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.se_number_list",
+              "label": "Service Establishment Number(s)",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.amex_opt_blue",
+              "label": "Opt Blue",
+              "value": false,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.seller_id",
+              "label": "Seller ID",
+              "is_switch": false
+            },
+            {
+              "name": "schemes.amex_registration_status",
+              "label": "Amex registration status",
+              "is_switch": false
+            }
+          ]
+        },
+        {
+          "scheme": "Batch Account Updater",
+          "settings": [
+            {
+              "name": "schemes.activate_batch_updater",
+              "label": "Activate Visa & Mastercard Batch Account Updater",
+              "value": false,
+              "is_switch": true
+            },
+            {
+              "name": "schemes.flex_account_id",
+              "label": "Batch Account ID",
+              "is_switch": false
+            }
+          ]
+        }
+      ],
+      "active_schemes_derived": [
+        "Mastercard",
+        "Visa"
+      ]
+    },
+    "fraud_tooling": [
+      "risk_tier:premium"
+    ]
+  },
+  "reporting_and_integration": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "partial",
+      "notes": "webhooks/workflows come from the public API; reporting profiles from the merlin reporting-profiles-config-api (separate internal service)",
+      "volatility": "high"
+    },
+    "integration_types": [
+      "direct_api",
+      "flow"
+    ],
+    "reporting_profiles": [
+      {
+        "profile_id": "875e4099-897c-496f-b169-5ccdebc05d7f",
+        "name": "Default Settlement Breakdown Report",
+        "report_type": "Settlement breakdown",
+        "enabled": false,
+        "date_created": "2026-08-04T11:03:33.885Z"
+      },
+      {
+        "profile_id": "7752dea8-b2d0-49cc-b5fb-610814160dcd",
+        "name": "Default Financial Actions Report",
+        "report_type": "Financial actions by date range",
+        "enabled": true,
+        "date_created": "2026-08-04T11:03:33.876Z"
+      },
+      {
+        "profile_id": "50490244-db0f-48fb-b976-28e52864c866",
+        "name": "Default Balance Statement Report",
+        "report_type": "Balance",
+        "enabled": false,
+        "date_created": "2026-08-04T11:03:33.866Z"
+      },
+      {
+        "profile_id": "fbeb6f86-14a6-48c5-abc6-02a75d64b410",
+        "name": "Default Balance Breakdown Report",
+        "report_type": "Balance breakdown",
+        "enabled": false,
+        "date_created": "2026-08-04T11:03:33.86Z"
+      },
+      {
+        "profile_id": "56ad5ebc-4136-49d8-9169-93d99ee4bda1",
+        "name": "Default Payout Summary Report",
+        "report_type": "Payouts",
+        "enabled": true,
+        "date_created": "2026-08-04T11:03:33.779Z"
+      },
+      {
+        "profile_id": "f4552605-6f9f-4930-93eb-edd86079e1de",
+        "name": "Default Financial Actions By Payout Report",
+        "report_type": "Financial actions by payout",
+        "enabled": true,
+        "date_created": "2026-08-04T11:03:33.679Z"
+      },
+      {
+        "profile_id": "e3c63116-c465-4d50-8d1f-5201ac18c48b",
+        "name": "Default Settlement Statement Report",
+        "report_type": "Settlement statement",
+        "enabled": true,
+        "date_created": "2026-08-04T11:03:33.673Z"
+      },
+      {
+        "profile_id": "edc706d7-db4a-4cfb-a128-edd9ba17eefd",
+        "name": "Default Invoice Report",
+        "report_type": "Invoice",
+        "enabled": true,
+        "date_created": "2026-08-04T11:03:33.662Z"
+      }
+    ],
+    "reporting_profiles_coverage": "complete"
+  },
+  "glossary": {
+    "provenance": {
+      "as_of": "2026-08-04T16:38:47Z",
+      "source": "cat_internal_api",
+      "coverage": "complete",
+      "notes": "entity-scoped id->name dictionary from configuration?entityId endpoints",
+      "volatility": "low"
+    },
+    "ids": {
+      "AMEX": "AMEX",
+      "AlternativePaymentCancelled": "APM - Alternative Payment Cancelled",
+      "AlternativePaymentCaptureDisputeReturned": "APM - Alternative Payment Capture Dispute Returned",
+      "AlternativePaymentCaptured": "APM - Alternative Payment Captured",
+      "AlternativePaymentCreated": "APM - Alternative Payment Created",
+      "AlternativePaymentDeclined": "APM - Alternative Payment Declined",
+      "AlternativePaymentDisputeResolved": "APM - Alternative Payment Dispute Resolved",
+      "AlternativePaymentExpired": "APM - Alternative Payment Expired",
+      "AlternativePaymentRefundCreated": "APM - Alternative Payment Refund Created",
+      "AlternativePaymentRefundReturned": "APM - Alternative Payment Refund Returned",
+      "AlternativePaymentRefunded": "APM - Alternative Payment Refunded",
+      "AlternativePaymentReturned": "APM - Alternative Payment Returned",
+      "AlternativePaymentVoided": "APM - Alternative Payment Voided",
+      "ArbitrationLost": "Chargebacks - Arbitration Lost",
+      "ArbitrationUnderReview": "Chargebacks - Arbitration Under Review",
+      "ArbitrationWon": "Chargebacks - Arbitration Won",
+      "AuthenticationAbandoned": "Sessions - Authentication Abandoned",
+      "AuthenticationApproved": "Sessions - Authentication Approved",
+      "AuthenticationAttempted": "Sessions - Authentication Attempted",
+      "AuthenticationChallengeAbandoned": "Sessions - Authentication Challenge Abandoned",
+      "AuthenticationChallenged": "Sessions - Authentication Challenged",
+      "AuthenticationDeclined": "Sessions - Authentication Declined",
+      "AuthenticationDispatched": "Sessions - Authentication Dispatched",
+      "AuthenticationExpired": "Sessions - Authentication Expired",
+      "AuthenticationPrimed": "Sessions - Authentication Primed",
+      "AuthenticationRejected": "Sessions - Authentication Rejected",
+      "AuthenticationRequested": "Sessions - Authentication Requested",
+      "AuthenticationUnavailable": "Sessions - Authentication Unavailable",
+      "Charge": "Charge",
+      "ChargeAuthorisationIncrementDeclined": "CardPayments - Charge Authorisation Increment Declined",
+      "ChargeAuthorisationIncremented": "CardPayments - Charge Authorisation Incremented",
+      "ChargeAuthorised": "CardPayments - Charge Authorised",
+      "ChargeCaptureDeclined": "CardPayments - Charge Capture Declined",
+      "ChargeCaptureFailed": "CardPayments - Charge Capture Failed",
+      "ChargeCaptureRiskDeclined": "CardPayments - Charge Capture Risk Declined",
+      "ChargeCaptured": "CardPayments - Charge Captured",
+      "ChargeDeclined": "CardPayments - Charge Declined",
+      "ChargePartiallyCaptured": "CardPayments - Charge Partially Captured",
+      "ChargePartiallyRefunded": "CardPayments - Charge Partially Refunded",
+      "ChargePartiallyVoided": "CardPayments - Charge Partially Voided",
+      "ChargeRefundChargebackDeclined": "CardPayments - Charge Refund Chargeback Declined",
+      "ChargeRefundDeclined": "CardPayments - Charge Refund Declined",
+      "ChargeRefundFailed": "CardPayments - Charge Refund Failed",
+      "ChargeRefunded": "CardPayments - Charge Refunded",
+      "ChargeRequested": "CardPayments - Charge Requested",
+      "ChargeRiskDeclined": "CardPayments - Charge Risk Declined",
+      "ChargeVoidDeclined": "CardPayments - Charge Void Declined",
+      "ChargeVoidFailed": "CardPayments - Charge Void Failed",
+      "ChargeVoided": "CardPayments - Charge Voided",
+      "ChargebackAutoRepresented": "Chargebacks - Chargeback Auto Represented",
+      "ChargebackDisputed": "Chargebacks - Chargeback Disputed",
+      "ChargebackIssued": "Chargebacks - Chargeback Issued",
+      "ChargebackLost": "Chargebacks - Chargeback Lost",
+      "ChargebackRepresented": "Chargebacks - Chargeback Represented",
+      "ChargebackResolvedWithScheme": "Chargebacks - Chargeback Resolved With Scheme",
+      "ChargebackRetrievalRequested": "Chargebacks - Chargeback Retrieval Requested",
+      "ChargebackReversed": "Chargebacks - Chargeback Reversed",
+      "ChargebackUnderReview": "Chargebacks - Chargeback Under Review",
+      "ChargebackWon": "Chargebacks - Chargeback Won",
+      "Credit": "Credit",
+      "Debit": "Debit",
+      "DeferredDebit": "Deferred Debit",
+      "DisputeDetailsAdjusted": "Chargebacks - Dispute Details Adjusted",
+      "Domestic": "Domestic",
+      "IDEAL": "iDEAL",
+      "International": "International",
+      "Intra": "Intra",
+      "JCB": "JCB",
+      "KLARNA": "Klarna",
+      "MBWAY": "MBWay",
+      "Prepaid": "Prepaid",
+      "SEPA": "SEPA",
+      "TAMARA": "Tamara",
+      "WECHATPAY": "WeChat",
+      "ca_4ianzcgb6qounnpr3sjv2wetdm": "PTOC UK LTD Revenue",
+      "ca_dc7erxk7yjleng7qoft7jj2kia": "PTOC UK LTD fees",
+      "ca_ffa3ltqlinxu3nrj7oy2ebjrae": "PTOC UK LTD Chargebacks",
+      "com.checkout.accelerate_funds_available.transaction": "VAS - Acceleration",
+      "com.checkout.client_settlements.payout.domestic": "VAS - Client Settlements Payout Domestic",
+      "com.checkout.client_settlements.payout.international": "VAS - Client Settlements Payout International",
+      "com.checkout.cost_of_sales.fee.adjustment": "Cost of Sales - Fee Adjustment",
+      "com.checkout.forward.request": "VAS - Vault Forward Request",
+      "com.checkout.ia.payment.optimized": "VAS - Payment Optimized",
+      "com.checkout.network_tokens.provisioned": "VAS - Network Token Provisioned",
+      "com.checkout.network_tokens.updated": "VAS - Network Token Updated",
+      "com.checkout.network_tokens_public.cryptogram": "VAS - Network Token API Cryptogram",
+      "com.checkout.network_tokens_public.provisioned": "VAS - Network Token API Provisioned",
+      "com.checkout.network_tokens_public.retrieved": "VAS - Network Token API Retrieval",
+      "com.checkout.network_tokens_public.updated": "VAS - Network Token API Update",
+      "com.checkout.payout": "VAS - Payout",
+      "com.checkout.rtau.card_updated": "VAS - RTAU Card Updated",
+      "com.checkout.vault.data.export": "VAS - Vault Data Export",
+      "com.checkout.vault.data.storage": "VAS - Vault Data Storage",
+      "integrated_platforms.platform_management.payout": "VAS - Platform Management Payout",
+      "pc_g6p2adehraje5mvumnna3qvtai": "PTOC UK LTD",
+      "pp_4z4nibkjb54ubacxj43tvzav7i": "Visa Pay in UK - pp_4z4nibkjb54ubacxj43tvzav7i",
+      "pp_bocinwms4qkuddn2e752rv65gm": "Mastercard Payin - pp_bocinwms4qkuddn2e752rv65gm",
+      "pp_icpo4jwmjmbeff6gyyq4ibg44a": "Mastercard VAS - pp_icpo4jwmjmbeff6gyyq4ibg44a",
+      "pp_tux5fgrkuuiu3c525t4cbfw2dy": "Visa VAS - pp_tux5fgrkuuiu3c525t4cbfw2dy"
+    }
+  }
+}

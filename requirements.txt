@@ -1,0 +1,15 @@
+# Nothing here is required to run the web app (app/server.py).
+# It uses only the Python standard library. Python 3.9+.
+#
+#   pip3 install -r requirements.txt
+#
+# pycountry  — OPTIONAL. Full ISO 3166-1 alpha-3 -> alpha-2 country mapping.
+#              Without it, cat_profile.py falls back to an 11-country table
+#              (see the try/except at the top of app/cat_profile.py), so the app
+#              still runs; wide country coverage degrades.
+pycountry
+
+# jsonschema — required ONLY by the cat-api/generate_profile.py CLI, which
+#              validates generated profiles against schema/merchant-profile.schema.json.
+#              The web app never imports it.
+jsonschema

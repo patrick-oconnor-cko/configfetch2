@@ -1,0 +1,40 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 1,
+  "_embedded": {
+    "routing_rules": [
+      {
+        "id": "rt_mjztfuwxpmeuxbcntfryfsqdfi",
+        "date_created": "2023-12-11T16:12:37Z",
+        "allow_any_processing_channel": true,
+        "allow_any_merchant_category_code": true,
+        "allow_any_processing_currency": true,
+        "allow_any_event_type": true,
+        "allow_any_card_type": true,
+        "allow_any_region": true,
+        "allow_any_banking_partner": true,
+        "revenue_currency_account_name": "Currency Account 1",
+        "fees_currency_account_name": "Fees",
+        "status": "Active",
+        "sub_entity_id": "*",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/payment-routing-rules/rt_mjztfuwxpmeuxbcntfryfsqdfi"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "routing_rules": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/payment-routing-rules/rt_mjztfuwxpmeuxbcntfryfsqdfi"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/payment-routing-rules"
+    },
+    "curies": []
+  }
+}

@@ -1,0 +1,27 @@
+# Checkout.com setup — Northwind Commerce (as of 2026-07-09, PRODUCTION)
+# This describes THIS merchant's CKO configuration. Answer config questions against it.
+# Where a fact is not listed and coverage is partial, say so rather than assuming.
+
+BUSINESS: Online brokerage/trading. Full account, single entity. MCC 6211. Regions: IT, CY, AE, GB.
+
+ENTITY: Northwind Commerce Ltd (ent_northwind_root), incorporated IT. Payments+payouts enabled.
+
+PROCESSING CHANNELS:
+- pc_it_main (IT): Visa+Mastercard; cur EUR/USD/GBP; MCC 6211; auto-capture ON; AUTH EXPIRY 7 days.
+- pc_fr_cards (FR): Visa+Mastercard+Cartes Bancaires; cur EUR; MCC 6211; auto-capture OFF; AUTH EXPIRY 30 days.
+
+SCHEMES: Visa=on, Mastercard=on, Cartes Bancaires=on (FR only), Amex=OFF.
+APMs: Apple Pay + Google Pay (IT/FR, EUR).
+
+PAYOUTS: FT types FD=on, GP=off.
+PAY-TO-CARD: enabled. Corridors: IT->AE (Visa,MC,FD), CY->AE (Visa,FD). MCC 6211.
+  NOT configured: pay-to-card to US.
+Payout destinations: card (AE,GB,IT), bank (IT,GB). Schedule daily T+1.
+
+SETTLEMENT: net, daily, EUR+GBP. Reserve rolling 5% / 30d. Banks IT/EUR, GB/GBP.
+
+RISK: 3DS risk-based, SCA exemption TRA. Network tokens on, Account Updater on, intelligent retries OFF. (coverage: partial)
+
+INTEGRATION: Direct API, version 2023-11-01. Webhooks: payment_captured, payment_declined, payout_paid. (coverage: partial)
+
+GAPS: no US pay-to-card; no Amex; no in-country USD acquiring.

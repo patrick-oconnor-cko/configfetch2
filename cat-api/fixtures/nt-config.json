@@ -1,0 +1,438 @@
+{
+  "schema": {
+    "label": "Network Tokens Configuration",
+    "form_fields": [
+      {
+        "name": "nt_state",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "default_value": false,
+        "value": false,
+        "label": "Network Tokens allowed",
+        "required": true,
+        "description": "Whether Checkout managed NTs are enabled"
+      },
+      {
+        "name": "default_entity_id",
+        "datatype": "enum",
+        "display_style": "selectMenu",
+        "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+        "label": "Default Billed Entity",
+        "required": true,
+        "description": "Entity (usually primary/main entity) used as default when specific triggering merchant entity is not provided",
+        "options": [
+          {
+            "label": "PTOC SA",
+            "value": "ent_sdur3xs7clfpdgtonhfmufiymm"
+          },
+          {
+            "label": "PTOC Sandbox",
+            "value": "ent_juznxdro7lhwrf3c5e4wprftgu"
+          },
+          {
+            "label": "PTOC - UK LTD",
+            "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q"
+          }
+        ],
+        "conditional_preselected_value": {
+          "conditions": [
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.identification_type",
+              "preselected_value": "vat"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.trade_name",
+              "preselected_value": "PTOC SA"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.legal_name",
+              "preselected_value": "PTOC SA"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.address.address_line1",
+              "preselected_value": "123 fake street"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.address.address_line2",
+              "preselected_value": ""
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.address.city",
+              "preselected_value": "Beantown"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.address.zip",
+              "preselected_value": "SE10 8TE"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.address.country",
+              "preselected_value": "SAU"
+            },
+            {
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "name": "scheme_configuration.primary_url",
+              "preselected_value": ""
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.identification_type",
+              "preselected_value": "vat"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.trade_name",
+              "preselected_value": "PTOC Sandbox"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.legal_name",
+              "preselected_value": "PTOC Sandbox"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.address.address_line1",
+              "preselected_value": "54 Portland Place"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.address.address_line2",
+              "preselected_value": ""
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.address.city",
+              "preselected_value": "London"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.address.zip",
+              "preselected_value": "W1B 1DY"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.address.country",
+              "preselected_value": "GBR"
+            },
+            {
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "name": "scheme_configuration.primary_url",
+              "preselected_value": ""
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.identification_type",
+              "preselected_value": "vat"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.trade_name",
+              "preselected_value": "PTOC UK LTD"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.legal_name",
+              "preselected_value": "PTOC - UK LTD"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.address.address_line1",
+              "preselected_value": "Wenlock Works"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.address.address_line2",
+              "preselected_value": "Shepherdess Walk"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.address.city",
+              "preselected_value": "London"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.address.zip",
+              "preselected_value": "N1 7BQ"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.address.country",
+              "preselected_value": "GBR"
+            },
+            {
+              "operator": "=",
+              "value": "ent_q7qxjp2ctv67yejt2wjmawuu5q",
+              "name": "scheme_configuration.primary_url",
+              "preselected_value": "http://www.PTOCUK.com"
+            }
+          ]
+        }
+      },
+      {
+        "name": "pricing_start_date",
+        "datatype": "string",
+        "display_style": "textField",
+        "label": "Pricing start date",
+        "description": "Format YYYY-MM-DD\nOnly fill this if automated pricing should start at a future date (for example free trial period)",
+        "reg_exp": "\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])",
+        "conditional_read_only": {
+          "conditions": [
+            {
+              "name": "nt_state",
+              "operator": "!=",
+              "value": true
+            }
+          ]
+        }
+      },
+      {
+        "name": "provisioning_state",
+        "datatype": "enum",
+        "display_style": "segmentedControl",
+        "value": "active",
+        "label": "Network Tokens provisioning enabled",
+        "required": true,
+        "description": "Whether provisioning of new NTs is enabled (does not affect usage of existing NTs)",
+        "options": [
+          {
+            "label": "Yes",
+            "value": "active"
+          },
+          {
+            "label": "No",
+            "value": "inactive"
+          }
+        ]
+      },
+      {
+        "name": "default_provision_mode",
+        "datatype": "enum",
+        "display_style": "segmentedControl",
+        "value": "sync",
+        "label": "Default provisioning mode",
+        "required": true,
+        "description": "Asynchronous - no latency with background provisioning, Synchronous - adds latency for higher NT availability for new cards",
+        "options": [
+          {
+            "label": "Asynchronous",
+            "value": "async"
+          },
+          {
+            "label": "Synchronous",
+            "value": "sync"
+          }
+        ]
+      },
+      {
+        "form_section": {
+          "label": "Merchant details",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.mastercard_status",
+              "datatype": "string",
+              "display_style": "plainText",
+              "label": "Onboarded to Mastercard on 21 Jul 2026, TRID: 98765400200"
+            },
+            {
+              "name": "scheme_configuration.enabled_mastercard",
+              "datatype": "boolean",
+              "display_style": "switchButton",
+              "value": true,
+              "label": "Mastercard transactions enabled"
+            },
+            {
+              "name": "scheme_configuration.visa_status",
+              "datatype": "string",
+              "display_style": "plainText",
+              "label": "Onboarded to VISA on 21 Jul 2026, TRID: 133700200, AFT enabled, NT updates enabled"
+            },
+            {
+              "name": "scheme_configuration.enabled_visa",
+              "datatype": "boolean",
+              "display_style": "switchButton",
+              "value": true,
+              "label": "VISA transactions enabled"
+            },
+            {
+              "name": "scheme_configuration.trade_name",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "PTOC Sandbox",
+              "label": "Trade name",
+              "required": true
+            },
+            {
+              "name": "scheme_configuration.legal_name",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "PTOC Sandbox",
+              "label": "Legal name",
+              "required": true
+            },
+            {
+              "name": "scheme_configuration.primary_url",
+              "datatype": "string",
+              "display_style": "textField",
+              "default_value": "",
+              "label": "Webpage URL",
+              "required": true,
+              "description": "URL with prefix http(s)://",
+              "reg_exp": "^(http|https)://.+"
+            }
+          ]
+        }
+      },
+      {
+        "form_section": {
+          "label": "Merchant Address",
+          "default_state": "collapsed",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.address.address_line1",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "54 Portland Place",
+              "label": "Address line 1",
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.address_line2",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "",
+              "label": "Address line 2",
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.city",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "London",
+              "label": "City",
+              "required": true,
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.zip",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "W1B 1DY",
+              "label": "ZIP Code",
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.country",
+              "datatype": "enum",
+              "display_style": "selectMenu",
+              "value": "GBR",
+              "label": "Country",
+              "required": true,
+              "options": [
+                {
+                  "label": "Saudi Arabia",
+                  "value": "SAU"
+                },
+                {
+                  "label": "United Kingdom",
+                  "value": "GBR"
+                },
+                {
+                  "label": "United Kingdom",
+                  "value": "GBR"
+                }
+              ],
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            }
+          ]
+        }
+      },
+      {
+        "form_section": {
+          "label": "Merchant Primary Contact",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.contact.email",
+              "datatype": "string",
+              "display_style": "textField",
+              "value": "jodivi2133@jalunaki.com",
+              "label": "Email",
+              "required": true,
+              "when_updating": {
+                "read_only": true
+              },
+              "when_creating": {
+                "read_only": true
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "endpoints": {
+    "create": {
+      "url": "https://nt-portal.sbox.checkout.internal/vault-nt-portal/cat/configurations/:clientId"
+    },
+    "update": {
+      "url": "https://nt-portal.sbox.checkout.internal/vault-nt-portal/cat/configurations/:clientId"
+    }
+  }
+}

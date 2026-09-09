@@ -1,0 +1,12 @@
+{
+  "id": "ent_juznxdro7lhwrf3c5e4wprftgu",
+  "date_created": "2024-01-04T13:40:33Z",
+  "date_modified": "2024-01-04T13:41:01Z",
+  "default_markup_percentage": "1.0",
+  "custom_markup": [],
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/forex-pay-to-card"
+    }
+  }
+}

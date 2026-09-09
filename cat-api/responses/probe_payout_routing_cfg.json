@@ -1,0 +1,20 @@
+{
+  "currency_accounts": [
+    {
+      "label": "NEWDAY CARDS LTD GBP- Revenue- HSBC \u2013 MO",
+      "value": "ca_e2dsy22ixb5endsc7lkjepyzcq"
+    },
+    {
+      "label": "Currency Account EUR",
+      "value": "ca_kyiqw3tirhte7dqizy6ezh5sv4"
+    },
+    {
+      "label": "Fees",
+      "value": "ca_fpztykcwydwubiebbnkpkaq2bm"
+    },
+    {
+      "label": "Currency Account 1",
+      "value": "ca_xd7v5anhc7kuhgy4qvaasvo3ei"
+    }
+  ]
+}

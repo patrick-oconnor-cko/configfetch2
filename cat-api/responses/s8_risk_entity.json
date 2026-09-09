@@ -1,0 +1,40 @@
+{
+  "label": "Client entity risk settings",
+  "form_fields": [
+    {
+      "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+      "name": "id",
+      "label": "Entity ID",
+      "display_style": "idField",
+      "datatype": "string"
+    },
+    {
+      "value": "11-Dec-2023 16:12:35",
+      "name": "created_at",
+      "label": "Date Created",
+      "display_style": "dateField",
+      "datatype": "string"
+    },
+    {
+      "value": "25-Jun-2026 15:38:31",
+      "name": "last_updated_at",
+      "label": "Date Last Modified",
+      "display_style": "dateField",
+      "datatype": "string"
+    },
+    {
+      "default_value": false,
+      "value": true,
+      "name": "allow_risk_flag",
+      "label": "Allow Risk Flag",
+      "display_style": "switchButton",
+      "datatype": "boolean"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/risk-settings"
+    }
+  },
+  "id": "ent_juznxdro7lhwrf3c5e4wprftgu"
+}

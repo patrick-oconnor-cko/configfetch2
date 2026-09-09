@@ -1,0 +1,85 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 4,
+  "_embedded": {
+    "currency_accounts": [
+      {
+        "id": "ca_e2dsy22ixb5endsc7lkjepyzcq",
+        "name": "NEWDAY CARDS LTD GBP- Revenue- HSBC \u2013 MO",
+        "date_created": "2025-07-29T15:11:12Z",
+        "status": "Active",
+        "holding_currency": "AED",
+        "credit_limit": 0.0,
+        "unarranged_credit_limit": 0.0,
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_e2dsy22ixb5endsc7lkjepyzcq"
+          }
+        }
+      },
+      {
+        "id": "ca_kyiqw3tirhte7dqizy6ezh5sv4",
+        "name": "Currency Account EUR",
+        "date_created": "2024-01-03T13:10:54Z",
+        "status": "Active",
+        "holding_currency": "EUR",
+        "credit_limit": 0.0,
+        "unarranged_credit_limit": 0.0,
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_kyiqw3tirhte7dqizy6ezh5sv4"
+          }
+        }
+      },
+      {
+        "id": "ca_fpztykcwydwubiebbnkpkaq2bm",
+        "name": "Fees",
+        "date_created": "2024-01-02T16:25:15Z",
+        "status": "Active",
+        "holding_currency": "GBP",
+        "credit_limit": 0.0,
+        "unarranged_credit_limit": 0.0,
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_fpztykcwydwubiebbnkpkaq2bm"
+          }
+        }
+      },
+      {
+        "id": "ca_xd7v5anhc7kuhgy4qvaasvo3ei",
+        "name": "Currency Account 1",
+        "date_created": "2023-12-11T16:12:26Z",
+        "status": "Active",
+        "holding_currency": "GBP",
+        "credit_limit": 0.0,
+        "unarranged_credit_limit": 0.0,
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_xd7v5anhc7kuhgy4qvaasvo3ei"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "currency_accounts": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_e2dsy22ixb5endsc7lkjepyzcq"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_kyiqw3tirhte7dqizy6ezh5sv4"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_fpztykcwydwubiebbnkpkaq2bm"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/currency-accounts/ca_xd7v5anhc7kuhgy4qvaasvo3ei"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/currency-accounts"
+    },
+    "curies": []
+  }
+}

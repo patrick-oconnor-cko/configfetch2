@@ -1,0 +1,765 @@
+{
+  "routes": [
+    {
+      "enabled": false,
+      "country": "AD",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "AL",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "AT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "BE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "BG",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "BL",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "CH",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "CY",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "CZ",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "DE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "DK",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "EE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "ES",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "FI",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "FR",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "GB",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "country": "GB",
+      "currency": "GBP",
+      "schemes": [
+        {
+          "name": "Local",
+          "fee_type": "Local"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "GG",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "GI",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "GR",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "HR",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "HU",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "IE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "IM",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "IS",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "IT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "JE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "LI",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "LT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "LU",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "LV",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "MC",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "MD",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "ME",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "MF",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "MK",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "MT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "NL",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "NO",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "PL",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "PM",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "PT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "RE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "RO",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "RS",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "SE",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "SI",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "SK",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "SM",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "VA",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "country": "YT",
+      "currency": "EUR",
+      "schemes": [
+        {
+          "name": "instant",
+          "fee_type": "sepa"
+        },
+        {
+          "name": "SEPA",
+          "fee_type": "sepa"
+        }
+      ]
+    }
+  ]
+}

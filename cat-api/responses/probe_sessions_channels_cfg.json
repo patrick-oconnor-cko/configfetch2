@@ -1,0 +1,27 @@
+{
+  "business_models": [
+    {
+      "label": "Payment Facilitator",
+      "value": "payfac"
+    },
+    {
+      "label": "Merchant",
+      "value": "merchant"
+    },
+    {
+      "label": "Marketplace",
+      "value": "marketplace"
+    },
+    {
+      "label": "Independent Software Vendor",
+      "value": "isv"
+    }
+  ],
+  "services": [
+    {
+      "label": "Vault",
+      "value": "vault",
+      "key": "vact_hemcl6vgqveuhatnh37umqruhi"
+    }
+  ]
+}

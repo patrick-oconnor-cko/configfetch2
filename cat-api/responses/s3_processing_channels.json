@@ -1,0 +1,72 @@
+{
+  "limit": 25,
+  "skip": 0,
+  "total_count": 4,
+  "_embedded": {
+    "processing_channels": [
+      {
+        "id": "pc_ciui77f3mfvephdkq7oh6ppxku",
+        "name": "Channel 1",
+        "business_model": "Merchant",
+        "date_created": "2023-12-11T16:12:32Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_ciui77f3mfvephdkq7oh6ppxku"
+          }
+        }
+      },
+      {
+        "id": "pc_eslelmxntabejezzb5wfcom3uu",
+        "name": "PTOC SBOX Payout",
+        "business_model": "Merchant",
+        "date_created": "2024-01-03T13:02:37Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_eslelmxntabejezzb5wfcom3uu"
+          }
+        }
+      },
+      {
+        "id": "pc_xcospfpb44aebbpemakd6eqzsu",
+        "name": "Profile PC",
+        "business_model": "Merchant",
+        "date_created": "2025-12-18T15:02:04Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_xcospfpb44aebbpemakd6eqzsu"
+          }
+        }
+      },
+      {
+        "id": "pc_v5dvjmf2sxnujpxkatxyritluu",
+        "name": "South Africa Test",
+        "business_model": "Merchant",
+        "date_created": "2026-06-30T09:33:14Z",
+        "_links": {
+          "self": {
+            "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_v5dvjmf2sxnujpxkatxyritluu"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "processing_channels": [
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_ciui77f3mfvephdkq7oh6ppxku"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_eslelmxntabejezzb5wfcom3uu"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_xcospfpb44aebbpemakd6eqzsu"
+      },
+      {
+        "href": "https://client-admin.cko-sbox.ckotech.co/api/processing-channels/pc_v5dvjmf2sxnujpxkatxyritluu"
+      }
+    ],
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/processing-channels"
+    }
+  }
+}

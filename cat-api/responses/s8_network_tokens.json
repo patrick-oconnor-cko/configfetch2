@@ -1,0 +1,616 @@
+{
+  "schema": {
+    "label": "Network Tokens Configuration",
+    "form_fields": [
+      {
+        "name": "nt_state",
+        "datatype": "boolean",
+        "display_style": "switchButton",
+        "label": "Network Tokens allowed",
+        "description": "Whether Checkout managed NTs are enabled",
+        "required": true,
+        "default_value": false
+      },
+      {
+        "name": "default_entity_id",
+        "datatype": "enum",
+        "display_style": "selectMenu",
+        "label": "Default Billed Entity",
+        "description": "Entity (usually primary/main entity) used as default when specific triggering merchant entity is not provided",
+        "required": true,
+        "options": [
+          {
+            "label": "PTOC SA",
+            "value": "ent_sdur3xs7clfpdgtonhfmufiymm"
+          },
+          {
+            "label": "PTOC Sandbox",
+            "value": "ent_juznxdro7lhwrf3c5e4wprftgu"
+          }
+        ],
+        "conditional_preselected_value": {
+          "conditions": [
+            {
+              "name": "scheme_configuration.identification_type",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "vat"
+            },
+            {
+              "name": "scheme_configuration.trade_name",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "PTOC SA"
+            },
+            {
+              "name": "scheme_configuration.legal_name",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "PTOC SA"
+            },
+            {
+              "name": "scheme_configuration.address.address_line1",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "123 fake street"
+            },
+            {
+              "name": "scheme_configuration.address.address_line2",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": ""
+            },
+            {
+              "name": "scheme_configuration.address.city",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "Beantown"
+            },
+            {
+              "name": "scheme_configuration.address.zip",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "SE10 8TE"
+            },
+            {
+              "name": "scheme_configuration.address.country",
+              "operator": "=",
+              "value": "ent_sdur3xs7clfpdgtonhfmufiymm",
+              "preselected_value": "SAU"
+            },
+            {
+              "name": "scheme_configuration.identification_type",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "vat"
+            },
+            {
+              "name": "scheme_configuration.trade_name",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "PTOC Sandbox"
+            },
+            {
+              "name": "scheme_configuration.legal_name",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "PTOC Sandbox"
+            },
+            {
+              "name": "scheme_configuration.address.address_line1",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "54 Portland Place"
+            },
+            {
+              "name": "scheme_configuration.address.address_line2",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": ""
+            },
+            {
+              "name": "scheme_configuration.address.city",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "London"
+            },
+            {
+              "name": "scheme_configuration.address.zip",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "W1B 1DY"
+            },
+            {
+              "name": "scheme_configuration.address.country",
+              "operator": "=",
+              "value": "ent_juznxdro7lhwrf3c5e4wprftgu",
+              "preselected_value": "GBR"
+            }
+          ]
+        }
+      },
+      {
+        "name": "pricing_start_date",
+        "datatype": "string",
+        "display_style": "textField",
+        "label": "Pricing start date",
+        "description": "Format YYYY-MM-DD\nOnly fill this if automated pricing should start at a future date (for example free trial period)",
+        "reg_exp": "\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])",
+        "conditional_read_only": {
+          "conditions": [
+            {
+              "name": "nt_state",
+              "operator": "!=",
+              "value": true
+            }
+          ]
+        }
+      },
+      {
+        "name": "provisioning_state",
+        "datatype": "enum",
+        "display_style": "segmentedControl",
+        "label": "Network Tokens provisioning enabled",
+        "description": "Whether provisioning of new NTs is enabled (does not affect usage of existing NTs)",
+        "required": true,
+        "default_value": "active",
+        "options": [
+          {
+            "label": "Yes",
+            "value": "active"
+          },
+          {
+            "label": "No",
+            "value": "inactive"
+          }
+        ]
+      },
+      {
+        "name": "default_provision_mode",
+        "datatype": "enum",
+        "display_style": "segmentedControl",
+        "label": "Default provisioning mode",
+        "description": "Asynchronous - no latency with background provisioning, Synchronous - adds latency for higher NT availability for new cards",
+        "required": true,
+        "default_value": "async",
+        "options": [
+          {
+            "label": "Asynchronous",
+            "value": "async"
+          },
+          {
+            "label": "Synchronous",
+            "value": "sync"
+          }
+        ]
+      },
+      {
+        "form_section": {
+          "label": "Scheme Details",
+          "form_fields": [
+            {
+              "form_section": {
+                "label": "Mastercard",
+                "form_fields": [
+                  {
+                    "name": "scheme_configuration.onboard_mastercard",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "Onboard to Mastercard",
+                    "default_value": false
+                  },
+                  {
+                    "name": "scheme_configuration.is_scof_enabled",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "Onboard to Mastercard SCOF",
+                    "description": "Whether the merchant is onboarded to Mastercard SCOF service instead of M4M",
+                    "default_value": false,
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_mastercard",
+                          "operator": "=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "form_section": {
+                "label": "Visa",
+                "form_fields": [
+                  {
+                    "name": "scheme_configuration.onboard_visa",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "Onboard to VISA",
+                    "default_value": false
+                  },
+                  {
+                    "name": "scheme_configuration.is_nt_update_enabled",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "NT updates enabled",
+                    "default_value": true,
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_visa",
+                          "operator": "=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "scheme_configuration.is_aft_enabled",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "AFT enabled",
+                    "default_value": true,
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_visa",
+                          "operator": "=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "scheme_configuration.vat_exemption_applicable",
+                    "datatype": "boolean",
+                    "display_style": "switchButton",
+                    "label": "VAT Exemption Applicable",
+                    "description": "Whether the merchant is exempt from VAT",
+                    "required": true,
+                    "default_value": false,
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_visa",
+                          "operator": "=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "scheme_configuration.identification_type",
+                    "datatype": "enum",
+                    "display_style": "selectMenu",
+                    "label": "Business identification type",
+                    "required": true,
+                    "value": "",
+                    "default_value": "",
+                    "options": [
+                      {
+                        "label": "--SELECT--",
+                        "value": ""
+                      },
+                      {
+                        "label": "ABN",
+                        "value": "abn"
+                      },
+                      {
+                        "label": "ACN",
+                        "value": "acn"
+                      },
+                      {
+                        "label": "BIN",
+                        "value": "bin"
+                      },
+                      {
+                        "label": "BIR",
+                        "value": "bir"
+                      },
+                      {
+                        "label": "BN",
+                        "value": "bn"
+                      },
+                      {
+                        "label": "BRN",
+                        "value": "brn"
+                      },
+                      {
+                        "label": "BRNO",
+                        "value": "brno"
+                      },
+                      {
+                        "label": "CL",
+                        "value": "cl"
+                      },
+                      {
+                        "label": "CLN",
+                        "value": "cln"
+                      },
+                      {
+                        "label": "CN",
+                        "value": "cn"
+                      },
+                      {
+                        "label": "CNPJ",
+                        "value": "cnpj"
+                      },
+                      {
+                        "label": "CR",
+                        "value": "cr"
+                      },
+                      {
+                        "label": "CUIT",
+                        "value": "cuit"
+                      },
+                      {
+                        "label": "EDRPOU",
+                        "value": "edrpou"
+                      },
+                      {
+                        "label": "EIN",
+                        "value": "ein"
+                      },
+                      {
+                        "label": "HKBR",
+                        "value": "hkbr"
+                      },
+                      {
+                        "label": "NATIONAL_ID",
+                        "value": "national_id"
+                      },
+                      {
+                        "label": "NIB",
+                        "value": "nib"
+                      },
+                      {
+                        "label": "NID",
+                        "value": "nid"
+                      },
+                      {
+                        "label": "NZBN",
+                        "value": "nzbn"
+                      },
+                      {
+                        "label": "PAN",
+                        "value": "pan"
+                      },
+                      {
+                        "label": "RFC",
+                        "value": "rfc"
+                      },
+                      {
+                        "label": "RNC",
+                        "value": "rnc"
+                      },
+                      {
+                        "label": "RUC",
+                        "value": "ruc"
+                      },
+                      {
+                        "label": "RUT",
+                        "value": "rut"
+                      },
+                      {
+                        "label": "SIN",
+                        "value": "sin"
+                      },
+                      {
+                        "label": "SSN",
+                        "value": "ssn"
+                      },
+                      {
+                        "label": "TC",
+                        "value": "tc"
+                      },
+                      {
+                        "label": "UEN",
+                        "value": "uen"
+                      },
+                      {
+                        "label": "USCI",
+                        "value": "usci"
+                      },
+                      {
+                        "label": "VAT",
+                        "value": "vat"
+                      }
+                    ],
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_visa",
+                          "operator": "=",
+                          "value": true
+                        },
+                        {
+                          "name": "scheme_configuration.vat_exemption_applicable",
+                          "operator": "!=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "scheme_configuration.identification_value",
+                    "datatype": "string",
+                    "display_style": "textField",
+                    "label": "Business identification value",
+                    "required": true,
+                    "conditional_render": {
+                      "conditions": [
+                        {
+                          "name": "scheme_configuration.onboard_visa",
+                          "operator": "=",
+                          "value": true
+                        },
+                        {
+                          "name": "scheme_configuration.vat_exemption_applicable",
+                          "operator": "!=",
+                          "value": true
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "form_section": {
+          "label": "Merchant Details",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.trade_name",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Trade name",
+              "required": true,
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.legal_name",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Legal name",
+              "required": true,
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.primary_url",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Webpage URL",
+              "description": "URL with prefix http(s)://",
+              "required": true,
+              "reg_exp": "^(http|https)://.+",
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            }
+          ]
+        }
+      },
+      {
+        "form_section": {
+          "label": "Merchant Address",
+          "default_state": "COLLAPSED",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.address.address_line1",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Address line 1",
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.address_line2",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Address line 2",
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.city",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "City",
+              "required": true,
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.zip",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "ZIP Code",
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            },
+            {
+              "name": "scheme_configuration.address.country",
+              "datatype": "enum",
+              "display_style": "selectMenu",
+              "label": "Country",
+              "required": true,
+              "options": [
+                {
+                  "label": "Saudi Arabia",
+                  "value": "SAU"
+                },
+                {
+                  "label": "United Kingdom",
+                  "value": "GBR"
+                }
+              ],
+              "when_creating": {
+                "read_only": true
+              },
+              "when_updating": {
+                "read_only": true
+              }
+            }
+          ]
+        }
+      },
+      {
+        "form_section": {
+          "label": "Merchant Primary Contact",
+          "form_fields": [
+            {
+              "name": "scheme_configuration.contact.email",
+              "datatype": "string",
+              "display_style": "textField",
+              "label": "Email",
+              "required": true,
+              "value": "jodivi2133@jalunaki.com"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "endpoints": {
+    "create": {
+      "url": "/api/clients/cli_scna7ew7mxdenl3h36zlmkyh6m/network-tokens"
+    },
+    "update": {
+      "url": "/api/clients/cli_scna7ew7mxdenl3h36zlmkyh6m/network-tokens"
+    }
+  }
+}

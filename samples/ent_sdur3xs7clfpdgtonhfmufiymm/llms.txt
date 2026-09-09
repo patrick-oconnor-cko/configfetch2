@@ -1,0 +1,21 @@
+# Checkout.com setup — PTOC Sandbox (as of 2026-07-29T19:39:44Z, SANDBOX)
+# Describes THIS merchant's CKO config. Answer against it; if absent and coverage unknown/partial, say so.
+ACCOUNT: full, business_model=PTOC SA, MCCs 5999. Regions SA.
+CARD SCHEMES: . APMs: mada.
+ENTITY PTOC SA (ent_sdur3xs7clfpdgtonhfmufiymm): country=SA, type=company, payments=True, payouts=False, status=active
+ENTITY PTOC Sandbox (ent_juznxdro7lhwrf3c5e4wprftgu): country=GB, type=company, payments=?, payouts=?, status=active
+CHANNEL PTOCSA (pc_uawoyrryxkgejhfk6wofeusbnm): status=active, business_model=merchant, services=vault, features: authorizations=enabled, captures=enabled, refunds=enabled, voids=enabled, full_card_api=enabled, moto=disabled, unreferenced_refunds=disabled
+  processor PTOCSAMADA: scheme=mada, acquirer=sabb_mpgs_sa, mcc=5999, mode=gateway_services, auth=same_as_pc, cap=same_as_pc, ref=same_as_pc, void=same_as_pc, gws_only=Yes, currencies: SAR
+PROFILE pp_3ftjpvejbifuvgu74nfqyuwbye (payin): scheme=mada, acquirer=sabb_mpgs_sa, bin=-, mcc=5999, ft_type=-, aft_bai=-, auth_validity=7, quasi_cash=-, sca_exemptions=-, status=Active
+PAY-TO-CARD: enabled=False. schemes=. ft_types=. mccs=.
+AUTH HOLD (days per scheme): mada=7
+SETTLEMENT: currencies SAR. accounts: SAR(active)
+RISK/AUTH: network_tokens=True, fraud_tooling=risk_tier:premium
+ROUTING: payment_rules=1, payout_rules=0
+  payment-routing  (rt_lxmttrdscmtuffdr7sdfkqndwq): enabled=None
+INTEGRATION: types=direct_api, flow, reporting_profiles=-
+WORKFLOWS: USD(active), TEST p500(active), Capture test(active)
+WEBHOOK EVENTS: card_payout.payment_approved, card_payout.payment_declined, client_balances.sub_account_low_balance_threshold_exceeded, gateway.batch_successful, gateway.batch_unsuccessful, gateway.card_verification_declined, gateway.card_verified, gateway.payment_approved, gateway.payment_authentication_failed, gateway.payment_authorization_increment_declined, gateway.payment_authorization_incremented, gateway.payment_authorized, gateway.payment_canceled, gateway.payment_capture_declined, gateway.payment_capture_pending, gateway.payment_captured, gateway.payment_declined, gateway.payment_expired, gateway.payment_paid, gateway.payment_pending, gateway.payment_refund_declined, gateway.payment_refund_pending, gateway.payment_refunded, gateway.payment_retry_scheduled, gateway.payment_returned, gateway.payment_void_declined, gateway.payment_void_pending, gateway.payment_voided, sessions.authentication_approved, sessions.authentication_attempted, sessions.authentication_expired, sessions.authentication_failed, sessions.authentication_started, sessions.error_details
+WEBHOOK ENDPOINTS: https://webhook.site/08289c25-9be7-4ffc-bcf9-7e0e6f05dbbd, https://webhook.site/988f4820-aab4-4c76-adf3-4dc156f21b4e, https://webhook.site/c5947431-0884-4929-83f8-e4066f727f96
+COVERAGE: identity=complete, entity_structure=complete, processing_channels=complete, processing_profiles=complete, scheme_enablement=complete, money_out=complete, settlement=complete, routing=complete, capabilities_matrix=complete, risk_and_auth=complete, reporting_and_integration=complete, glossary=complete
+GAPS: Amex not enabled for acceptance. | No active pay-to-card (payout) processing profiles found.

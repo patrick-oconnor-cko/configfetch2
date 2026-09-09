@@ -1,0 +1,37 @@
+{
+  "business_model_types": [
+    {
+      "label": "Merchant",
+      "value": "merchant"
+    },
+    {
+      "label": "Payment Facilitator",
+      "value": "payment_facilitator"
+    },
+    {
+      "label": "Marketplace",
+      "value": "marketplace"
+    },
+    {
+      "label": "Independent Software Vendor",
+      "value": "isv"
+    }
+  ],
+  "services": [
+    {
+      "label": "Pay To Bank",
+      "value": "pay_to_bank",
+      "key": "ent_juznxdro7lhwrf3c5e4wprftgu"
+    },
+    {
+      "label": "Vault",
+      "value": "vault",
+      "key": "vact_hemcl6vgqveuhatnh37umqruhi"
+    },
+    {
+      "label": "Fraud Detection",
+      "value": "prism",
+      "key": "cli_scna7ew7mxdenl3h36zlmkyh6m|ent_juznxdro7lhwrf3c5e4wprftgu"
+    }
+  ]
+}

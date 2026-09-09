@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Sandbox CAT config fetch</title>
+<style>
+  :root{--bg:#0f1115;--panel:#171a21;--panel2:#1d222b;--edge:#2a303c;--fg:#e6e9ef;--mut:#93a0b4;--accent:#4f8cff;--ok:#3fb950;--warn:#d29922;--err:#f85149}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:16px 24px;border-bottom:1px solid var(--edge);display:flex;align-items:baseline;gap:12px}
+  header h1{margin:0;font-size:16px;letter-spacing:.2px} header .sub{color:var(--mut);font-size:12px}
+  header .nav{margin-left:auto;color:var(--accent);text-decoration:none;font-size:12px;border:1px solid var(--edge);padding:5px 11px;border-radius:7px}
+  header .nav:hover{border-color:var(--accent)}
+  .wrap{display:grid;grid-template-columns:330px 1fr;min-height:calc(100vh - 58px)}
+  .side{padding:18px;border-right:1px solid var(--edge);background:var(--panel)}
+  label{display:block;margin:14px 0 4px;font-size:12px;color:var(--mut)}
+  input{width:100%;padding:9px 10px;background:#0d0f14;border:1px solid var(--edge);border-radius:7px;color:var(--fg);font:12px ui-monospace,Menlo,monospace}
+  input:focus{outline:none;border-color:var(--accent)}
+  .btn{margin-top:16px;width:100%;padding:10px;background:var(--accent);border:0;border-radius:7px;color:#fff;font-weight:600;cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:default}
+  .hint{margin-top:10px;color:var(--mut);font-size:11px}
+  .main{padding:16px 22px;overflow:auto}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  select{padding:8px 10px;background:#0d0f14;border:1px solid var(--edge);border-radius:7px;color:var(--fg)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px;border-bottom:1px solid var(--edge);padding-bottom:10px}
+  .tab{padding:6px 11px;border:1px solid var(--edge);border-radius:7px;background:transparent;color:var(--mut);cursor:pointer;font-size:12.5px}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tab.llm{border-color:#2f7d4f;color:#7ee2a0} .tab.llm.active{background:#2f7d4f;color:#fff}
+  h2{font-size:15px;margin:2px 0 12px} h3{font-size:13px;color:var(--mut);margin:18px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+  table{border-collapse:collapse;width:100%;margin:6px 0 14px;font-size:12.5px}
+  th,td{border:1px solid var(--edge);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--mut);font-weight:600}
+  .kv{display:grid;grid-template-columns:170px 1fr;gap:2px 14px;margin:4px 0 14px}
+  .kv div:nth-child(odd){color:var(--mut)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;border:1px solid var(--edge);margin:0 4px 4px 0}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)} .mut{color:var(--mut)}
+  .cov-complete{border-color:#265b34;color:var(--ok)} .cov-partial{border-color:#5b4a20;color:var(--warn)} .cov-unknown{border-color:#5b2626;color:var(--err)}
+  pre{background:var(--panel);border:1px solid var(--edge);border-radius:9px;padding:14px;overflow:auto;white-space:pre-wrap;word-break:break-word;font:12px ui-monospace,Menlo,monospace}
+  .toolbar{display:flex;gap:8px;margin-bottom:8px}
+  .toolbar button{padding:6px 12px;border:1px solid var(--edge);border-radius:7px;background:var(--panel2);color:var(--fg);cursor:pointer;font-size:12px;width:auto;margin:0}
+  .search{display:flex;gap:8px;align-items:center;margin:8px 0}
+  .search input{max-width:120px;text-transform:uppercase}
+  .countrybox{max-height:150px;overflow:auto;border:1px solid var(--edge);border-radius:7px;padding:8px;font:11px ui-monospace,monospace;color:var(--mut)}
+  code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
+  .picks{display:flex;flex-direction:column;gap:6px;margin:6px 0 14px;max-width:720px}
+  .pick{display:flex;align-items:center;gap:9px;margin:0;padding:7px 11px;border:1px solid var(--edge);border-radius:7px;color:var(--fg);font-size:12.5px;cursor:pointer;background:var(--panel)}
+  .pick.on{border-color:var(--accent)} .pick.all{background:var(--panel2)}
+  .pick input{width:auto;margin:0;accent-color:var(--accent)}
+  .toolbar{align-items:center} .toolbar .meta{color:var(--mut);font-size:12px;margin-left:6px}
+</style>
+</head>
+<body>
+<header><h1>Sandbox CAT config fetch</h1><span class="sub">Client Admin Tool → merchant configuration profile · sandbox · credentials used per-request, never stored</span></header>
+<div class="wrap">
+  <div class="side">
+    <label>Client ID (CLI)</label>
+    <input id="client_id" placeholder="cli_..." autocomplete="off"/>
+    <label>CAT API key (Bearer token)</label>
+    <input id="cat_token" placeholder="eyJ... (Okta bearer)" autocomplete="off"/>
+    <label>Secret key (SK)</label>
+    <input id="sk" placeholder="sk_sbox_... (enables webhooks)" autocomplete="off"/>
+    <label>Public key (PK)</label>
+    <input id="pk" placeholder="pk_sbox_..." autocomplete="off"/>
+    <button class="btn" id="go">Fetch config</button>
+    <div class="hint">Runs against <code>client-admin.cko-sbox</code>. One profile per entity under the client (full breadth: all channels + profiles).</div>
+    <div class="hint" id="status"></div>
+  </div>
+  <div class="main">
+    <div id="empty" class="mut">Enter a Client ID and CAT API key, then Fetch config.</div>
+    <div id="result" style="display:none">
+      <div class="row" id="entrow">
+        <label style="margin:0">Entity</label>
+        <select id="entsel"></select>
+        <span id="cov" class="row" style="margin:0"></span>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div id="view"></div>
+    </div>
+  </div>
+</div>
+<script>
+let DATA=null, cur=0, tab="client";
+// Client Markdown tab: which entity indices are ticked, and rendered documents keyed by
+// the sorted selection so re-ticking a previous combination is instant.
+let SEL=new Set(), DOC_CACHE={};
+// Absolute API base so fetch works even when the page is loaded in a preview iframe / file:// context
+const API_BASE=(location.origin && location.origin.startsWith("http")) ? location.origin : "http://localhost:8787";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+const TABS=[
+  ["client","Client Markdown"],["bundle","LLM Markdown"],["llm","llms.txt"],["json","JSON"]
+];
+
+// Wall-clock duration, scaled to the magnitude: sub-minute in seconds, else m/s.
+function fmtDur(ms){
+  const s=ms/1000;
+  if(s<10) return s.toFixed(1)+"s";
+  if(s<60) return Math.round(s)+"s";
+  const m=Math.floor(s/60), r=Math.round(s%60);
+  return r?`${m}m ${r}s`:`${m}m`;
+}
+async function gen(){
+  const body={client_id:$("client_id").value.trim(),cat_token:$("cat_token").value.trim(),sk:$("sk").value.trim(),pk:$("pk").value.trim()};
+  $("go").disabled=true; $("status").textContent="Fetching CAT config (one full pass per entity)…"; $("status").className="hint";
+  const t0=performance.now();
+  try{
+    const r=await fetch(API_BASE+"/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(j.error){ $("status").innerHTML='<span class="err">'+esc(j.error)+'</span> <span class="mut">— failed after '+fmtDur(performance.now()-t0)+'</span>'; return; }
+    DATA=j; cur=0;
+    SEL=new Set(j.entities.map((_,i)=>i)); DOC_CACHE={};   // default: every entity ticked
+    const n=j.entities.length;
+    $("status").innerHTML='<span class="ok">Done</span> — '+n+' '+(n===1?'entity':'entities')
+      +' <span class="mut">· ran in '+fmtDur(performance.now()-t0)+'</span>';
+    $("empty").style.display="none"; $("result").style.display="block";
+    const sel=$("entsel"); sel.innerHTML="";
+    j.entities.forEach((e,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(e.entity_name||e.entity_id)+"  ·  "+e.entity_id;sel.appendChild(o);});
+    buildTabs(); render();
+  }catch(e){ $("status").innerHTML='<span class="err">'+esc(e)+'</span> <span class="mut">— failed after '+fmtDur(performance.now()-t0)+'</span>'; }
+  finally{ $("go").disabled=false; }
+}
+function buildTabs(){
+  $("tabs").innerHTML=TABS.map(([k,l])=>`<button class="tab ${k==='llm'?'llm':''} ${k===tab?'active':''}" data-k="${k}">${l}</button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(t=>t.onclick=()=>{tab=t.dataset.k;buildTabs();render();});
+}
+function covBadges(env){
+  const cs=(env&&env.coverage_summary)||{};
+  return Object.entries(cs).map(([k,v])=>`<span class="pill cov-${v}">${k.replace(/_/g,' ')}: ${v}</span>`).join("");
+}
+function kv(obj){return '<div class="kv">'+Object.entries(obj).map(([k,v])=>`<div>${esc(k)}</div><div>${v}</div>`).join("")+'</div>';}
+function tbl(cols,rows){
+  if(!rows.length)return '<p class="mut">none</p>';
+  return '<table><tr>'+cols.map(c=>`<th>${esc(c)}</th>`).join("")+'</tr>'+
+    rows.map(r=>'<tr>'+r.map(c=>`<td>${c==null?'—':c}</td>`).join("")+'</tr>').join("")+'</table>';
+}
+
+function render(){
+  if(!DATA)return; const e=DATA.entities[cur]; const p=e.profile;
+  $("cov").innerHTML=covBadges(p.envelope);
+  // the entity dropdown drives the per-entity tabs; the client tab has its own selector
+  $("entrow").style.display = tab==="client" ? "none" : "flex";
+  const v=$("view"); let h="";
+
+  if(tab==="client"){
+    const n=DATA.entities.length, all=SEL.size===n;
+    h+=`<h2>Client Markdown <span class="mut">— one document: the client at the top, each ticked entity as its own section beneath it</span></h2>`;
+    h+=`<p class="mut">Paste into a Claude project's instructions. Ask <i>"summarise my config on &lt;entity&gt;"</i> for one entity, or <i>"summarise my config in general"</i> for the client as a whole. Per-entity content is rendered by the same code as the single-entity document.</p>`;
+    h+=`<h3>Entities to include</h3><div class="picks">`;
+    h+=`<label class="pick all ${all?'on':''}"><input type="checkbox" id="pick_all" ${all?'checked':''}/> <b>All entities</b> <span class="mut">(${n})</span></label>`;
+    DATA.entities.forEach((x,i)=>{
+      h+=`<label class="pick ${SEL.has(i)?'on':''}"><input type="checkbox" class="pick_ent" data-i="${i}" ${SEL.has(i)?'checked':''}/> ${esc(x.entity_name||x.entity_id)} <code>${esc(x.entity_id)}</code></label>`;
+    });
+    h+=`</div>`;
+    h+=`<div class="toolbar"><button onclick="copyText('clienttext')">Copy</button><button onclick="dlClient()">Download .md</button><span class="meta" id="clientmeta"></span></div>`;
+    h+=`<pre id="clienttext" class="mut">Rendering…</pre>`;
+    v.innerHTML=h; wirePicks(); loadClientDoc(); return;
+  }
+  else if(tab==="bundle"){
+    const b=e.bundle;
+    if(!b){h+=`<p class="mut">No bundle in this response — restart the server.</p>`;}
+    else{
+      const m=b.meta, paths=Object.keys(b.files).sort();
+      h+=`<h2>LLM Markdown <span class="mut">— point-in-time context pack for a Claude agent running Checkout MCP</span></h2>`;
+      h+=kv({"Snapshot":esc(m.snapshot_id),"Entity":`<code>${esc(m.entity_id)}</code>`,
+        "Card (always in context)":`≈${m.index_tokens} tokens`,
+        "Whole bundle":`≈${m.total_tokens} tokens across ${paths.length} files`,
+        "Lookup index":`${Object.keys(b.lookup).length} ids → file`});
+      h+=`<p class="mut">A question costs the card plus one or two sections — not the whole pack.</p>`;
+      // delivery modes — reference only; the generated files are the same in every case
+      h+=`<h3>Delivery</h3>`+tbl(["Mode","How","Progressive disclosure"],[
+        ["Repo + Claude Code <span class=\"ok\">best</span>",
+         "Copy the folder into your repo; append <code>INDEX.md</code> to <code>CLAUDE.md</code>. Sections are read on demand.",
+         '<span class="ok">✅ native</span>'],
+        ["Claude Project",
+         "Paste <code>INDEX.md</code> into project instructions; upload the section files.",
+         '<span class="ok">✅ retrieved on demand</span>'],
+      ]);
+      // the card
+      h+=`<h3>INDEX.md — the card</h3>
+        <div class="toolbar">
+          <button onclick="copyText('cardtext')">Copy card</button>
+          <button onclick="download('INDEX.md','cardtext')">Download — Card</button>
+          <button onclick="dlAll()">Download all (single .md with file markers)</button>
+        </div><pre id="cardtext">${esc(b.files["INDEX.md"]||"")}</pre>`;
+      // sections table
+      h+=`<h3>Files</h3>`+tbl(["File","Coverage","Volatility","~tokens",""],
+        paths.map(pth=>{
+          const sm=(m.sections||[]).find(s=>s.path===pth);
+          return [`<code>${esc(pth)}</code>`,
+            sm?`<span class="pill cov-${sm.coverage}">${sm.coverage}</span>`:"—",
+            sm?esc(sm.volatility||"—"):"—",
+            sm?sm.tokens:Math.max(1,Math.round((b.files[pth]||"").length/4)),
+            `<button onclick="showFile('${esc(pth)}')">View</button> `+
+            `<button onclick="dlFile('${esc(pth)}')">Download</button>`];
+        }));
+      h+=`<div id="fileview"></div>`;
+    }
+  }
+  else if(tab==="llm"){
+    h+=`<h2>LLM context <span class="mut">— paste into a prompt / system message for merchant-specific answers</span></h2>`;
+    h+=`<div class="toolbar"><button onclick="copyText('llmtext')">Copy</button><button onclick="download('${e.entity_id}.llms.txt','llmtext')">Download .txt</button></div>`;
+    h+=`<pre id="llmtext">${esc(e.llms)}</pre>`;
+  }
+  else if(tab==="json"){
+    h+=`<h2>Canonical profile (JSON)</h2>`;
+    h+=`<div class="toolbar"><button onclick="copyText('jsontext')">Copy</button><button onclick="download('${e.entity_id}.merchant-profile.json','jsontext')">Download .json</button></div>`;
+    h+=`<pre id="jsontext">${esc(JSON.stringify(p,null,2))}</pre>`;
+  }
+  v.innerHTML=h;
+}
+function copyText(id){navigator.clipboard.writeText($(id).textContent);}
+function download(name,id){saveText(name,$(id).textContent);}
+function saveText(name,text){const b=new Blob([text],{type:"text/plain"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=name.replace(/\//g,"__");a.click();}
+// --- Client Markdown tab helpers ---
+function selKey(){return [...SEL].sort((a,b)=>a-b).join(",");}
+function wirePicks(){
+  const n=DATA.entities.length, a=$("pick_all");
+  a.indeterminate = SEL.size>0 && SEL.size<n;
+  a.onchange=()=>{SEL = a.checked ? new Set(DATA.entities.map((_,i)=>i)) : new Set(); render();};
+  document.querySelectorAll(".pick_ent").forEach(c=>c.onchange=()=>{
+    const i=+c.dataset.i; if(c.checked) SEL.add(i); else SEL.delete(i); render();});
+}
+async function loadClientDoc(){
+  const key=selKey(), idx=key?key.split(",").map(Number):[];
+  const pre=$("clienttext"), meta=$("clientmeta");
+  if(!idx.length){pre.className="mut"; pre.textContent="Tick at least one entity."; meta.textContent=""; return;}
+  if(!DOC_CACHE[key]){
+    try{
+      // re-render only: sends back the profiles already fetched, no CAT call, no credentials
+      const r=await fetch(API_BASE+"/api/client-doc",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({profiles:idx.map(i=>DATA.entities[i].profile)})});
+      const j=await r.json(); if(j.error) throw new Error(j.error);
+      DOC_CACHE[key]=j;
+    }catch(e){ if(selKey()===key){pre.className="err"; pre.textContent="Failed to render: "+e;} return; }
+  }
+  if(selKey()!==key) return;   // selection changed while awaiting; a newer call owns the view
+  const j=DOC_CACHE[key];
+  pre.className=""; pre.textContent=j.md;
+  meta.textContent=`≈${j.tokens} tokens · ${idx.length} of ${DATA.entities.length} entities`;
+}
+function dlClient(){
+  const j=DOC_CACHE[selKey()]; if(!j) return;
+  const first=DATA.entities[[...SEL].sort((a,b)=>a-b)[0]];
+  const snap=((first.profile||{}).envelope||{}).snapshot_id||"snapshot";
+  saveText(`${snap}-${DATA.client_id}.client-instructions.md`, j.md);
+}
+// --- LLM Markdown tab helpers ---
+function curBundle(){return DATA&&DATA.entities[cur]&&DATA.entities[cur].bundle;}
+function showFile(p){const b=curBundle();if(!b)return;
+  $("fileview").innerHTML=`<h3>${p}</h3><div class="toolbar">
+    <button onclick="copyFile('${p}')">Copy</button>
+    <button onclick="dlFile('${p}')">Download</button></div>
+    <pre>${(b.files[p]||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}</pre>`;
+  $("fileview").scrollIntoView({behavior:"smooth",block:"nearest"});}
+function copyFile(p){const b=curBundle();if(b)navigator.clipboard.writeText(b.files[p]||"");}
+function dlFile(p){const b=curBundle();if(b)saveText(p.split("/").pop(),b.files[p]||"");}
+function dlAll(){const b=curBundle();if(!b)return;
+  const parts=Object.keys(b.files).sort().map(p=>`<!-- ===== FILE: ${p} ===== -->\n\n${b.files[p]}\n`);
+  saveText(`${b.meta.snapshot_id||"bundle"}-${b.meta.entity_id||""}.md`,
+    `<!-- Checkout.com merchant context pack. Split on the FILE markers below. -->\n\n`+parts.join("\n"));}
+// Prefill from server-injected local dev creds (gitignored dev-creds.json) — never hardcoded here
+if(window.__DEV_CREDS__){const c=window.__DEV_CREDS__;for(const k of ["client_id","sk","pk","cat_token"]){if(c[k]&&$(k))$(k).value=c[k];}}
+$("go").onclick=gen;
+$("entsel").onchange=e=>{cur=+e.target.value;render();};
+</script>
+</body>
+</html>

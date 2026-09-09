@@ -1,0 +1,20 @@
+{
+  "vault_account": {
+    "is_enabled": true,
+    "vault_account_id": "vact_hemcl6vgqveuhatnh37umqruhi"
+  },
+  "flow_account": {
+    "is_enabled": true,
+    "flow_account_id": "acc_pfefuojqbfsurlnuslvqkktm4a"
+  },
+  "prism": {
+    "is_enabled": true,
+    "prism_key": "cli_scna7ew7mxdenl3h36zlmkyh6m|ent_juznxdro7lhwrf3c5e4wprftgu",
+    "date_created": "2026-07-09T18:09:44Z"
+  },
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/entities/ent_juznxdro7lhwrf3c5e4wprftgu/services"
+    }
+  }
+}

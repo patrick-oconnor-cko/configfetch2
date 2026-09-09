@@ -1,0 +1,80 @@
+{
+  "id": "pc_ciui77f3mfvephdkq7oh6ppxku",
+  "name": "Channel 1",
+  "date_created": "2023-12-11T16:12:32Z",
+  "date_modified": "2025-05-14T09:44:36Z",
+  "status": "active",
+  "business_model_type": "merchant",
+  "processors": [
+    {
+      "id": "p_ullx62bharre5ftkoskg2pjhsu",
+      "acquirer_id": "cko-visa",
+      "acquirer_name": "Checkout VISA",
+      "scheme_id": "VISA",
+      "scheme_name": "VISA",
+      "merchant_category_code": "5192",
+      "merchant_category_code_name": "5192 - Books, Periodicals and Newspapers",
+      "mode": "complete_processing",
+      "processor_type": "manual",
+      "protocol_versions": [
+        "1.0.2",
+        "2"
+      ]
+    },
+    {
+      "id": "p_vcwsjmpzgasejpm2kv7z5ir3uu",
+      "acquirer_id": "cko-mastercard",
+      "acquirer_name": "Checkout Mastercard",
+      "scheme_id": "MASTERCARD",
+      "scheme_name": "Mastercard",
+      "merchant_category_code": "5815",
+      "merchant_category_code_name": "5815 - Digital Goods Media - Books, Movies, Music",
+      "mode": "complete_processing",
+      "processor_type": "manual",
+      "protocol_versions": [
+        "1.0.2",
+        "2"
+      ]
+    },
+    {
+      "id": "p_6phxnili4whebjxxffo35i6wja",
+      "acquirer_id": "cko-amex",
+      "acquirer_name": "Checkout AMEX",
+      "scheme_id": "AMEX",
+      "scheme_name": "American Express",
+      "merchant_category_code": "5815",
+      "merchant_category_code_name": "5815 - Digital Goods Media - Books, Movies, Music",
+      "mode": "complete_processing",
+      "processor_type": "profile",
+      "protocol_versions": [
+        "1.0.2",
+        "2"
+      ]
+    },
+    {
+      "id": "p_ezrrpl5e5zrelgqvixetmh6re4",
+      "acquirer_id": "cko-visa",
+      "acquirer_name": "Checkout VISA",
+      "scheme_id": "VISA",
+      "scheme_name": "VISA",
+      "merchant_category_code": "0742",
+      "merchant_category_code_name": "0742 - Veterinary Services",
+      "mode": "complete_processing",
+      "processor_type": "profile",
+      "protocol_versions": [
+        "2"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "value": "vault",
+      "key": "vact_hemcl6vgqveuhatnh37umqruhi"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/sessions-processing-channels/pc_ciui77f3mfvephdkq7oh6ppxku"
+    }
+  }
+}

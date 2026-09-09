@@ -1,0 +1,21 @@
+{
+  "id": "rt_mjztfuwxpmeuxbcntfryfsqdfi",
+  "date_created": "2023-12-11T16:12:37Z",
+  "date_modified": "2024-01-02T16:28:12Z",
+  "status": "Active",
+  "allow_any_processing_channel": true,
+  "allow_any_merchant_category_code": true,
+  "allow_any_processing_currency": true,
+  "allow_any_event_type": true,
+  "allow_any_card_type": true,
+  "allow_any_region": true,
+  "allow_any_banking_partner": true,
+  "allow_any_payment_method": true,
+  "revenue_currency_account_id": "ca_xd7v5anhc7kuhgy4qvaasvo3ei",
+  "fees_currency_account_id": "ca_fpztykcwydwubiebbnkpkaq2bm",
+  "_links": {
+    "self": {
+      "href": "https://client-admin.cko-sbox.ckotech.co/api/payment-routing-rules/rt_mjztfuwxpmeuxbcntfryfsqdfi"
+    }
+  }
+}
