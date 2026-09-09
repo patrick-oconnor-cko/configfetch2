@@ -85,6 +85,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/", "/index.html"):
             self._page("index.html")
+        elif self.path == "/favicon.svg":
+            self._send(200, (HERE/"favicon.svg").read_bytes(), "image/svg+xml")
         else:
             self._send(404, json.dumps({"error":"not found"}))
     def do_POST(self):
