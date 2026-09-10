@@ -46,7 +46,13 @@ This has repeatedly looked like a bug in the code.
 - **Network Tokens, Intelligent Acceptance and RTAU are three distinct value-added services** —
   separate products, separate config services. Never model or present them as facets of one
   thing.
-- **A pay-in processing profile carrying a BAI is AFT-enabled.** That is the definition.
+- **A pay-in processing profile carrying an AFT code is AFT-enabled.** That is the definition.
+  The code's name is scheme-specific: Visa's is the **Business Application Identifier (BAI)**
+  at `custom_settings.aft.business_application_identifier`; Mastercard's is the **Payment
+  Transaction Type Identifier (TTI)** at `custom_settings.transaction_type_identifier`. They
+  are equivalents — a question about either is a question about the AFT code. Verified on
+  live production profiles (Visa: BAI only; Mastercard: TTI only, e.g. `P71`). Detecting AFT
+  from the BAI alone reported every Mastercard AFT profile as not enabled.
 - **Pay-to-card means** processing profiles with `processing_type=payout` and `status=Active`.
   It is never a per-channel capability — but a card payout request still requires a
   `processing_channel_id`, and **any** Active channel on the entity is valid. The
@@ -78,9 +84,14 @@ key rather than the CAT token, used only for webhooks/workflows.
 ## Documentation lookups
 
 For Checkout API schemas, field names and error codes, use the **`checkout-mcp-sandbox`** MCP
-server — not `checkout-mcp` (production). This project is sandbox, and the two servers index
-different API surfaces. Its search returns only a section's opening excerpt, so it cannot
-retrieve long reference tables.
+server when working on sandbox output — not `checkout-mcp` (production). The two servers
+index different API surfaces. The app has a Sandbox and a Prod mode; generated documents name
+the matching server via `llm_bundle._mcp_name`. Its search returns only a section's opening
+excerpt, so it cannot retrieve long reference tables.
+
+**Production bases live in `cat_profile.ENVIRONMENTS["production"]`** — all six are set. Change
+one only from a verified source, never by deriving a production hostname from the sandbox one;
+the CAT swagger's own "Prod" server entry (`client-admin-prod.ckotech.co`) does not resolve.
 
 ## Test payloads
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sandbox CAT config fetch</title>
+<title>CAT config fetch</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
 <style>
   :root{--bg:#0f1115;--panel:#171a21;--panel2:#1d222b;--edge:#2a303c;--fg:#e6e9ef;--mut:#93a0b4;--accent:#4f8cff;--ok:#3fb950;--warn:#d29922;--err:#f85149}
@@ -49,27 +49,67 @@
   .pick.on{border-color:var(--accent)} .pick.all{background:var(--panel2)}
   .pick input{width:auto;margin:0;accent-color:var(--accent)}
   .toolbar{align-items:center} .toolbar .meta{color:var(--mut);font-size:12px;margin-left:6px}
+  /* mode switch: the selected mode is green, the other grey */
+  .modes{display:flex;gap:8px;margin-bottom:6px}
+  .mode{flex:1;padding:9px;border-radius:7px;border:1px solid var(--edge);background:#2a303c;color:var(--mut);font-weight:600;cursor:pointer;letter-spacing:.3px}
+  .mode:hover{color:var(--fg)}
+  .mode.on{background:var(--ok);border-color:var(--ok);color:#fff}
+  /* loading bar: indeterminate — the fetch is one blocking request, so there is no true
+     progress to report; the bar shows the request is in flight and the counter shows for how long */
+  .bar{display:none;height:6px;margin-top:12px;border-radius:4px;background:var(--panel2);overflow:hidden;position:relative}
+  .bar.on{display:block}
+  .bar .fill,.pbar .fill{height:100%;width:0;background:var(--accent);border-radius:4px;transition:width .25s}
+  .bar.indet::after,.pbar.indet::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:40%;border-radius:4px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:slide 1.2s ease-in-out infinite}
+  @keyframes slide{from{left:-40%}to{left:100%}}
+  /* progress panel (main area) — determinate once the entity list is known, plus a live call log */
+  .pbar{height:12px;border-radius:6px;background:var(--panel2);overflow:hidden;position:relative;margin:10px 0 8px}
+  .pmeta{display:flex;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:12px;margin-bottom:10px}
+  .pmeta b{color:var(--fg)}
+  .plog{font:11px ui-monospace,Menlo,monospace;background:var(--panel);border:1px solid var(--edge);border-radius:9px;padding:8px 10px;max-height:55vh;overflow:auto}
+  .plog div{display:grid;grid-template-columns:34px 76px 1fr 44px 62px;gap:8px;padding:1px 0;white-space:nowrap}
+  .plog .path{overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
+  .plog .svc{color:var(--accent)} .plog .ent{grid-column:1 / -1;color:var(--mut);border-top:1px solid var(--edge);margin-top:4px;padding-top:4px}
+  .plog .ms{text-align:right;color:var(--mut)}
+  details.fetchlog{margin:0 0 12px} details.fetchlog summary{cursor:pointer;color:var(--mut);font-size:12px}
+  .plog div.fail{background:rgba(248,81,73,.09);border-radius:4px}
+  .plog div.fail .path{color:var(--err)}
+  .warnbox{border:1px solid #7a5a1c;background:rgba(210,153,34,.08);border-radius:9px;padding:10px 14px;margin:0 0 12px;font-size:12.5px}
+  .warnbox b{color:var(--warn)} .warnbox ul{margin:6px 0 0 18px;padding:0} .warnbox li{margin:2px 0}
+  .warnbox code{font-size:11px}
 </style>
 </head>
 <body>
-<header><h1>Sandbox CAT config fetch</h1><span class="sub">Client Admin Tool → merchant configuration profile · sandbox · credentials used per-request, never stored</span></header>
+<header><h1>CAT config fetch</h1><span class="sub">Client Admin Tool → merchant configuration profile · credentials used per-request, never stored</span></header>
 <div class="wrap">
   <div class="side">
+    <label>Mode</label>
+    <div class="modes">
+      <button class="mode on" id="mode_sandbox" data-m="sandbox">Sandbox</button>
+      <button class="mode" id="mode_production" data-m="production">Prod</button>
+    </div>
     <label>Client ID (CLI)</label>
     <input id="client_id" placeholder="cli_..." autocomplete="off"/>
-    <label>CAT API key (Bearer token)</label>
+    <label id="l_tok">CAT API key (Bearer token)</label>
     <input id="cat_token" placeholder="eyJ... (Okta bearer)" autocomplete="off"/>
-    <label>Secret key (SK)</label>
-    <input id="sk" placeholder="sk_sbox_... (enables webhooks)" autocomplete="off"/>
-    <label>Public key (PK)</label>
-    <input id="pk" placeholder="pk_sbox_..." autocomplete="off"/>
+    <label id="l_sk">Secret key (SK) — optional. Required for webhook information.</label>
+    <input id="sk" placeholder="sk_sbox_..." autocomplete="off"/>
     <button class="btn" id="go">Fetch config</button>
-    <div class="hint">Runs against <code>client-admin.cko-sbox</code>. One profile per entity under the client (full breadth: all channels + profiles).</div>
+    <div class="bar" id="bar"><div class="fill" id="barfill"></div></div>
+    <div class="hint" id="hint_env"></div>
     <div class="hint" id="status"></div>
   </div>
   <div class="main">
     <div id="empty" class="mut">Enter a Client ID and CAT API key, then Fetch config.</div>
+    <div id="progress" style="display:none">
+      <h2 id="ptitle">Fetching configuration…</h2>
+      <div class="pbar indet" id="pbar"><div class="fill" id="pfill"></div></div>
+      <div class="pmeta" id="pmeta"></div>
+      <div class="plog" id="plog"></div>
+    </div>
     <div id="result" style="display:none">
+      <div class="warnbox" id="fetchwarn" style="display:none"></div>
+      <details class="fetchlog" id="fetchlog" style="display:none"><summary id="fetchlog_sum"></summary><div class="plog" id="fetchlog_body"></div></details>
       <div class="row" id="entrow">
         <label style="margin:0">Entity</label>
         <select id="entsel"></select>
@@ -82,6 +122,34 @@
 </div>
 <script>
 let DATA=null, cur=0, tab="client";
+// Mode: "sandbox" or "production". Credentials are kept per mode so switching back
+// restores what was typed; nothing is persisted beyond this page.
+let MODE="sandbox";
+const FIELDS=["client_id","cat_token","sk"];
+const CREDS={sandbox:{}, production:{}};
+const MODE_UI={
+  sandbox:{tok:"CAT API key (Bearer token)", sk:"Secret key (SK) — optional. Required for webhook information.",
+           ph_tok:"eyJ... (Okta bearer)", ph_sk:"sk_sbox_...",
+           hint:'Runs against <code>client-admin.cko-sbox</code>. One profile per entity under the client (full breadth: all channels + profiles).'},
+  production:{tok:"PROD CAT API key (Bearer token) — required", sk:"PROD Secret key (SK) — optional. Required for webhook information.",
+           ph_tok:"eyJ... (PROD Okta bearer)", ph_sk:"sk_... (PROD)",
+           hint:'Runs against <b>production</b>: <code>client-admin.cko-prod.ckotech.co</code> and <code>api.checkout.com</code>. One profile per entity under the client (full breadth: all channels + profiles).'}
+};
+function setMode(m){
+  if(!MODE_UI[m]) return;
+  if(m!==MODE) FIELDS.forEach(k=>CREDS[MODE][k]=$(k).value);   // stash what was typed for the old mode
+  MODE=m;
+  FIELDS.forEach(k=>$(k).value=CREDS[m][k]||"");          // restore (or blank) for the new mode
+  document.querySelectorAll(".mode").forEach(b=>b.classList.toggle("on", b.dataset.m===m));
+  document.body.classList.toggle("prod", m==="production");
+  const u=MODE_UI[m];
+  $("l_tok").textContent=u.tok; $("l_sk").textContent=u.sk;
+  $("cat_token").placeholder=u.ph_tok; $("sk").placeholder=u.ph_sk;
+  $("hint_env").innerHTML=u.hint;
+  // results belong to the mode they were fetched in; never show one mode's data under the other
+  DATA=null; DOC_CACHE={}; $("result").style.display="none"; $("progress").style.display="none"; $("fetchwarn").style.display="none"; $("empty").style.display="block";
+  $("status").textContent=""; $("status").className="hint"; $("bar").classList.remove("on");
+}
 // Client Markdown tab: which entity indices are ticked, and rendered documents keyed by
 // the sorted selection so re-ticking a previous combination is instant.
 let SEL=new Set(), DOC_CACHE={};
@@ -102,25 +170,95 @@ function fmtDur(ms){
   const m=Math.floor(s/60), r=Math.round(s%60);
   return r?`${m}m ${r}s`:`${m}m`;
 }
+// ---- progress state for one fetch. The server streams NDJSON events: start · call (one per
+// GET, with service/path/status/ms) · entities (list once known) · entity_start/entity_done ·
+// result|error. Progress = entities completed plus the in-flight entity's fraction, where the
+// fraction is calls-so-far over the previous entity's call count (≈30 for the first).
+let P=null;
+function pReset(){P={t0:performance.now(),total:null,done:0,calls:0,callsThisEnt:0,expect:30,ent:null,errors:0,names:[],fails:[]};
+  $("plog").innerHTML=""; $("pmeta").innerHTML=""; $("pfill").style.width="0"; $("barfill").style.width="0";
+  $("pbar").classList.add("indet"); $("bar").classList.add("indet","on"); $("ptitle").textContent="Fetching configuration…";}
+function pPct(){ if(!P||!P.total) return null;
+  const frac=Math.min(P.callsThisEnt/Math.max(P.expect,1),0.95);
+  return Math.min(100,Math.round(100*(P.done+(P.ent!==null?frac:0))/P.total)); }
+function pDraw(){
+  const pct=pPct(), el=performance.now()-P.t0;
+  if(pct!==null){ $("pbar").classList.remove("indet"); $("bar").classList.remove("indet"); $("pfill").style.width=pct+"%"; $("barfill").style.width=pct+"%"; }
+  const ent=P.ent!==null?`<span>Entity <b>${P.done+1} of ${P.total}</b> — ${esc(P.names[P.ent]||"")}</span>`:(P.total===null?`<span>Listing entities…</span>`:``);
+  $("pmeta").innerHTML=(pct!==null?`<span><b>${pct}%</b></span>`:``)+ent+`<span><b>${P.calls}</b> GET calls</span>`
+    +(P.errors?`<span class="err"><b>${P.errors}</b> failed${failKinds()}</span>`:``)+`<span>${fmtDur(el)}</span>`;
+  $("status").textContent=(pct!==null?pct+"% · ":"")+"Fetching "+(MODE==="production"?"PROD":"sandbox")+" config · "+P.calls+" calls · "+fmtDur(el);
+}
+function failKinds(){ const nr=P.fails.filter(f=>f.status==null).length, he=P.fails.length-nr;
+  const parts=[]; if(nr) parts.push(nr+" no response"); if(he) parts.push(he+" HTTP error"+(he>1?"s":"")); return parts.length?" ("+parts.join(", ")+")":""; }
+const SVC_NAMES={cat:"Client Admin Tool",public:"public API (webhooks)",reporting:"reporting profiles (merlin)",nt:"network tokens (nt-portal)",ia:"Intelligent Acceptance (pp-tenet-int)",rtau:"RTAU",http:"other"};
+function failBanner(){
+  if(!P.fails.length){ $("fetchwarn").style.display="none"; return; }
+  const by={}; P.fails.forEach(f=>{ const k=f.service; (by[k]=by[k]||{n:0,nr:0,reasons:{},ents:new Set()}); by[k].n++; if(f.status==null) by[k].nr++;
+    const r=f.status==null?("no response — "+(f.error||"connection failed")):("HTTP "+f.status+(f.error?" — "+f.error:"")); by[k].reasons[r]=(by[k].reasons[r]||0)+1; by[k].ents.add(f.entity); });
+  const items=Object.entries(by).map(([k,v])=>{
+    const reasons=Object.entries(v.reasons).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([r,n])=>`${esc(r)}${n>1?` ×${n}`:""}`).join("; ");
+    return `<li><b>${esc(SVC_NAMES[k]||k)}</b> — ${v.n} failed call${v.n>1?"s":""}${v.nr?` (${v.nr} no response)`:""} · ${reasons}<br><span class="mut">affects: ${esc([...v.ents].join(", "))}</span></li>`; }).join("");
+  $("fetchwarn").innerHTML=`<b>⚠ ${P.fails.length} of ${P.calls} calls failed${failKinds()}.</b> The sections that depend on them are marked <code>unavailable</code> in the generated documents, which tells the reader to answer "unknown" — they are not shown as "no". Re-run once the service is reachable (VPN for the internal hosts; a fresh token for 401s).<ul>${items}</ul>`;
+  $("fetchwarn").style.display="block";
+}
+function pLog(html,cls){ const l=$("plog"); const d=document.createElement("div"); if(cls) d.className=cls; d.innerHTML=html; l.appendChild(d);
+  while(l.children.length>600) l.removeChild(l.firstChild); l.scrollTop=l.scrollHeight; }
+function pEvent(ev){
+  if(ev.type==="start"){ pLog(`<div class="ent">${esc(ev.mode)} · client ${esc(ev.client_id)} · hosts: ${Object.values(ev.hosts||{}).map(h=>esc(h.replace(/^https?:\/\//,"").split("/")[0])).join(" · ")}</div>`); }
+  else if(ev.type==="call"){ P.calls++; if(P.ent!==null) P.callsThisEnt++; const ok=ev.status===200;
+    if(!ok){ P.errors++; P.fails.push({service:ev.service,path:ev.path,status:ev.status,error:ev.error||"",entity:P.ent!==null?(P.names[P.ent]||""):"(entity list)"}); }
+    pLog(`<span class="mut">${esc(ev.method)}</span><span class="svc">${esc(ev.service)}</span><span class="path" title="${esc(ev.path)}">${esc(ev.path)}</span>`
+        +`<span class="${ok?'ok':'err'}">${ev.status==null?'no response':ev.status}</span><span class="ms">${ev.ms} ms</span>`
+        +(ev.error?`<span class="err" style="grid-column:1 / -1;white-space:normal">${esc(ev.error)}</span>`:``), ok?"":"fail"); }
+  else if(ev.type==="entities"){ P.total=ev.total; P.names=(ev.entities||[]).map(e=>e.name||e.id); pLog(`<div class="ent">${ev.total} ${ev.total===1?'entity':'entities'} under the client</div>`); }
+  else if(ev.type==="entity_start"){ P.ent=ev.index; P.callsThisEnt=0; pLog(`<div class="ent">▶ ${esc(ev.name||"")} <code>${esc(ev.entity_id)}</code></div>`); }
+  else if(ev.type==="entity_done"){ P.expect=Math.max(P.callsThisEnt,5); P.done++; P.ent=null; pLog(`<div class="ent">✓ done — ${P.callsThisEnt} calls</div>`); }
+  pDraw();
+}
 async function gen(){
-  const body={client_id:$("client_id").value.trim(),cat_token:$("cat_token").value.trim(),sk:$("sk").value.trim(),pk:$("pk").value.trim()};
-  $("go").disabled=true; $("status").textContent="Fetching CAT config (one full pass per entity)…"; $("status").className="hint";
-  const t0=performance.now();
+  const body={mode:MODE,client_id:$("client_id").value.trim(),cat_token:$("cat_token").value.trim(),sk:$("sk").value.trim()};
+  if(MODE==="production"){
+    const need=[["client_id","Client ID"],["cat_token","PROD CAT API token"]].filter(([k])=>!body[k]).map(([,l])=>l);
+    if(need.length){ $("status").innerHTML='<span class="err">Prod mode requires: '+esc(need.join(", "))+'</span>'; return; }
+  }
+  $("go").disabled=true; $("status").className="hint";
+  pReset(); $("empty").style.display="none"; $("result").style.display="none"; $("progress").style.display="block";
+  const timer=setInterval(pDraw,500);
+  let final=null;
   try{
     const r=await fetch(API_BASE+"/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    const j=await r.json();
-    if(j.error){ $("status").innerHTML='<span class="err">'+esc(j.error)+'</span> <span class="mut">— failed after '+fmtDur(performance.now()-t0)+'</span>'; return; }
-    DATA=j; cur=0;
+    const ctype=r.headers.get("content-type")||"";
+    if(!ctype.includes("ndjson")){ final=await r.json(); }             // non-streaming reply (e.g. bad json → 400)
+    else{
+      const reader=r.body.getReader(), dec=new TextDecoder(); let buf="";
+      for(;;){ const {value,done}=await reader.read(); if(done) break;
+        buf+=dec.decode(value,{stream:true}); let i;
+        while((i=buf.indexOf("\n"))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1); if(!line) continue;
+          const ev=JSON.parse(line); if(ev.type==="result"||ev.type==="error") final=ev; else pEvent(ev); } }
+      if(buf.trim()){ const ev=JSON.parse(buf); if(ev.type==="result"||ev.type==="error") final=ev; }
+    }
+    if(!final) throw new Error("connection closed before the result arrived");
+    const el=fmtDur(performance.now()-P.t0);
+    if(final.error){ $("status").innerHTML='<span class="err">'+esc(final.error)+'</span> <span class="mut">— failed after '+el+'</span>';
+      $("ptitle").textContent="Fetch failed"; pLog(`<div class="ent err">✗ ${esc(final.error)}</div>`); return; }
+    const j=final; DATA=j; cur=0;
     SEL=new Set(j.entities.map((_,i)=>i)); DOC_CACHE={};   // default: every entity ticked
     const n=j.entities.length;
     $("status").innerHTML='<span class="ok">Done</span> — '+n+' '+(n===1?'entity':'entities')
-      +' <span class="mut">· ran in '+fmtDur(performance.now()-t0)+'</span>';
-    $("empty").style.display="none"; $("result").style.display="block";
+      +' <span class="'+(j.mode==="production"?'warn':'mut')+'">· '+esc(j.mode||MODE)+'</span>'
+      +' <span class="mut">· '+P.calls+' calls · ran in '+el+'</span>'
+      +(P.errors?' <span class="err">· ⚠ '+P.errors+' failed</span>':'');
+    // keep the call log available above the results — collapsed when clean, open when anything failed
+    $("fetchlog_sum").textContent=`Fetch log — ${P.calls} GET calls across ${n} ${n===1?'entity':'entities'} in ${el}`+(P.errors?` · ⚠ ${P.errors} failed${failKinds()}`:` · all OK`);
+    $("fetchlog_body").innerHTML=$("plog").innerHTML; $("fetchlog").style.display="block"; $("fetchlog").open=P.errors>0;
+    failBanner();
+    $("progress").style.display="none"; $("result").style.display="block";
     const sel=$("entsel"); sel.innerHTML="";
     j.entities.forEach((e,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(e.entity_name||e.entity_id)+"  ·  "+e.entity_id;sel.appendChild(o);});
     buildTabs(); render();
-  }catch(e){ $("status").innerHTML='<span class="err">'+esc(e)+'</span> <span class="mut">— failed after '+fmtDur(performance.now()-t0)+'</span>'; }
-  finally{ $("go").disabled=false; }
+  }catch(e){ $("status").innerHTML='<span class="err">'+esc(e)+'</span> <span class="mut">— failed after '+fmtDur(performance.now()-P.t0)+'</span>'; $("ptitle").textContent="Fetch failed"; }
+  finally{ clearInterval(timer); $("bar").classList.remove("on","indet"); $("go").disabled=false; }
 }
 function buildTabs(){
   $("tabs").innerHTML=TABS.map(([k,l])=>`<button class="tab ${k==='llm'?'llm':''} ${k===tab?'active':''}" data-k="${k}">${l}</button>`).join("");
@@ -262,8 +400,11 @@ function dlAll(){const b=curBundle();if(!b)return;
   const parts=Object.keys(b.files).sort().map(p=>`<!-- ===== FILE: ${p} ===== -->\n\n${b.files[p]}\n`);
   saveText(`${b.meta.snapshot_id||"bundle"}-${b.meta.entity_id||""}.md`,
     `<!-- Checkout.com merchant context pack. Split on the FILE markers below. -->\n\n`+parts.join("\n"));}
-// Prefill from server-injected local dev creds (gitignored dev-creds.json) — never hardcoded here
-if(window.__DEV_CREDS__){const c=window.__DEV_CREDS__;for(const k of ["client_id","sk","pk","cat_token"]){if(c[k]&&$(k))$(k).value=c[k];}}
+// Prefill from server-injected local dev creds (gitignored dev-creds.json) — never hardcoded
+// here, and SANDBOX ONLY: Prod fields always start empty and must be typed.
+if(window.__DEV_CREDS__){const c=window.__DEV_CREDS__;for(const k of FIELDS){if(c[k])CREDS.sandbox[k]=c[k];}}
+setMode("sandbox");
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 $("go").onclick=gen;
 $("entsel").onchange=e=>{cur=+e.target.value;render();};
 </script>

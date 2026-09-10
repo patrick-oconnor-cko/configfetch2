@@ -11,7 +11,24 @@ can only give generic answers.
 
 **Read-only.** Every call this application makes is a `GET`. There is no write path.
 
-Sandbox only.
+**Two modes: Sandbox and Prod.** The switch is the first control on the page; the selected
+mode is green. A run uses the service bases of one mode only (`cat_profile.ENVIRONMENTS`),
+stamps `environment` into every document, and picks the matching docs MCP server name
+(`checkout-mcp-sandbox` or `checkout-mcp`). Prod mode needs a PROD CAT token; the secret key is
+optional in both modes and only unlocks the webhooks section. A secret key from the other
+environment is refused (`sk_sbox_` in Prod, plain `sk_` in Sandbox). Switching mode clears any
+results on screen, so one mode's data is never shown under the other's label.
+
+> **Production hosts.** `ENVIRONMENTS["production"]` carries all six: the Client Admin Tool
+> (`client-admin.cko-prod.ckotech.co/api`, verified live), the public API (`api.checkout.com`),
+> and the four internal services on their `.prod.` hosts (merlin, nt-portal, pp-tenet-int,
+> rtau — same paths as sandbox). Note the CAT swagger's servers list names
+> `client-admin-prod.ckotech.co` as "Prod"; that name has no DNS record and is not used. Any
+> base set back to `None` degrades only its own section to `unavailable` with the reason "host
+> is not configured for this environment"; CAT unset stops a Prod fetch before any request.
+>
+> A production document also replaces the test-card block with a warning not to run example
+> payloads against the live account.
 
 > Open work and design notes live in [`TODO.md`](TODO.md). Read that before starting anything
 > — it carries current priorities and several hard-won API quirks.
@@ -26,14 +43,29 @@ python3 app/server.py     # http://localhost:8787
 
 | Field | Notes |
 |---|---|
-| Client ID | prefills from `app/dev-creds.json` |
-| **CAT API bearer token** | **paste this** — short-lived Okta token, expires in ~1h |
-| Secret key (`sk_sbox_…`) | prefills; enables the public-API workflow calls |
-| Public key (`pk_sbox_…`) | prefills |
+| Mode | **Sandbox** (default) or **Prod**. Credentials are kept per mode while the page is open. |
+| Client ID | Sandbox: prefills from `app/dev-creds.json`. Prod: typed. |
+| **CAT API bearer token** | **paste this** — short-lived Okta token, expires in ~1h. Prod: must be a PROD token. |
+| Secret key | **Optional.** Required only for webhook information: it authenticates the public-API workflow calls, which is the one thing the CAT token cannot do. Sandbox prefills `sk_sbox_…`; Prod takes `sk_…`. |
+
+Prefill from `dev-creds.json` applies to Sandbox mode only; Prod fields always start empty.
 
 **Fetch config** produces one pack *per entity* under the client. Expect 8–15s per entity
-(~24 CAT calls plus four other services); the status line reports elapsed time. `Ctrl+C` to
-stop.
+(~24 CAT calls plus four other services). While it runs the main pane shows a **progress bar
+and a live call log**: `POST /api/generate` streams newline-delimited JSON events — `start`,
+`entities` (the list, once known), `entity_start`/`entity_done`, one `call` per GET with
+service, path, HTTP status and duration, then `result` or `error`. The bar is exact per
+completed entity and estimates the in-flight one from the previous entity's call count. Calls
+never include the token or response bodies.
+
+**Failures are flagged, not buried.** A call that returns non-200, or gets no response at all
+(DNS, VPN, timeout), is tinted red in the log with its status — or "no response" — and error
+text. The progress line counts failures split by kind. After the run a warning banner above
+the results lists them per service with the reasons and the entities affected, and explains
+the consequence: the dependent sections are `unavailable` in the documents, which means
+"answer unknown", not "no". The log stays above the results — collapsed when clean, open when
+anything failed. A fetch that fails outright (401, unknown client, unreachable host) keeps the
+progress panel open with the diagnosis as its last line. `Ctrl+C` to stop the server.
 
 > ### Restart the server after any renderer change
 > `server.py` imports `cat_profile` and `llm_bundle` once at startup and Python caches
@@ -134,22 +166,54 @@ next to a `sections/` tree. Use one delivery mode per consumer.
 Six sources. The five config services each degrade independently — one being unreachable marks
 only its own section `unavailable` rather than failing the run.
 
-| Source | Scope | Auth | Base |
-|---|---|---|---|
-| CAT | client + entity | CAT bearer | `client-admin.cko-sbox.ckotech.co/api` |
-| Reporting profiles (merlin) | **entity** | CAT bearer | `merlin-alb.sbox.internal/reporting-profiles-config-api` |
-| Network tokens (nt-portal) | **client**, inherited | CAT bearer | `nt-portal.sbox.checkout.internal/vault-nt-portal` |
-| Intelligent Acceptance | **client**, inherited | CAT bearer | `pp-tenet-int.sbox.internal/tenet-config-controller` |
-| Real Time Account Updater | **client**, inherited | CAT bearer | `rtau.sbox.checkout.internal/vault-rtau-portal` |
-| Public API | client | **secret key** | `api.sandbox.checkout.com` — webhooks/workflows only |
+| Source | Scope | Auth | Sandbox base | Production base |
+|---|---|---|---|---|
+| CAT | client + entity | CAT bearer | `client-admin.cko-sbox.ckotech.co/api` | `client-admin.cko-prod.ckotech.co/api` |
+| Reporting profiles (merlin) | **entity** | CAT bearer | `merlin-alb.sbox.internal/reporting-profiles-config-api` | `merlin-alb.prod.internal/…` |
+| Network tokens (nt-portal) | **client**, inherited | CAT bearer | `nt-portal.sbox.checkout.internal/vault-nt-portal` | `nt-portal.prod.checkout.internal/…` |
+| Intelligent Acceptance | **client**, inherited | CAT bearer | `pp-tenet-int.sbox.internal/tenet-config-controller/cat-api` | `pp-tenet-int.prod.internal/…` |
+| Real Time Account Updater | **client**, inherited | CAT bearer | `rtau.sbox.checkout.internal/vault-rtau-portal` | `rtau.prod.checkout.internal/…` |
+| Public API | client | **secret key** | `api.sandbox.checkout.com` | `api.checkout.com` — webhooks/workflows only |
+
+Paths are identical in both environments; only the host changes. The table of record is
+`cat_profile.ENVIRONMENTS`. Every call made in one run uses one environment's row, and every
+GET is reported to the UI's call log with its service label.
 
 Client-level inheritance was **measured**, not assumed: IA, network tokens and RTAU come back
 byte-identical across entities, while channels, currency accounts and reporting profiles all
 differ per entity.
 
-The four non-CAT internal hosts are on `10.69.x.x`, so they are unreachable off the corporate
-network. Quirk worth knowing: **RTAU returns `415` on a `GET` unless
-`Content-Type: application/json` is sent**, despite a GET having no body.
+All hosts except the public API resolve to private addresses and are reachable only on the
+corporate VPN. Off VPN a call gets no HTTP response at all, which the UI reports as such.
+
+### CAT API reference, pagination and failure diagnosis
+
+The CAT swagger is served by every CAT environment at `/api/swagger/v1/swagger.json` — e.g.
+`https://client-admin.cko-qa.ckotech.co/api/swagger/v1/swagger.json` (VPN). One contract for all
+environments: identical paths and schemas, only the host and the token change. Its `servers`
+list names `client-admin-prod.ckotech.co` as Prod; that name does not resolve — production is
+`client-admin.cko-prod.ckotech.co` (verified: it serves the same swagger and real data).
+
+**Collections are paged at 25** (`limit`, `skip`, `total_count`), and production clients
+routinely exceed a page. `cat_profile._get_paged` follows `total_count` for entities,
+processing channels, processing profiles, currency accounts, both routing-rule lists,
+sessions channels and payout settings, merging pages into the first page's raw shape so
+`normalize` is unchanged. A response without `total_count` is returned as-is.
+
+**Failure diagnosis** (`cat_profile.list_entities_diag`, surfaced verbatim in the UI):
+
+| Symptom | Cause |
+|---|---|
+| No HTTP status at all | wrong hostname or not on the VPN — the token was never evaluated |
+| 401 | token expired, or minted by the other environment's Okta app (the message shows the token's `cid`) |
+| 404 | client id does not exist on that host — check the id and the selected mode |
+| 200, empty | the client genuinely has no entities |
+
+Tokens are Okta access tokens; sandbox and production use different Okta apps, so a token is
+only ever valid for one environment. Decode the payload and read `cid` to tell which.
+
+Quirk worth knowing: **RTAU returns `415` on a `GET` unless `Content-Type: application/json`
+is sent**, despite a GET having no body. Confirmed in both environments.
 
 Why nt-portal, pp-tenet-int and rtau exist separately: CAT has its own endpoints for these,
 but they return **form definitions with every value null**. The specialist services are the
@@ -185,12 +249,18 @@ only readable source of the actual settings.
   there are now derived, never asserted.
 - **Verify against live data, not `samples/`.** Those are a different entity and stale.
   Previewing from them produced two wrong conclusions about field scoping.
-- **Entity-scoped, not client-scoped.** One client can hold several legal entities with
-  genuinely different capabilities. Pay-to-card is an *entity*-level capability — never answer
-  it per channel. Reporting profiles are per entity. IA, network tokens and RTAU are per client.
+- **Facts are entity-scoped, even in the client document.** One client can hold several legal
+  entities with genuinely different capabilities. Pay-to-card is an *entity*-level capability —
+  never answer it per channel. Reporting profiles are per entity. IA, network tokens and RTAU
+  are per client. The Client Markdown document puts several entities in one paste but keeps
+  each in its own section and tells the reader to resolve the entity before answering; it
+  never merges two entities' values into one fact.
 - **Capabilities are derived, not read.** CAT exposes building blocks, not answers. AFT on a
   channel requires joining processors to profiles on acquirer + scheme + MCC. A pay-in profile
-  carrying a BAI *is* AFT-enabled. Pay-to-card means `processing_type=payout` profiles with
+  carrying an AFT code *is* AFT-enabled — Visa's code is the BAI (`custom_settings.aft`),
+  Mastercard's is the Payment Transaction Type Identifier, TTI
+  (`custom_settings.transaction_type_identifier`); the two are equivalents and the documents
+  name whichever applies. Pay-to-card means `processing_type=payout` profiles with
   `status=Active`.
 - **Rule out the wrong reasoning, not just the wrong answer.** Saying "never answer this per
   channel" was not enough to stop a reading session from applying the AFT acquirer+scheme+MCC
@@ -232,8 +302,15 @@ block) rather than telling the reader to look it up. It is a **three-way** class
 last two rows — which is why the category stays three-way. Sourced from the Checkout.com card
 payouts docs, hardcoded because the Checkout MCP could not return the table (its search only
 ever yields the section's opening excerpt, and the docs page is JS-rendered). Unrecognised
-codes stay `unknown` and are never defaulted to a category. If Checkout adds a code, this map
-needs updating by hand.
+codes are never defaulted to a category. If Checkout adds a code, this map needs updating by
+hand.
+
+**Mastercard AFT TTIs are not in this table.** Mastercard pay-in AFT profiles carry a Payment
+Transaction Type Identifier such as `P71` (seen live in production); the table above covers
+payout funds-transfer-type codes only. The documents therefore render such a profile as
+AFT-enabled with its code, and the category column as "not classified here — the code is real
+config; only its category is absent from this document's table". That wording is deliberate:
+an unclassified code must not read as a misconfiguration or as "not AFT".
 
 ---
 
@@ -246,6 +323,7 @@ needs updating by hand.
 | Pay-to-card corridors per FT type | Not from CAT `pay-to-card-schemes` (503) — derived from payout profile `custom_settings` instead, one FT type per profile |
 | Payout cron timezone | The schedule carries no timezone **as read today** — but see the note below; this may be a gap in `normalize` rather than in CAT |
 | Settlement threshold / balance minimum units | Raw numbers with no currency or minor/major-unit indicator |
+| Mastercard AFT TTI categories | `FT_CATEGORIES` covers payout funds-transfer-type codes; Mastercard AFT identifiers (e.g. `P71`) render as AFT-enabled but unclassified |
 | Pricing | Excluded — commercially sensitive |
 | Bank account numbers | Redacted **by this app, not by CAT** — `cat_profile.SENSITIVE` strips them and records `redacted_fields`. CAT returns them in full. |
 
@@ -297,11 +375,13 @@ python3 cat-api/generate_profile.py --offline cat-api/responses
 ```
 TODO.md                # open work, priorities, API quirks — read first
 app/
-  server.py            # stdlib HTTP server, port 8787
-  index.html           # front end (4 tabs)
-  cat_profile.py       # fetch + normalise engine; render_md / render_llms
-  llm_bundle.py        # renders project-instructions.md and the two-tier pack
-  dev-creds.json       # SANDBOX-ONLY prefill
+  server.py            # stdlib HTTP server, port 8787; streams /api/generate progress; /api/client-doc
+  index.html           # front end: mode switch, progress + call log, 4 tabs
+  favicon.svg          # tab icon
+  cat_profile.py       # fetch (ENVIRONMENTS, paging, diagnostics) + normalise; render_md / render_llms
+  llm_bundle.py        # renders project-instructions.md, the client document and the two-tier pack
+  dev-creds.example.json   # template for the prefill file
+  dev-creds.json       # SANDBOX-ONLY prefill — gitignored, create from the example
 schema/
   merchant-profile.schema.json   # JSON Schema draft 2020-12, v0.1.0
 cat-api/
@@ -324,7 +404,7 @@ bug. They are the obvious input for the golden-file test in `TODO.md`.
 
 ## Credentials
 
-`app/dev-creds.json` holds a **sandbox-only** Client ID, SK and PK for prefill convenience.
+`app/dev-creds.json` holds a **sandbox-only** Client ID and SK for prefill convenience.
 It is **gitignored**: copy `app/dev-creds.example.json` to `app/dev-creds.json` and fill it in.
 Without it the form fields simply start empty. Never put production keys or a CAT bearer
 token in it — the token is short-lived and always pasted at run time.

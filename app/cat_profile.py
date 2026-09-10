@@ -45,6 +45,37 @@ IA_BASE = "https://pp-tenet-int.sbox.internal/tenet-config-controller/cat-api"
 RTAU_BASE = "https://rtau.sbox.checkout.internal/vault-rtau-portal"
 RTAU_HEADERS = {"Content-Type": "application/json"}
 
+# Per-environment service bases. The app runs in one of two modes and every call in a run
+# uses the bases of that mode only — never a mix. `None` means the host is NOT KNOWN: a
+# fetch against it is skipped and the section degrades to `unavailable` with that reason,
+# exactly as an unreachable host would. Fill a value in only from a verified source; a
+# guessed hostname would silently produce a document about the wrong environment.
+ENVIRONMENTS = {
+    "sandbox": {
+        "cat":       "https://client-admin.cko-sbox.ckotech.co/api",
+        "public":    "https://api.sandbox.checkout.com",
+        "reporting": REPORTING_BASE,
+        "nt":        NT_BASE,
+        "ia":        IA_BASE,
+        "rtau":      RTAU_BASE,
+    },
+    "production": {
+        # Verified live 2026-09-10: this host serves the Client Admin API swagger and returned
+        # the production entity list. The CAT swagger's own "Prod" server entry,
+        # client-admin-prod.ckotech.co, has no DNS record — do not "correct" this back to it.
+        "cat":       "https://client-admin.cko-prod.ckotech.co/api",
+        "public":    "https://api.checkout.com",
+        # Supplied by Patrick 2026-09-10 as working production URLs; same paths as sandbox.
+        "reporting": "https://merlin-alb.prod.internal/reporting-profiles-config-api",
+        "nt":        "https://nt-portal.prod.checkout.internal/vault-nt-portal",
+        "ia":        "https://pp-tenet-int.prod.internal/tenet-config-controller/cat-api",
+        "rtau":      "https://rtau.prod.checkout.internal/vault-rtau-portal",
+    },
+}
+SERVICE_LABELS = {"cat": "Client Admin Tool", "public": "public API",
+                  "reporting": "reporting profiles (merlin)", "nt": "network tokens (nt-portal)",
+                  "ia": "Intelligent Acceptance (pp-tenet-int)", "rtau": "RTAU"}
+
 # RTAU is configured per scheme, and the field names are opaque. Group them the way the
 # form does, and carry the form's own labels so nothing has to be inferred from a slug.
 RTAU_SCHEME_SECTIONS = ("Mastercard", "Visa", "American Express", "Batch Account Updater")
@@ -374,27 +405,138 @@ def hal(d, key=None):
     return []
 
 # ---------- fetch ----------
+# Progress reporting. The server registers a callback for the duration of one fetch and
+# every GET reports (service, path, status, ms) through it, so the UI can show what is being
+# called as it happens. Never includes the token or the response body. The server is
+# single-threaded, so one module-level hook is sufficient.
+_PROGRESS = None
+def set_progress_hook(fn):
+    global _PROGRESS
+    _PROGRESS = fn
+
+def _service_of(base):
+    """Short label for the service a base URL belongs to, looked up in ENVIRONMENTS."""
+    for env in ENVIRONMENTS.values():
+        for k, v in env.items():
+            if v and base.startswith(v): return k
+    return "http"
+
 def _get(base, token, path, timeout=30, extra_headers=None):
     h = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
     h.update(extra_headers or {})
     req = urllib.request.Request(base+path, headers=h)
+    import time as _t
+    t0 = _t.monotonic()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.status, json.loads(r.read().decode("utf-8","replace"))
+            st, out = r.status, json.loads(r.read().decode("utf-8","replace"))
     except urllib.error.HTTPError as e:
-        return e.code, {"_error": e.read().decode("utf-8","replace")[:400]}
+        st, out = e.code, {"_error": e.read().decode("utf-8","replace")[:400]}
     except Exception as e:
-        return None, {"_error": str(e)}
+        st, out = None, {"_error": str(e)}
+    if _PROGRESS:
+        try:
+            _PROGRESS({"service": _service_of(base), "method": "GET", "path": path,
+                       "status": st, "ms": int((_t.monotonic() - t0) * 1000),
+                       "error": (out.get("_error", "")[:160] if st != 200 and isinstance(out, dict) else None)})
+        except Exception:
+            pass
+    return st, out
+
+def _list_of(d, key=None):
+    """Where a CAT collection lives in a response, mirroring hal(): returns (container,
+    listkey) so pages can be merged in place, or (None, None) if no list is found."""
+    if not isinstance(d, dict): return None, None
+    emb = d.get("_embedded")
+    if isinstance(emb, dict):
+        if key and isinstance(emb.get(key), list): return emb, key
+        for k, v in emb.items():
+            if isinstance(v, list): return emb, k
+    for k in ("routes", "processing_profiles", "data", "items", "entities"):
+        if isinstance(d.get(k), list): return d, k
+    return None, None
+
+def _get_paged(base, token, path, key=None, page_size=25, max_pages=40):
+    """GET a CAT collection and follow limit/skip/total_count until every item is read.
+
+    Production clients routinely exceed one page (25) of entities, channels or profiles,
+    and a single-page read silently truncates the document. Returns the FIRST page's
+    dict with its list extended by the later pages, so callers that read the raw shape
+    via hal() are unchanged. Responses without total_count are returned as-is."""
+    sep = "&" if "?" in path else "?"
+    st, first = _get(base, token, f"{path}{sep}limit={page_size}&skip=0")
+    if st != 200 or not isinstance(first, dict): return st, first
+    cont, lk = _list_of(first, key)
+    total = first.get("total_count")
+    if cont is None or not isinstance(total, int): return st, first
+    limit = first.get("limit") or page_size or len(cont[lk]) or 1
+    skip, pages = limit, 1
+    while len(cont[lk]) < total and pages < max_pages:
+        st2, d = _get(base, token, f"{path}{sep}limit={limit}&skip={skip}")
+        if st2 != 200: break
+        c2, k2 = _list_of(d, key)
+        if c2 is None or not c2[k2]: break
+        cont[lk].extend(c2[k2]); skip += limit; pages += 1
+    first["_pages_read"] = pages
+    return st, first
+
+def _token_cid(token):
+    """Okta client id (`cid`) from a bearer's payload — identifies which environment's CAT
+    app minted it. Read-only base64 decode; never validates or logs the token itself."""
+    try:
+        import base64, json as _j
+        seg = token.split(".")[1]; seg += "=" * (-len(seg) % 4)
+        return _j.loads(base64.urlsafe_b64decode(seg)).get("cid")
+    except Exception:
+        return None
+
+def list_entities_diag(base, token, client_id):
+    """(status, entities, diagnosis). `diagnosis` is None on success, otherwise a sentence
+    naming the failure class — connection vs. auth vs. not-found — so the UI never has to
+    guess. Statuses: None = no HTTP exchange at all (DNS / VPN / timeout)."""
+    st, d = _get_paged(base, token, f"/clients/{client_id}/entities", "entities")
+    ents = hal(d, "entities")
+    host = base.split("//", 1)[-1].split("/", 1)[0]
+    if st is None:
+        err = (d or {}).get("_error", "") if isinstance(d, dict) else ""
+        return st, [], (f"No HTTP response from {host} ({err or 'connection failed'}). "
+                        "The token was never evaluated: check the hostname resolves and that you are on the VPN.")
+    if st == 401:
+        cid = _token_cid(token)
+        return st, [], ("CAT returned 401: the token was rejected. It is expired, or was issued by the other "
+                        f"environment's Okta app{f' (token cid {cid})' if cid else ''}. Get a fresh token for this environment.")
+    if st == 403:
+        return st, [], f"CAT returned 403: this token is not permitted to read client {client_id} on {host}."
+    if st == 404:
+        return st, [], f"CAT returned 404: client {client_id} does not exist on {host} — check the id and the selected mode."
+    if st != 200:
+        return st, [], f"CAT returned HTTP {st} from {host}: {str((d or {}).get('_error', ''))[:200]}"
+    if not ents:
+        return st, [], f"CAT answered 200 but client {client_id} has no entities on {host}."
+    return st, ents, None
 
 def list_entities(base, token, client_id):
-    st, d = _get(base, token, f"/clients/{client_id}/entities")
+    st, d = _get_paged(base, token, f"/clients/{client_id}/entities", "entities")
     return hal(d, "entities")
 
-def fetch_all(base, token, client_id, entity_id):
-    """Fetch everything needed to build ONE entity's profile. Returns a responses dict."""
-    R = {"_status": {}}
+def fetch_all(base, token, client_id, entity_id, services=None):
+    """Fetch everything needed to build ONE entity's profile. Returns a responses dict.
+
+    `services` is one ENVIRONMENTS entry (defaults to sandbox). A service whose base is
+    None is not called; its section records status None and the reason, so the renderer
+    reports it as unavailable rather than silently empty."""
+    S = services or ENVIRONMENTS["sandbox"]
+    R = {"_status": {}, "_service_gaps": {}}
+    def missing(key, rkey):
+        R["_status"][rkey] = None
+        R["_service_gaps"][rkey] = f"{SERVICE_LABELS[key]} host is not configured for this environment"
+        return True
     def g(key, path):
         st, obj = _get(base, token, path); R["_status"][key]=st
+        R[key]=obj; return obj
+    def gp(key, path, listkey=None):
+        """Paginated variant of g() for collections that CAT pages at 25."""
+        st, obj = _get_paged(base, token, path, listkey); R["_status"][key]=st
         R[key]=obj; return obj
     g("client", f"/clients/{client_id}")
     R["entities"] = list_entities(base, token, client_id)
@@ -407,21 +549,21 @@ def fetch_all(base, token, client_id, entity_id):
     g("entity", f"/entities/{entity_id}")
     g("breadcrumb", f"/configuration/breadcrumb?entityId={entity_id}")
     g("services", f"/entities/{entity_id}/services")
-    pcs = hal(g("processing_channels_raw", f"/entities/{entity_id}/processing-channels"), "processing_channels")
-    profs = hal(g("processing_profiles_raw", f"/entities/{entity_id}/processing-profiles"), "processing_profiles")
+    pcs = hal(gp("processing_channels_raw", f"/entities/{entity_id}/processing-channels", "processing_channels"), "processing_channels")
+    profs = hal(gp("processing_profiles_raw", f"/entities/{entity_id}/processing-profiles", "processing_profiles"), "processing_profiles")
     g("apm_pricing_raw", f"/entities/{entity_id}/apm-pricing-profiles")
     g("payout_routes_raw", f"/entities/{entity_id}/payout-routes/v2")
     g("forex_p2c", f"/entities/{entity_id}/forex-pay-to-card")
-    g("currency_accounts_raw", f"/entities/{entity_id}/currency-accounts")
+    gp("currency_accounts_raw", f"/entities/{entity_id}/currency-accounts", "currency_accounts")
     g("risk_entity", f"/entities/{entity_id}/risk-settings")
-    pay_rules = hal(g("payment_routing_raw", f"/entities/{entity_id}/payment-routing-rules?limit=25&skip=0"))
-    payout_rules = hal(g("payout_routing_raw", f"/entities/{entity_id}/payout-routing-rules?limit=25&skip=0"))
+    pay_rules = hal(gp("payment_routing_raw", f"/entities/{entity_id}/payment-routing-rules"))
+    payout_rules = hal(gp("payout_routing_raw", f"/entities/{entity_id}/payout-routing-rules"))
     g("risk_client", f"/clients/{client_id}/risk-settings")
     g("net_tokens", f"/clients/{client_id}/network-tokens")
     # sessions channels carry the 3DS layer (protocol_versions per scheme processor)
-    sess = hal(g("sessions_channels_raw", f"/entities/{entity_id}/sessions-processing-channels?limit=25&skip=0"),
+    sess = hal(gp("sessions_channels_raw", f"/entities/{entity_id}/sessions-processing-channels"),
                "sessions_processing_channels")
-    payout_settings = hal(g("payout_settings_raw", f"/entities/{entity_id}/payout-settings?limit=25&skip=0"),
+    payout_settings = hal(gp("payout_settings_raw", f"/entities/{entity_id}/payout-settings"),
                           "payout_settings")
     # entity-scoped label dictionaries (id -> human name) for glossing opaque IDs
     g("gloss_payment_routing", f"/payment-routing-rules/configuration?entityId={entity_id}")
@@ -430,54 +572,67 @@ def fetch_all(base, token, client_id, entity_id):
 
     # Network tokens — client-level, on nt-portal. CAT's own /network-tokens endpoint is a
     # form DEFINITION with null values, so it cannot answer any of this.
-    try:
-        st, d = _get(NT_BASE, token, f"/cat/configurations/{client_id}")
-        R["_status"]["nt_config"] = st
-        R["nt_config"] = parse_nt_config(d) if st == 200 else {}
-    except Exception as e:
-        R["_status"]["nt_config"] = None
-        R["nt_config"] = {}
+    R["nt_config"] = {}
+    if S.get("nt") is None:
+        missing("nt", "nt_config")
+    else:
+        try:
+            st, d = _get(S["nt"], token, f"/cat/configurations/{client_id}")
+            R["_status"]["nt_config"] = st
+            R["nt_config"] = parse_nt_config(d) if st == 200 else {}
+        except Exception as e:
+            R["_status"]["nt_config"] = None
 
     # Intelligent Acceptance — client-level, fourth internal service.
-    try:
-        st, d = _get(IA_BASE, token, f"/clients/{client_id}/form")
-        R["_status"]["ia_config"] = st
-        R["ia_config"] = parse_ia_config(d) if st == 200 else {}
-    except Exception:
-        R["_status"]["ia_config"] = None
-        R["ia_config"] = {}
+    R["ia_config"] = {}
+    if S.get("ia") is None:
+        missing("ia", "ia_config")
+    else:
+        try:
+            st, d = _get(S["ia"], token, f"/clients/{client_id}/form")
+            R["_status"]["ia_config"] = st
+            R["ia_config"] = parse_ia_config(d) if st == 200 else {}
+        except Exception:
+            R["_status"]["ia_config"] = None
 
     # Real Time Account Updater — fifth service, client-level. Needs Content-Type on a GET.
-    try:
-        st, d = _get(RTAU_BASE, token, f"/cat/configurations/{client_id}/form",
-                     extra_headers=RTAU_HEADERS)
-        R["_status"]["rtau_config"] = st
-        R["rtau_config"] = parse_rtau_config(d) if st == 200 else {}
-    except Exception:
-        R["_status"]["rtau_config"] = None
-        R["rtau_config"] = {}
+    R["rtau_config"] = {}
+    if S.get("rtau") is None:
+        missing("rtau", "rtau_config")
+    else:
+        try:
+            st, d = _get(S["rtau"], token, f"/cat/configurations/{client_id}/form",
+                         extra_headers=RTAU_HEADERS)
+            R["_status"]["rtau_config"] = st
+            R["rtau_config"] = parse_rtau_config(d) if st == 200 else {}
+        except Exception:
+            R["_status"]["rtau_config"] = None
 
     # Reporting profiles — different service, different host. Paged; follow it if needed.
     # Wrapped so an unreachable internal host degrades this section only.
     R["reporting_profiles"] = []
-    try:
-        skip, guard = 0, 0
-        while guard < 10:
-            st, d = _get(REPORTING_BASE, token,
-                         f"/reporting-profiles/table/{entity_id}?skip={skip}")
-            R["_status"]["reporting_profiles"] = st
-            if st != 200:
-                break
-            page, pg = parse_reporting_table(d)
-            R["reporting_profiles"].extend(page)
-            total, limit = pg.get("total") or 0, pg.get("limit") or 0
-            skip += (limit or len(page) or 1)
-            guard += 1
-            if not page or skip >= total:
-                break
-    except Exception as e:
-        R["_status"]["reporting_profiles"] = None
-        R["reporting_profiles_error"] = str(e)
+    if S.get("reporting") is None:
+        missing("reporting", "reporting_profiles")
+        R["reporting_profiles_error"] = R["_service_gaps"]["reporting_profiles"]
+    else:
+        try:
+            skip, guard = 0, 0
+            while guard < 10:
+                st, d = _get(S["reporting"], token,
+                             f"/reporting-profiles/table/{entity_id}?skip={skip}")
+                R["_status"]["reporting_profiles"] = st
+                if st != 200:
+                    break
+                page, pg = parse_reporting_table(d)
+                R["reporting_profiles"].extend(page)
+                total, limit = pg.get("total") or 0, pg.get("limit") or 0
+                skip += (limit or len(page) or 1)
+                guard += 1
+                if not page or skip >= total:
+                    break
+        except Exception as e:
+            R["_status"]["reporting_profiles"] = None
+            R["reporting_profiles_error"] = str(e)
 
     # chained: ALL channel details + ALL profile details (fetch breadth)
     R["channel_details"] = []
@@ -585,7 +740,16 @@ def normalize(R, environment="sandbox"):
             "caic":(bs[0].get("card_acceptor_identification_code") if bs else None),
             "business_model":d.get("business_model"),
             "ft_type":cs.get("funds_transfer_type"),
+            # The AFT indicator differs per scheme: Visa puts a Business Application
+            # Identifier (BAI) inside custom_settings.aft; Mastercard puts a Payment Transaction
+            # Type Identifier (TTI) at custom_settings.transaction_type_identifier. Verified on
+            # live production profiles 2026-09-10 (17 Visa AFT profiles: BAI only; 16
+            # Mastercard: TTI only). Either one marks a pay-in profile AFT-enabled.
             "aft_bai":aft.get("business_application_identifier"),
+            "aft_tti":cs.get("transaction_type_identifier"),
+            "aft_code":aft.get("business_application_identifier") or cs.get("transaction_type_identifier"),
+            "aft_indicator":("BAI" if aft.get("business_application_identifier")
+                             else "TTI" if cs.get("transaction_type_identifier") else None),
             "aft_override":aft.get("override_aft_processing"),
             "aft_skip_recipient_name":aft.get("is_skip_recipient_name_enabled"),
             "authorization_validity_period":cs.get("authorization_validity_period"),
@@ -606,7 +770,7 @@ def normalize(R, environment="sandbox"):
     active_payout=[p for p in payout if (p.get("status") or "").lower()=="active"]
     # The v2 profile endpoint carries AFT / funds-transfer-type / corridor / auth-hold
     # fields; v1 does not. Without v2 we must report "unknown", never a false negative.
-    v2_fidelity=any(p.get("aft_bai") or p.get("ft_type") or p.get("destination_countries")
+    v2_fidelity=any(p.get("aft_code") or p.get("ft_type") or p.get("destination_countries")
                     or p.get("authorization_validity_period") is not None for p in profiles)
 
     cid=client.get("id") or entity.get("client_id"); eid=entity.get("id")
@@ -682,7 +846,7 @@ def normalize(R, environment="sandbox"):
         proc_rows=[]; aft_hits=[]
         for p in procs:
             mp,how=match_profile(p.get("acquirer_id"),p.get("scheme"),p.get("merchant_category_code"))
-            if mp and mp.get("type")=="payin" and mp.get("aft_bai"): aft_hits.append((mp,how))
+            if mp and mp.get("type")=="payin" and mp.get("aft_code"): aft_hits.append((mp,how))
             curs=sorted({cur for cur in (p.get("processing_currencies") or [])})
             proc_rows.append(drop_empty({
                 "processor_id":p.get("id"),"name":p.get("name"),"scheme":scheme(p.get("scheme")),
@@ -699,14 +863,27 @@ def normalize(R, environment="sandbox"):
         # and coverage says why. An LLM must never read a missing `enabled` as "no".
         if aft_hits:
             mp,how=aft_hits[0]
+            # A channel can resolve to one AFT profile PER SCHEME (Visa via BAI, Mastercard via
+            # TTI). Keep the first as the headline for compatibility, but carry every match so
+            # the renderer can show one row per scheme instead of hiding the others.
+            seen=set(); matches=[]
+            for m,h in aft_hits:
+                if m["id"] in seen: continue
+                seen.add(m["id"])
+                matches.append(drop_empty({"profile_id":m["id"],"profile_name":m["name"],
+                    "scheme":(m.get("schemes") or [None])[0] if len(m.get("schemes") or [])==1 else ", ".join(m.get("schemes") or []) or None,
+                    "aft_code":m.get("aft_code"),"aft_indicator":m.get("aft_indicator"),
+                    "authorization_validity_period":m.get("authorization_validity_period"),"match":h}))
             aft_verdict=drop_empty({"enabled":True,"coverage":"complete",
-                "profile_id":mp["id"],"profile_name":mp["name"],
+                "profile_id":mp["id"],"profile_name":mp["name"],"matches":matches,
                 "business_application_identifier":mp.get("aft_bai"),
+                "transaction_type_identifier":mp.get("aft_tti"),
+                "aft_code":mp.get("aft_code"),"aft_indicator":mp.get("aft_indicator"),
                 "authorization_validity_period":mp.get("authorization_validity_period"),
                 "sca_exemptions_settings":mp.get("sca_exemptions"),"match":how})
         elif not v2_fidelity:
             aft_verdict={"coverage":"unavailable",
-                "reason":"profile details came from the v1 endpoint; AFT fields (BAI, auth "
+                "reason":"profile details came from the v1 endpoint; AFT fields (BAI/TTI, auth "
                          "hold, SCA exemptions) are absent. Regenerate live to determine."}
         else:
             aft_verdict={"enabled":False,"coverage":"complete",
@@ -760,15 +937,17 @@ def normalize(R, environment="sandbox"):
             # corridors live on PAYOUT profiles only; a pay-in AFT profile has none at all
             "origination_countries":pr.get("origination_countries") or [],
             "destination_countries":pr.get("destination_countries") or [],
-            # DEFINITIONAL: a pay-in profile carrying a BAI is AFT-enabled. State it rather
-            # than leaving the reader to infer it from the presence of the BAI.
-            **({"aft_enabled":True} if (pr.get("type")=="payin" and pr.get("aft_bai"))
+            # DEFINITIONAL: a pay-in profile carrying an AFT code — a BAI (Visa) or a TTI
+            # (Mastercard) — is AFT-enabled. State it rather than leaving the reader to infer it.
+            **({"aft_enabled":True} if (pr.get("type")=="payin" and pr.get("aft_code"))
                else {"aft_enabled":False} if pr.get("type")=="payin" else {}),
             "card_acceptor_identification_code":pr.get("caic"),
             "business_model":pr.get("business_model"),"funds_transfer_type":pr.get("ft_type"),
             "card_acceptor_country_code":pr.get("acceptor_country"),
             "enable_recipient_details_submission":pr.get("recipient_details"),
             "aft":drop_empty({"business_application_identifier":pr.get("aft_bai"),
+                "transaction_type_identifier":pr.get("aft_tti"),
+                "code":pr.get("aft_code"),"indicator":pr.get("aft_indicator"),
                 "override_aft_processing":pr.get("aft_override"),
                 "is_skip_recipient_name_enabled":pr.get("aft_skip_recipient_name")}),
             "authorization_validity_period":pr.get("authorization_validity_period"),
@@ -1018,6 +1197,10 @@ def normalize(R, environment="sandbox"):
         "pricing":{"state":"excluded","reason":"commercially sensitive"},
         "bank_account_numbers":{"state":"redacted","reason":"policy — instrument type, "
                      "currency and bank name are surfaced instead"}}
+    # A service with no configured host for this environment was never called. Say so with
+    # the precise reason, replacing the generic "unreachable" wording where both apply.
+    for k, reason in (R.get("_service_gaps") or {}).items():
+        env["not_available"][k]={"state":"unavailable","reason":reason}
     env["coverage_summary"]={sec:(profile[sec].get("provenance",{}) or {}).get("coverage","unknown")
         for sec in ["identity","entity_structure","processing_channels","processing_profiles","scheme_enablement",
                     "money_out","settlement","routing","capabilities_matrix","risk_and_auth",
@@ -1104,7 +1287,7 @@ def render_md(p):
             a=pr.get("aft") or {}
             extra=[]
             if pr.get("funds_transfer_type"): extra.append(f"FT {pr['funds_transfer_type']}")
-            if a.get("business_application_identifier"): extra.append(f"AFT BAI {a['business_application_identifier']}")
+            if a.get("code"): extra.append(f"AFT {a.get('indicator','code')} {a['code']}")
             if pr.get("authorization_validity_period") is not None: extra.append(f"auth {pr['authorization_validity_period']}d")
             if pr.get("is_quasi_cash"): extra.append("quasi-cash")
             sca=pr.get("sca_exemptions_settings") or {}
@@ -1184,7 +1367,7 @@ def render_llms(p):
         en=",".join(k.replace("enable_","") for k,v in sca.items() if v)
         L.append(f"PROFILE {pr.get('name','')} ({pr.get('type','')}): scheme={pr.get('scheme','')}, acquirer={pr.get('acquirer_key','')}, "
                  f"bin={pr.get('acquiring_bin','-')}, mcc={pr.get('merchant_category_code','-')}, "
-                 f"ft_type={pr.get('funds_transfer_type','-')}, aft_bai={a.get('business_application_identifier','-')}, "
+                 f"ft_type={pr.get('funds_transfer_type','-')}, aft_code={a.get('code','-')}{'('+a['indicator']+')' if a.get('indicator') else ''}, "
                  f"auth_validity={pr.get('authorization_validity_period','-')}, quasi_cash={pr.get('is_quasi_cash','-')}, "
                  f"sca_exemptions={en or '-'}, status={pr.get('status','')}")
     L.append(f"PAY-TO-CARD: enabled={p2c.get('enabled')}. schemes={', '.join(p2c.get('enabled_schemes',[]))}. ft_types={', '.join(p2c.get('ft_types',[]))}. mccs={', '.join(p2c.get('supported_mccs',[]))}.")

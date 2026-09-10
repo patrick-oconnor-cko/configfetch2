@@ -29,6 +29,25 @@ def _classify_ft(code):
         return None
 
 
+def _aft_code(a):
+    """(code, indicator) from a profile's `aft` block or a channel's AFT verdict. Visa's
+    indicator is the Business Application Identifier (BAI); Mastercard's is the Payment
+    Transaction Type Identifier (TTI). Same role, different name — both mean AFT-enabled."""
+    a = a or {}
+    code = a.get("code") or a.get("aft_code") or a.get("business_application_identifier") or a.get("transaction_type_identifier")
+    ind = a.get("indicator") or a.get("aft_indicator") or ("BAI" if a.get("business_application_identifier") else "TTI" if a.get("transaction_type_identifier") else None)
+    return code, ind
+
+def _aft_cell(a):
+    code, ind = _aft_code(a)
+    return f"`{code}` ({ind})" if code and ind else f"`{code}`" if code else "—"
+
+AFT_INDICATOR_NOTE = ("The AFT indicator is scheme-specific: **Visa** calls it the Business Application "
+                      "Identifier (**BAI**); **Mastercard** calls it the Payment Transaction Type Identifier "
+                      "(**TTI**). They are the same thing under two names — when a question mentions either, "
+                      "answer from the code shown here whichever the scheme.")
+
+
 def est_tokens(s): return max(1, len(s) // 4)
 
 
@@ -43,8 +62,20 @@ TEST_CARDS = (
 )
 
 
-def _test_cards_block(mcp="the Checkout.com docs MCP server"):
-    """Test-card defaults for example payloads. Rendered into both tiers."""
+def _test_cards_block(mcp="the Checkout.com docs MCP server", sandbox=True):
+    """Test-card defaults for example payloads. Rendered into both tiers.
+
+    Only for a sandbox snapshot: the numbers below are sandbox-only, and a production
+    document must not invite anyone to send test — or real — cards at a live account."""
+    if not sandbox:
+        return ["**Generating an example payload — production snapshot**", "",
+                "This document describes a **production** account. Do not run example or "
+                "test payloads against it: sandbox test card numbers are not valid on "
+                "production, and a real card number would create a live transaction. Build "
+                "and test any example request in the sandbox first, then carry over only "
+                "the production identifiers from this document (processing channel, "
+                "currency account, profile ids) into the live request.",
+                ""]
     return ["**Generating an example payload — which card to use**", "",
             _tbl(["Scheme", "Number", "Expiry", "CVV"],
                  [[s, f"`{n}`", e, c] for s, n, e, c in TEST_CARDS]),
@@ -169,9 +200,10 @@ def _sec_channels(p, nm):
         if ch.get("mccs"): out.append("MCCs: " + ", ".join(ch["mccs"]))
 
         out.append("AFT: " + _verdict(ch.get("aft"),
-            lambda v: (f"✅ via {v.get('profile_name')} (`{v.get('profile_id')}`) · "
-                       f"BAI={v.get('business_application_identifier')} · "
-                       f"auth hold {v.get('authorization_validity_period')}d · match {v.get('match')}"),
+            lambda v: "✅ " + " · ".join(
+                f"via {m.get('profile_name')} (`{m.get('profile_id')}`) {m.get('scheme') or ''} "
+                f"{_aft_code(m)[1] or 'AFT code'}={_aft_code(m)[0]} · auth hold {m.get('authorization_validity_period')}d · match {m.get('match')}"
+                for m in (v.get("matches") or [v])),
             lambda v: f"❌ {v.get('reason','no AFT-capable profile')}"))
         out.append("3DS: " + _verdict(ch.get("three_ds"),
             lambda v: "✅ " + " · ".join(
@@ -202,7 +234,7 @@ def _sec_payin(p):
     payin = [x for x in pp.get("profiles", []) if x.get("type") == "payin"]
     rows = [[x.get("name"), x.get("scheme"), x.get("acquirer_key"), x.get("acquiring_bin"),
              x.get("merchant_category_code"),
-             (x.get("aft") or {}).get("business_application_identifier"),
+             _aft_cell(x.get("aft")),
              (f"{x['authorization_validity_period']}d" if x.get("authorization_validity_period") is not None else None),
              ("yes" if x.get("is_quasi_cash") else "no"), x.get("acceptance_mode"), x.get("status")]
             for x in payin]
@@ -210,9 +242,9 @@ def _sec_payin(p):
                volatility=pv.get("volatility"),
                sources="/entities/{e}/processing-profiles · /processing-profiles/v2/{id}"),
            "", "# Pay-in processing profiles", "",
-           "Acceptance profiles. AFT profiles carry the Business Application Identifier (BAI),",
-           "the authorization hold, and SCA exemptions.", "",
-           _tbl(["Name", "Scheme", "Acquirer", "BIN", "MCC", "AFT BAI", "Auth hold",
+           "Acceptance profiles. AFT profiles carry the AFT code (Visa: BAI; Mastercard: TTI),",
+           "the authorization hold, and SCA exemptions. " + AFT_INDICATOR_NOTE, "",
+           _tbl(["Name", "Scheme", "Acquirer", "BIN", "MCC", "AFT code", "Auth hold",
                  "Quasi-cash", "Acceptance", "Status"], rows)]
     FL = [("enable_transaction_risk_analysis", "TRA"), ("enable_low_value", "Low value"),
           ("enable_secure_corporate_payment", "Secure corp"), ("enable_3ds_outage", "3DS outage"),
@@ -385,7 +417,8 @@ def _sec_glossary(p):
     g = (p.get("glossary") or {}).get("ids") or {}
     pv = _prov(p, "glossary")
     CODES = [("FT / C52 / FD", "funds transfer type on a payout profile — identifies the scheme money-movement product"),
-             ("BAI", "Business Application Identifier on an AFT (Account Funding Transaction) profile"),
+             ("BAI", "Business Application Identifier — Visa's AFT (Account Funding Transaction) indicator on a pay-in profile"),
+             ("TTI", "Payment Transaction Type Identifier — Mastercard's AFT indicator; the Mastercard equivalent of a BAI"),
              ("CAIC", "Card Acceptor Identification Code"),
              ("same_as_pc", "this processor inherits the setting from its processing channel"),
              ("complete_processing", "Checkout.com performs both authorization and settlement"),
@@ -468,7 +501,7 @@ def _card(p, section_meta):
         ["MCC — channels.md / pay-to-card.md",
          "MCC is **not** a field on a payout request; it comes from the profile the payout routes to"],
     ]))
-    L += _test_cards_block("the Checkout.com docs MCP server")
+    L += _test_cards_block("the Checkout.com docs MCP server", sandbox=_mcp_name(p)[1])
     L += ["## Can / cannot", ""]
     L.append("- accept: " + (", ".join(s.get("scheme") for s in se.get("card_schemes", [])) or "—")
              + " · APMs: " + (", ".join(a.get("name") for a in se.get("alternative_payment_methods", [])) or "—"))
@@ -635,27 +668,27 @@ def _promote(s, levels=1):
 
 
 def _aft_summary(p):
-    """AFT: which channel, the BAI and its category, and what the profile permits."""
+    """AFT: which channel, the AFT code (BAI or TTI) and its category, and what the profile permits."""
     chans = (p.get("processing_channels") or {}).get("channels", [])
     profs = {x.get("profile_id"): x for x in
              (p.get("processing_profiles") or {}).get("profiles", [])}
     out = ["## AFT (Account Funding Transactions)", "",
-           "**A pay-in processing profile carrying a BAI is AFT-enabled — that is what "
+           "**A pay-in processing profile carrying an AFT code is AFT-enabled — that is what "
            "enables AFT.** A channel is AFT-enabled when one of its processors resolves to "
            "such a profile (joined on acquirer + scheme + MCC); AFT is not a field on the "
-           "channel itself.", ""]
+           "channel itself. " + AFT_INDICATOR_NOTE, ""]
     aftp = [x for x in (p.get("processing_profiles") or {}).get("profiles", [])
             if x.get("aft_enabled")]
     if aftp:
         arows = []
         for x in aftp:
-            bai = (x.get("aft") or {}).get("business_application_identifier")
-            c = _classify_ft(bai)
+            code, _ind = _aft_code(x.get("aft"))
+            c = _classify_ft(code)
             arows.append([x.get("name") or f"`{x.get('profile_id')}`",
                           x.get("scheme") or "—",
-                          f"`{bai}`" if bai else "—",
+                          _aft_cell(x.get("aft")),
                           (f"**{c['category_label']}** — {c['description']}" if c
-                           else "unknown — code not recognised"),
+                           else "not classified here — the code is real config; only its category is absent from this document's table"),
                           ", ".join(x.get("currencies") or []) or "not stated",
                           ", ".join(x.get("merchant_category_codes") or []) or "—",
                           x.get("acquiring_bin") or "—",
@@ -668,7 +701,7 @@ def _aft_summary(p):
                            else "unknown"),
                           x.get("status") or "—"])
         out += ["**AFT-enabled pay-in profiles**", "",
-                _tbl(["Profile", "Scheme", "BAI", "Category", "Currencies", "MCC", "BIN",
+                _tbl(["Profile", "Scheme", "AFT code", "Category", "Currencies", "MCC", "BIN",
                       "Acceptor country", "Recipient details", "Recipient name",
                       "Status"], arows), ""]
 
@@ -683,29 +716,34 @@ def _aft_summary(p):
     rows = []
     for ch in live:
         a = ch.get("aft") or {}
-        pr = profs.get(a.get("profile_id")) or {}
-        ft = a.get("business_application_identifier")
-        cls = _classify_ft(ft)
-        rows.append([
-            f"{ch.get('name')} `{ch.get('processing_channel_id')}`",
-            a.get("profile_name") or a.get("profile_id") or "—",
-            f"`{ft}`" if ft else "—",
-            (f"**{cls['category_label']}** — {cls['description']}" if cls
-             else "unknown — code not recognised"),
-            ", ".join(pr.get("currencies") or []) or "not stated on the profile",
-            (f"{a.get('authorization_validity_period')}d"
-             if a.get("authorization_validity_period") is not None else "—"),
-        ])
-    out.append(_tbl(["Channel", "Via profile", "BAI", "Category", "Currencies allowed",
+        # one row per matching profile: a channel can be AFT-enabled for Visa (BAI) and
+        # Mastercard (TTI) through two different profiles — never collapse them into one
+        for m in (a.get("matches") or [a]):
+            pr = profs.get(m.get("profile_id")) or {}
+            ft, _ind = _aft_code(m)
+            cls = _classify_ft(ft)
+            rows.append([
+                f"{ch.get('name')} `{ch.get('processing_channel_id')}`",
+                m.get("profile_name") or m.get("profile_id") or "—",
+                m.get("scheme") or pr.get("scheme") or "—",
+                _aft_cell(m),
+                (f"**{cls['category_label']}** — {cls['description']}" if cls
+                 else "not classified here — the code is real config; only its category is absent from this document's table"),
+                ", ".join(pr.get("currencies") or []) or "not stated on the profile",
+                (f"{m.get('authorization_validity_period')}d"
+                 if m.get("authorization_validity_period") is not None else "—"),
+            ])
+    out.append(_tbl(["Channel", "Via profile", "Scheme", "AFT code", "Category", "Currencies allowed",
                      "Auth hold"], rows))
     out += ["**There are no corridor country lists on a pay-in AFT profile.** Verified "
             "across every profile on this client: `origination_countries` and "
             "`destination_countries` appear only on *payout* profiles (see Pay-to-card). "
             "What a pay-in AFT profile does carry is the acceptor's own country and the two "
             "recipient controls above. AFT destination/recipient **countries** are therefore "
-            "**unknown** from config, not unrestricted. The BAI category above comes from the Checkout.com card payouts "
-            "documentation, not from CAT; a money transfer requires a `sender` block on the "
-            "request.", ""]
+            "**unknown** from config, not unrestricted. The category column comes from the Checkout.com card payouts "
+            "documentation's funds-transfer-type table, not from CAT; a money transfer requires a `sender` block on the "
+            "request. Codes outside that table (for example Mastercard AFT TTIs such as `P71`) are shown "
+            "unclassified — that is a gap in the table, not a configuration problem.", ""]
     return "\n".join(out)
 
 
@@ -1506,7 +1544,7 @@ def _pi_validation(p):
          "When validating, check the values against this document **and** retrieve the "
          "request schema from the docs for the required-field list. Report which specific "
          "values are wrong for this merchant, not just whether the shape is valid.",
-         ""] + _test_cards_block("the `checkout-mcp-sandbox` MCP server")
+         ""] + _test_cards_block(f"the `{_mcp_name(p)[0]}` MCP server", sandbox=_mcp_name(p)[1])
 
 
 def _pi_not_covered(p):
@@ -1798,7 +1836,7 @@ def _sec_aft(p):
     pv = _prov(p, "processing_profiles")
     return (_fm(section="aft", as_of=pv.get("as_of"), coverage=pv.get("coverage"),
                 volatility=pv.get("volatility"),
-                scope="channel (derived — a pay-in profile carrying a BAI is what enables it)",
+                scope="channel (derived — a pay-in profile carrying an AFT code, BAI or TTI, is what enables it)",
                 sources="/entities/{e}/processing-channels · "
                         "/entities/{e}/processing-profiles · /processing-profiles/v2/{id}",
                 not_covered="destination/recipient countries (not on a pay-in AFT profile)")
