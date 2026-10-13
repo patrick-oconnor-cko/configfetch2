@@ -267,7 +267,12 @@ def parse_nt_config(d):
     })
 
 # Funds transfer type -> category. Source: Checkout.com docs, "Funds transfer types" on
-# Payments > Request payouts > Card payouts. Visa calls the code a Business Application
+# Payments > Request payouts > Card payouts. SCOPE: this categorisation, and the
+# `requires_sender` flag derived from it, apply to PAY-TO-CARD funds transfer types on payout
+# profiles. AFT codes (BAI/TTI) reuse some of the same letters but the sender rule does NOT
+# follow: for an AFT, sender/recipient requirements come from scheme + jurisdiction +
+# geography (docs: "Perform an account funding transaction"). The renderers use this table
+# only for a use-case label on the AFT side. Visa calls the code a Business Application
 # Identifier (BAI) / Visa Direct code; Mastercard calls it a Transaction Type Identifier /
 # Mastercard Send code.
 #
@@ -643,7 +648,7 @@ def fetch_all(base, token, client_id, entity_id, services=None):
     R["profile_details"] = []
     for pr in profs:
         if pr.get("id"):
-            st, d = _get(base, token, f"/processing-profiles/v2/{pr['id']}")  # v2 carries pay-to-card corridors
+            st, d = _get(base, token, f"/processing-profiles/v2/{pr['id']}")  # v2 carries pay-to-card origination/destination countries
             if "_error" not in d: R["profile_details"].append(d)
     # chained: routing-rule detail (list gives CA *names*, detail adds allow_any_payment_method)
     R["payment_rule_details"], R["payout_rule_details"] = [], []
@@ -737,7 +742,19 @@ def normalize(R, environment="sandbox"):
             "mccs":sorted({str(b.get("merchant_category_code")) for b in bs
                            if b.get("merchant_category_code") is not None}),
             "currencies":[c for c in (d.get("currencies") or []) if c],
+            # CAID — Card Acceptor Identification Code, what merchants call the MID. It lives in
+            # business_settings, one entry per MCC<->CAID pair, and a profile can carry several.
+            # Keep every pair (the pairing is real config) plus the distinct code list; `caic`
+            # stays as the first code for older readers.
             "caic":(bs[0].get("card_acceptor_identification_code") if bs else None),
+            "acceptor_ids":[drop_empty({"merchant_category_code":(str(b["merchant_category_code"]) if b.get("merchant_category_code") is not None else None),
+                                        "card_acceptor_identification_code":b.get("card_acceptor_identification_code") or None,
+                                        "force_caid_generation":b.get("force_caid_generation")})
+                            for b in bs if (b.get("merchant_category_code") is not None or b.get("card_acceptor_identification_code"))],
+            "caids":sorted({b.get("card_acceptor_identification_code") for b in bs if b.get("card_acceptor_identification_code")}),
+            "auto_generate_caid":d.get("auto_generate_card_acceptor_identification_code"),
+            "acceptor_legal_name":d.get("card_acceptor_legal_name") or None,
+            "acceptor_trade_name":d.get("card_acceptor_trade_name") or None,
             "business_model":d.get("business_model"),
             "ft_type":cs.get("funds_transfer_type"),
             # The AFT indicator differs per scheme: Visa puts a Business Application
@@ -761,14 +778,14 @@ def normalize(R, environment="sandbox"):
             "caic":(bs[0].get("card_acceptor_identification_code") if bs else None),
             "acceptor_country":iso2(d.get("card_acceptor_country_code")),
             # AFT recipient controls — these are the only recipient-related settings on a
-            # pay-in AFT profile. There are NO corridor country lists on a pay-in profile.
+            # pay-in AFT profile. There are NO origination/destination country lists on a pay-in profile.
             "recipient_details":cs.get("enable_recipient_details_submission"),
             "origination_countries":sorted({iso2(c) for c in (cs.get("origination_countries") or []) if iso2(c)}),
             "destination_countries":sorted({iso2(c) for c in (cs.get("destination_countries") or []) if iso2(c)})})
     payin=[p for p in profiles if p["type"]=="payin"]
     payout=[p for p in profiles if p["type"]=="payout"]
     active_payout=[p for p in payout if (p.get("status") or "").lower()=="active"]
-    # The v2 profile endpoint carries AFT / funds-transfer-type / corridor / auth-hold
+    # The v2 profile endpoint carries AFT / funds-transfer-type / origination+destination countries / auth-hold
     # fields; v1 does not. Without v2 we must report "unknown", never a false negative.
     v2_fidelity=any(p.get("aft_code") or p.get("ft_type") or p.get("destination_countries")
                     or p.get("authorization_validity_period") is not None for p in profiles)
@@ -931,10 +948,10 @@ def normalize(R, environment="sandbox"):
             "scheme":(pr["schemes"][0] if pr["schemes"] else None),
             "acquirer_key":pr.get("acquirer_key"),"processor_key":pr.get("processor_key"),
             "acquiring_bin":pr.get("acquiring_bin"),"merchant_category_code":pr.get("mcc"),
-            # all MCCs the profile covers, its permitted currencies, and its CAIC
+            # all MCCs the profile covers, its permitted currencies, and its CAIDs
             "merchant_category_codes":pr.get("mccs") or [],
             "currencies":pr.get("currencies") or [],
-            # corridors live on PAYOUT profiles only; a pay-in AFT profile has none at all
+            # origination/destination countries live on PAYOUT profiles only; a pay-in AFT profile has none
             "origination_countries":pr.get("origination_countries") or [],
             "destination_countries":pr.get("destination_countries") or [],
             # DEFINITIONAL: a pay-in profile carrying an AFT code — a BAI (Visa) or a TTI
@@ -942,6 +959,11 @@ def normalize(R, environment="sandbox"):
             **({"aft_enabled":True} if (pr.get("type")=="payin" and pr.get("aft_code"))
                else {"aft_enabled":False} if pr.get("type")=="payin" else {}),
             "card_acceptor_identification_code":pr.get("caic"),
+            "card_acceptor_identification_codes":pr.get("caids") or [],
+            "acceptor_ids":pr.get("acceptor_ids") or [],
+            "auto_generate_card_acceptor_identification_code":pr.get("auto_generate_caid"),
+            "card_acceptor_legal_name":pr.get("acceptor_legal_name"),
+            "card_acceptor_trade_name":pr.get("acceptor_trade_name"),
             "business_model":pr.get("business_model"),"funds_transfer_type":pr.get("ft_type"),
             "card_acceptor_country_code":pr.get("acceptor_country"),
             "enable_recipient_details_submission":pr.get("recipient_details"),
@@ -966,6 +988,8 @@ def normalize(R, environment="sandbox"):
     p2c_processors=[drop_empty({"profile_id":p["id"],"name":p["name"],
         "scheme":(p["schemes"][0] if p["schemes"] else None),"acquiring_bin":p["acquiring_bin"],
         "merchant_category_code":p["mcc"],"card_acceptor_identification_code":p.get("caic"),
+        "merchant_category_codes":p.get("mccs") or [],
+        "card_acceptor_identification_codes":p.get("caids") or [],"acceptor_ids":p.get("acceptor_ids") or [],
         "funds_transfer_type":p.get("ft_type"),"business_model":p["business_model"],
         "acceptance_mode":p.get("acceptance_mode"),"checkout_legal_entity_code":p.get("checkout_legal_entity_code"),
         "status":p["status"],
@@ -974,7 +998,7 @@ def normalize(R, environment="sandbox"):
     p2c_origin=sorted({c for p in active_payout for c in (p.get("origination_countries") or [])})
     p2c_dest=sorted({c for p in active_payout for c in (p.get("destination_countries") or [])})
     p2c_ft=sorted({p["ft_type"] for p in active_payout if p.get("ft_type")})
-    # payout routes: keep the per-corridor scheme/fee_type detail we were collapsing away
+    # payout routes: keep the per-country/currency scheme/fee_type detail we were collapsing away
     enabled_routes=[r for r in payout_routes if r.get("enabled")]
     route_rows=[drop_empty({"country":iso2(r.get("country")),"currency":r.get("currency"),
         "schemes":[drop_empty({"name":s.get("name"),"fee_type":s.get("fee_type")})
@@ -1049,6 +1073,42 @@ def normalize(R, environment="sandbox"):
     ALLOW_KEYS=("allow_any_processing_channel","allow_any_merchant_category_code",
                 "allow_any_processing_currency","allow_any_event_type","allow_any_card_type",
                 "allow_any_region","allow_any_banking_partner","allow_any_payment_method")
+    # When an allow_any_* flag is FALSE the rule is scoped, and CAT states the scope in
+    # sibling fields — the list gives e.g. processing_channel_name="BLIK" and
+    # processing_currency_count=1; the detail may add arrays (event_types, ids). Keeping only
+    # the flags dropped that scope, so a rule bound to one channel rendered as "restricted by
+    # processing channel" with the channel never named. Capture every sibling field whose name
+    # carries the dimension, so nothing read is lost and nothing unread is invented.
+    DIMENSIONS=("processing_channel","merchant_category_code","processing_currency","event_type",
+                "card_type","region","banking_partner","payment_method")
+    chan_by_name={}
+    for c in pcs:
+        if c.get("name"): chan_by_name.setdefault(c["name"],[]).append(c.get("id"))
+    def scope_of(r):
+        scoped={}
+        for dim in DIMENSIONS:
+            if r.get(f"allow_any_{dim}") is not False: continue
+            stem=dim[:-1] if dim.endswith("y") else dim   # processing_currency -> processing_currenc(ies)
+            raw={k:v for k,v in r.items() if stem in k and not k.startswith("allow_any_") and v not in (None,"",[],{})}
+            values=[]; count=None
+            for k,v in raw.items():
+                if k.endswith("_count") and isinstance(v,int): count=v
+                elif isinstance(v,list): values+= [str(x) if not isinstance(x,dict) else (x.get("name") or x.get("id") or str(x)) for x in v]
+                elif isinstance(v,(str,int)): values.append(str(v))
+            values=list(dict.fromkeys(values))
+            entry={"values":values,"count":count if count is not None else (len(values) or None)}
+            if dim=="processing_channel":
+                # resolve names to this entity's channel ids — a join on data already read
+                ids=[]
+                for v in values:
+                    hit=chan_by_name.get(v) or []
+                    if v.startswith("pc_"): ids.append(v)
+                    elif len(hit)==1 and hit[0]: ids.append(hit[0])
+                if ids: entry["processing_channel_ids"]=ids
+            if not values and count is None:
+                entry["note"]="scoped, but the record does not name the values"
+            scoped[dim]=drop_empty(entry)
+        return scoped
     def rule(r):
         conds={k:r[k] for k in ALLOW_KEYS if k in r}
         out={"rule_id":r.get("id"),"name":r.get("name"),"status":r.get("status"),
@@ -1063,6 +1123,11 @@ def normalize(R, environment="sandbox"):
             out["conditions"]=conds
             # pre-computed answer: does this rule restrict anything at all?
             out["unrestricted"]=all(bool(v) for v in conds.values())
+            sc=scope_of(r)
+            if sc: out["scope"]=sc
+            # event types array from the detail endpoint, when present (TODO.md item 2)
+            ev=(sc.get("event_type") or {}).get("values")
+            if ev: out["event_types"]=ev
         return drop_empty(out)
     routing={"provenance":prov(bool(pay_routing) or bool(payout_routing)),
         "payment_routing_rules":[rule(r) for r in pay_routing],
@@ -1185,13 +1250,14 @@ def normalize(R, environment="sandbox"):
             "reason":"reporting-profiles-config-api unreachable or unauthorised "
                      "(internal host; needs corporate network) — check the Dashboard"}}),
         "velocity_limits":{"state":"not_available","reason":"not exposed by the CAT API"},
-        # Corridors ARE readable — from payout profile custom_settings, one FT type per
-        # profile, so per-FT-type corridors resolve. Only declare them unavailable when no
-        # payout profile actually carries any. Asserting the gap unconditionally made the
-        # document tell the reader to answer "unknown" about the corridors it had printed.
+        # Origination/destination countries ARE readable — from payout profile custom_settings,
+        # one FT type per profile, so the per-FT-type lists resolve. Only declare them
+        # unavailable when no payout profile actually carries any. Asserting the gap
+        # unconditionally made the document tell the reader to answer "unknown" about lists
+        # it had printed.
         **({} if any((x.get("origination_countries") or x.get("destination_countries"))
                      for x in processing_profiles["profiles"] if x.get("type")=="payout") else
-           {"pay_to_card_ft_corridors":{"state":"unavailable",
+           {"pay_to_card_origination_destination_countries_per_ft_type":{"state":"unavailable",
             "reason":"CAT pay-to-card-schemes endpoint returns 503 and no payout profile "
                      "carries origination or destination countries"}}),
         "pricing":{"state":"excluded","reason":"commercially sensitive"},
@@ -1288,6 +1354,7 @@ def render_md(p):
             extra=[]
             if pr.get("funds_transfer_type"): extra.append(f"FT {pr['funds_transfer_type']}")
             if a.get("code"): extra.append(f"AFT {a.get('indicator','code')} {a['code']}")
+            if pr.get("card_acceptor_identification_codes"): extra.append("CAID/MID " + ", ".join(pr["card_acceptor_identification_codes"]))
             if pr.get("authorization_validity_period") is not None: extra.append(f"auth {pr['authorization_validity_period']}d")
             if pr.get("is_quasi_cash"): extra.append("quasi-cash")
             sca=pr.get("sca_exemptions_settings") or {}
@@ -1366,7 +1433,8 @@ def render_llms(p):
         sca=pr.get("sca_exemptions_settings") or {}
         en=",".join(k.replace("enable_","") for k,v in sca.items() if v)
         L.append(f"PROFILE {pr.get('name','')} ({pr.get('type','')}): scheme={pr.get('scheme','')}, acquirer={pr.get('acquirer_key','')}, "
-                 f"bin={pr.get('acquiring_bin','-')}, mcc={pr.get('merchant_category_code','-')}, "
+                 f"bin={pr.get('acquiring_bin','-')}, mcc={','.join(pr.get('merchant_category_codes') or [pr.get('merchant_category_code') or '-'])}, "
+                 f"caid_mid={','.join(pr.get('card_acceptor_identification_codes') or ['-'])}, "
                  f"ft_type={pr.get('funds_transfer_type','-')}, aft_code={a.get('code','-')}{'('+a['indicator']+')' if a.get('indicator') else ''}, "
                  f"auth_validity={pr.get('authorization_validity_period','-')}, quasi_cash={pr.get('is_quasi_cash','-')}, "
                  f"sca_exemptions={en or '-'}, status={pr.get('status','')}")

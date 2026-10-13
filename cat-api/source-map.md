@@ -9,7 +9,7 @@ Run against **sbox** (`https://client-admin.cko-sbox.ckotech.co/api`); swagger w
 **Response format:** HAL — lists come wrapped in `_embedded.<key>[]` with `limit/skip/total_count`. Countries are ISO-3.
 
 ## ✅ Confirmed field locations (from swagger)
-- **FT types + corridors** → `GET /entities/{entityId}/pay-to-card-schemes/{scheme}` returns `ApprovedFundsTransferType`: `funds_transfer_type`, `approved_origination_countries[]`, `approved_destination_countries[]`, `merchant_category_code`. *(list schemes first via `/entities/{entityId}/pay-to-card-schemes` → `scheme_value`)*
+- **FT types + origination/destination countries** → `GET /entities/{entityId}/pay-to-card-schemes/{scheme}` returns `ApprovedFundsTransferType`: `funds_transfer_type`, `approved_origination_countries[]`, `approved_destination_countries[]`, `merchant_category_code`. *(list schemes first via `/entities/{entityId}/pay-to-card-schemes` → `scheme_value`)*
 - **Scheme / acquirer / MID / capture** → `GET /processing-channels/{processingChannelId}` returns `ProcessorListItem[]`: `acquirer_id`, `acquirer_name`, `scheme`, `merchant_category_code`, `processing_currencies[]`, `mode`, and `authorizations/captures/refunds/voids` flags.
 - **Reserves, settlement schedule, MCCs, capabilities, currency scope** → all inside `GET /entities/{entityId}` (`Reserves.rolling`, `Settlements.schedule`, `processing_scope.merchant_category_codes`, `capabilities.is_payments/payouts/issuing_available`, `currency_scope.holding_currencies`).
 - **PCI level** → `GET /processing-entities/{entityId}` (`ProcessingEntityResponse`: `pci_compliance_level`, `pci_compliance_expiry_date`).
@@ -80,7 +80,7 @@ Note: card acceptance schemes are derived from **processors** (§3) + acquirer-s
 | payout routes | `/entities/:entityId/payout-routes` (+ `/v2`) |
 | payout routing rules | `/entities/:entityId/payout-routing-rules`, `/payout-routing-rules/:id` |
 | payout settings / schedule | `/entities/:entityId/payout-settings`, `/entities/:entityId/payout-settings/:scheduleId` |
-| available networks per corridor | `/entities/:entityId/payment-networks/:countryIso3/:currency` |
+| available networks per country/currency | `/entities/:entityId/payment-networks/:countryIso3/:currency` |
 | **pay-to-card entity config** | `/entities/:entityId/pay-to-card-entity` |
 | **pay-to-card schemes (per entity / per scheme)** | `/entities/:entityId/pay-to-card-schemes`, `/entities/:entityId/pay-to-card-schemes/:scheme` |
 | pay-to-card routing / pricing | `/entities/:entityId/pay-to-card-routing-rules`, `/entities/:entityId/pay-to-card-pricing-profiles` |
@@ -104,7 +104,7 @@ Note: card acceptance schemes are derived from **processors** (§3) + acquirer-s
 Derived in the generator from:
 - `/entities/:entityId/services` (what's switched on)
 - `/configuration/feature-toggles` (feature flags)
-- `/entities/:entityId/payment-networks/:country/:currency` (pay-to-card corridor truth)
+- `/entities/:entityId/payment-networks/:country/:currency` (pay-to-card country/currency route truth)
 - §3 processors + §5 pay-to-card-schemes
 
 ## §8 Risk & authorization

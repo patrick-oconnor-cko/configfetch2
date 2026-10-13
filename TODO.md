@@ -43,12 +43,13 @@ down means stepping over two sections the rule implies aren't in the way.
 Both were found while working on something else, and both make the document state something
 false rather than incomplete — which is worse than a gap.
 
-**Routing rule event types.** The document says "specific event types (not listed on the
-record)". CAT does list them — the rule *detail* endpoint returns the full array, and a
-separate capture read all 14 chargeback events from it. `fetch_all` already fetches that detail
-(`cat_profile.py`, the `/payment-routing-rules/{id}` call), but `normalize` keeps only the
-`allow_any_*` flags in `conditions` and drops `event_types`, so the renderer's fallback always
-fires. Carry the array through and render it.
+**Routing rule event types — carried through, unverified live.** `normalize` now keeps every
+scoped dimension's stated values in `scope` (2026-09-11: added for processing channel names,
+currency counts, and any array the detail returns, including `event_types`). The `event_types`
+fallback should therefore stop firing when the detail carries the array. A real detail for a
+currency-scoped rule (2026-09-11) confirmed the plural-array shape (`processing_currencies`)
+and the capture picks it up; `event_types` itself still awaits a live rule with
+`allow_any_event_type: false` to confirm.
 
 **Payout schedule timezone.** `cat_profile` reads no schedule timezone at all — the only
 timezone fields are entity-level. A newer CAT payout-settings response appears to carry
@@ -139,7 +140,7 @@ nothing else" true) or stand up a venv on a newer interpreter.
 Best-value tool: **`validate_card_payout`**. The config half is deterministic server-side — is
 this FT type on an Active payout profile, does `source.id` exist and its currency match, is
 `processing_channel_id` present (any Active channel is valid), is the destination within *that
-profile's* corridor, is `sender` required per the FT category, is `billing_address` required per
+profile's* origination/destination countries, is `sender` required per the FT category, is `billing_address` required per
 incorporation, is `purpose` required per destination country. Return findings; no model
 judgement on the mechanical half.
 

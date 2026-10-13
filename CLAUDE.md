@@ -58,9 +58,26 @@ This has repeatedly looked like a bug in the code.
   `processing_channel_id`, and **any** Active channel on the entity is valid. The
   acquirer+scheme+MCC join applies to pay-in AFT only; a channel MCC differing from a payout
   profile's MCC is **not** a mismatch.
+- **Routing rules are scoped by their `allow_any_*` flags, and the scope is stated on the
+  record.** `allow_any_processing_channel: true` means the rule applies to every channel on the
+  entity; when false, the list item carries `processing_channel_name` (e.g. `BLIK`) and the
+  rule is bound to that channel only. Same pattern per dimension (`processing_currency_count`,
+  `event_types`, …). The normaliser keeps these in `scope`; keeping only the flags lost them.
+- **CAID = MID.** The Card Acceptor Identification Code (`card_acceptor_identification_code`,
+  inside a profile's `business_settings`) is the merchant identifier a scheme sees; users call
+  it the MID. It is set **per MCC**, so a processing profile can carry several MCC ↔ CAID pairs
+  — keep them paired, never as two unrelated lists. Any answer about a processing profile must
+  state its CAID(s) and MCC(s). Both pay-in and payout profiles carry them.
 - **Funds transfer types have three categories**, not two: money transfer, non-money transfer,
   online gambling. Only money transfer requires a `sender` block. The map lives in
-  `cat_profile.FT_CATEGORIES`.
+  `cat_profile.FT_CATEGORIES`. **This is a pay-to-card (payout) rule only.**
+- **AFT requirements are not the pay-to-card rules.** A BAI/TTI identifies the AFT use case and
+  must be valid for the MCC; it does **not** by itself make `sender` or any field mandatory.
+  For an AFT, sender/recipient requirements are driven by scheme, transaction jurisdiction
+  (domestic vs cross-border) and geography — docs page *Perform an account funding transaction*
+  (`https://www.checkout.com/docs/payments/manage-payments/perform-an-account-funding-transaction`),
+  retrievable via the Checkout MCP. Never apply the money-transfer/`sender` split to an AFT code;
+  the documents label an AFT code's *use case* only.
 - **Don't aggregate away a difference.** A union shown as one fact hides real config — the
   pay-to-card summary said four destination countries while Mastercard PTC only reached three.
   Show per-profile values next to any summary.

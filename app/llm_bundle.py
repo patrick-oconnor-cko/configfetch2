@@ -42,10 +42,65 @@ def _aft_cell(a):
     code, ind = _aft_code(a)
     return f"`{code}` ({ind})" if code and ind else f"`{code}`" if code else "—"
 
+def _caids(x):
+    """Every CAID on a profile row (new list field, falling back to the single legacy field)."""
+    x = x or {}
+    c = x.get("card_acceptor_identification_codes")
+    if c: return list(c)
+    return [x["card_acceptor_identification_code"]] if x.get("card_acceptor_identification_code") else []
+
+def _caid_cell(x):
+    return ", ".join(f"`{c}`" for c in _caids(x)) or "—"
+
+def _mcc_cell(x):
+    x = x or {}
+    m = x.get("merchant_category_codes") or ([x["merchant_category_code"]] if x.get("merchant_category_code") else [])
+    return ", ".join(str(v) for v in m) or "—"
+
+CAID_NOTE = ("**CAID** is the Card Acceptor Identification Code — the merchant identifier the scheme sees "
+             "for a profile, which merchants usually call the **MID** (CAT's field is "
+             "`card_acceptor_identification_code`). It is set per MCC: a profile carries one or more "
+             "MCC ↔ CAID pairs. **Any answer about a processing profile must state its CAID(s) and "
+             "MCC(s)**, and where a profile has several pairs, keep them paired — never list the MCCs "
+             "and the CAIDs as two unrelated sets.")
+
+def _pairs_table(profiles, title="MCC ↔ CAID pairs on profiles with more than one"):
+    """Per-pair rows for any profile carrying several MCC<->CAID entries; the summary tables
+    show the code lists, this keeps the pairing itself visible."""
+    rows = []
+    for x in profiles:
+        pairs = x.get("acceptor_ids") or []
+        if len(pairs) < 2: continue
+        for pr in pairs:
+            rows.append([x.get("name") or f"`{x.get('profile_id')}`", x.get("scheme") or "—",
+                         pr.get("merchant_category_code") or "—",
+                         f"`{pr['card_acceptor_identification_code']}`" if pr.get("card_acceptor_identification_code") else "—",
+                         "auto" if pr.get("force_caid_generation") else "—"])
+    if not rows: return []
+    return [f"**{title}**", "", _tbl(["Profile", "Scheme", "MCC", "CAID (MID)", "CAID generation"], rows), ""]
+
 AFT_INDICATOR_NOTE = ("The AFT indicator is scheme-specific: **Visa** calls it the Business Application "
                       "Identifier (**BAI**); **Mastercard** calls it the Payment Transaction Type Identifier "
                       "(**TTI**). They are the same thing under two names — when a question mentions either, "
                       "answer from the code shown here whichever the scheme.")
+
+AFT_DOCS_URL = "https://www.checkout.com/docs/payments/manage-payments/perform-an-account-funding-transaction"
+AFT_REQUIREMENTS_NOTE = (
+    "**AFT payload requirements are not the pay-to-card rules.** The BAI/TTI identifies the AFT "
+    "**use case** and must be valid for the profile's MCC; it does **not** by itself make `sender` or "
+    "any other field mandatory. For an AFT, sender and recipient requirements are set by the **scheme**, "
+    "the **transaction jurisdiction** (domestic vs cross-border) and the **geography** of the parties — "
+    "look them up in the Checkout.com docs, *Perform an account funding transaction* "
+    f"({AFT_DOCS_URL}), retrievable through the docs MCP server. The money-transfer / non-money-transfer "
+    "split, and its `sender` rule, applies to **pay-to-card funds transfer types on payout profiles** "
+    "only (see Pay-to-card) — never carry it over to an AFT code.")
+
+def _aft_use_case(code):
+    """Use-case label for an AFT code where this document's table knows it (the Visa BAI list);
+    deliberately NOT the payout money-transfer category — that rule does not apply to AFTs."""
+    c = _classify_ft(code)
+    if c: return c["description"]
+    return "use case not listed in this document — the code is real config" if code else "—"
 
 
 def est_tokens(s): return max(1, len(s) // 4)
@@ -233,7 +288,8 @@ def _sec_payin(p):
     pv = _prov(p, "processing_profiles")
     payin = [x for x in pp.get("profiles", []) if x.get("type") == "payin"]
     rows = [[x.get("name"), x.get("scheme"), x.get("acquirer_key"), x.get("acquiring_bin"),
-             x.get("merchant_category_code"),
+             _mcc_cell(x), _caid_cell(x),
+             x.get("card_acceptor_trade_name") or x.get("card_acceptor_legal_name") or "—",
              _aft_cell(x.get("aft")),
              (f"{x['authorization_validity_period']}d" if x.get("authorization_validity_period") is not None else None),
              ("yes" if x.get("is_quasi_cash") else "no"), x.get("acceptance_mode"), x.get("status")]
@@ -242,10 +298,12 @@ def _sec_payin(p):
                volatility=pv.get("volatility"),
                sources="/entities/{e}/processing-profiles · /processing-profiles/v2/{id}"),
            "", "# Pay-in processing profiles", "",
-           "Acceptance profiles. AFT profiles carry the AFT code (Visa: BAI; Mastercard: TTI),",
-           "the authorization hold, and SCA exemptions. " + AFT_INDICATOR_NOTE, "",
-           _tbl(["Name", "Scheme", "Acquirer", "BIN", "MCC", "AFT code", "Auth hold",
-                 "Quasi-cash", "Acceptance", "Status"], rows)]
+           "Acceptance profiles. Each carries its acquirer, BIN, MCC(s) and CAID(s); AFT profiles",
+           "also carry the AFT code (Visa: BAI; Mastercard: TTI), the authorization hold, and SCA",
+           "exemptions. " + CAID_NOTE, "", AFT_INDICATOR_NOTE, "",
+           _tbl(["Name", "Scheme", "Acquirer", "BIN", "MCC", "CAID (MID)", "Acceptor name", "AFT code",
+                 "Auth hold", "Quasi-cash", "Acceptance", "Status"], rows)]
+    out += _pairs_table(payin)
     FL = [("enable_transaction_risk_analysis", "TRA"), ("enable_low_value", "Low value"),
           ("enable_secure_corporate_payment", "Secure corp"), ("enable_3ds_outage", "3DS outage"),
           ("enable_trusted_listing", "Trusted listing"), ("enable_sca_delegation", "SCA delegation")]
@@ -258,7 +316,7 @@ def _sec_payin(p):
     m2m = [x for x in payin if (x.get("me_2_me_settings") or {}).get("is_enabled")]
     if m2m:
         out += ["## Merchant-to-merchant", "",
-                _tbl(["Profile", "Merchant name", "CAIC"],
+                _tbl(["Profile", "Merchant name", "CAID (MID)"],
                      [[x.get("name"), (x["me_2_me_settings"] or {}).get("merchant_name"),
                        (x["me_2_me_settings"] or {}).get("card_acceptor_identification_code")] for x in m2m])]
     return "\n".join(out)
@@ -270,7 +328,7 @@ def _sec_p2c(p):
     out = [_fm(section="pay-to-card", as_of=pv.get("as_of"), coverage=pv.get("coverage"),
                volatility=pv.get("volatility"), scope="entity",
                sources="/entities/{e}/processing-profiles · /processing-profiles/v2/{id}",
-               not_covered="per-FT-type corridors (CAT pay-to-card-schemes endpoint returns 503)"),
+               not_covered="per-FT-type origination/destination countries from CAT's pay-to-card-schemes endpoint (returns 503); the profile-level lists are used instead"),
            "", "# Pay-to-card", "",
            "**Scope: entity-level.** Declared by processing profiles with",
            "`processing_type=payout` and `status=Active`. Processing channels carry no",
@@ -288,14 +346,15 @@ def _sec_p2c(p):
     if "pay_to_card_forex_enabled" in fx:
         out.append(f"forex: {'enabled' if fx['pay_to_card_forex_enabled'] else 'not configured'}")
     rows = [[x.get("name"), x.get("scheme"), x.get("funds_transfer_type"), x.get("acquiring_bin"),
-             x.get("card_acceptor_identification_code"), x.get("merchant_category_code"),
+             _caid_cell(x), _mcc_cell(x),
              x.get("acceptance_mode"), x.get("checkout_legal_entity_code"), x.get("status")]
             for x in v.get("processors", [])]
-    out += ["", "## Payout profiles (the pay-to-card processors)", "",
-            _tbl(["Profile", "Scheme", "FT", "BIN", "CAIC", "MCC", "Acceptance", "Legal entity", "Status"], rows)]
+    out += ["", "## Payout profiles (the pay-to-card processors)", "", CAID_NOTE, "",
+            _tbl(["Profile", "Scheme", "FT", "BIN", "CAID (MID)", "MCC", "Acceptance", "Legal entity", "Status"], rows)]
+    out += _pairs_table(v.get("processors", []))
     pr = mo.get("payout_routes") or []
     if pr:
-        out += ["## Payout (bank) routes — enabled corridors", "",
+        out += ["## Payout (bank) routes — enabled country/currency routes", "",
                 f"{(mo.get('payout_routes_summary') or {}).get('enabled')} enabled of "
                 f"{(mo.get('payout_routes_summary') or {}).get('total')} total", "",
                 _tbl(["Country", "Currency", "Schemes"],
@@ -327,6 +386,8 @@ def _sec_routing(p, nm):
                            else "restrictions: some conditions are scoped (see below)")
             for k, val in (r.get("conditions") or {}).items():
                 out.append(f"  {k}: {val}")
+            for line in _scope_desc(r, nm):
+                out.append(f"  scoped → {line}")
             if r.get("source_identifier"): out.append(f"source: {nm(r['source_identifier'])}")
             if r.get("revenue_currency_account_id") or r.get("revenue_currency_account_name"):
                 out.append(f"revenue → {r.get('revenue_currency_account_name') or nm(r.get('revenue_currency_account_id'))}"
@@ -416,10 +477,10 @@ def _sec_webhooks(p):
 def _sec_glossary(p):
     g = (p.get("glossary") or {}).get("ids") or {}
     pv = _prov(p, "glossary")
-    CODES = [("FT / C52 / FD", "funds transfer type on a payout profile — identifies the scheme money-movement product"),
-             ("BAI", "Business Application Identifier — Visa's AFT (Account Funding Transaction) indicator on a pay-in profile"),
-             ("TTI", "Payment Transaction Type Identifier — Mastercard's AFT indicator; the Mastercard equivalent of a BAI"),
-             ("CAIC", "Card Acceptor Identification Code"),
+    CODES = [("FT / C52 / FD", "funds transfer type on a **payout** (pay-to-card) profile — identifies the scheme money-movement product; only here does money-transfer vs non-money-transfer decide the `sender` block"),
+             ("BAI", "Business Application Identifier — Visa's AFT (Account Funding Transaction) indicator on a pay-in profile; names the AFT use case, must be valid for the MCC, does not by itself set sender requirements"),
+             ("TTI", "Payment Transaction Type Identifier — Mastercard's AFT indicator; the Mastercard equivalent of a BAI, with the same caveat"),
+             ("CAID (MID)", "Card Acceptor Identification Code — the merchant identifier a scheme sees, set per MCC on a processing profile; merchants call it the MID. A profile can carry several MCC ↔ CAID pairs. Always label it CAID, never CAIC"),
              ("same_as_pc", "this processor inherits the setting from its processing channel"),
              ("complete_processing", "Checkout.com performs both authorization and settlement"),
              ("gws_only", "gateway-services only — Checkout.com routes but does not acquire"),
@@ -464,7 +525,7 @@ def _card(p, section_meta):
          "   `not_available`, answer **\"unknown\"**. Never infer configuration from documentation.",
          "3. **Payload and integration questions need BOTH sources — config first.** Config",
          "   values *select which documented rules apply*: the same endpoint has different",
-         "   required fields depending on funds transfer type / BAI, country of incorporation,",
+         "   required fields depending on payout funds transfer type, AFT jurisdiction, country of incorporation,",
          "   destination issuer country, and which channel and currency account you use. So",
          "   read the config values here, **then** look up the rules those values trigger.",
          "   Never answer a payload question from this pack alone, or from the docs alone.",
@@ -487,11 +548,14 @@ def _card(p, section_meta):
     L += ["", "## Payload questions — config values that change the required fields", "",
           "Read the config value, then look up the rule it triggers (Rule 3).", ""]
     L.append(_tbl(["Config value (in this pack)", "Selects which documented rule applies"], [
-        ["funds transfer type / BAI — pay-to-card.md",
-         "which payout codes are legal for you; **money-transfer codes require a `sender` block**"],
+        ["funds transfer type (payout profile) — pay-to-card.md",
+         "which **pay-to-card** codes are legal for you; **money-transfer codes require a `sender` block** — this rule is for payouts only"],
+        ["AFT code, BAI/TTI (pay-in profile) — channels.md / payin-profiles.md",
+         "selects the AFT **use case** and must be valid for the MCC; it does **not** decide `sender` — for an AFT, sender/recipient "
+         "fields follow scheme + jurisdiction (domestic vs cross-border) + geography, per the docs' *Perform an account funding transaction* page"],
         ["country of incorporation — entities.md",
          "US-incorporated → recipient `billing_address` is mandatory on every card payout"],
-        ["destination corridors — pay-to-card.md",
+        ["destination countries — pay-to-card.md",
          "issuer country AR·BD·CL·CO·EG·IN·MX·SA → `instruction.purpose` becomes mandatory"],
         ["processing channels — channels.md",
          "`processing_channel_id` is **required** on card payouts — **any** Active channel on the "
@@ -543,7 +607,8 @@ def _card(p, section_meta):
         ["**AFT** on a specific channel · BAI", "sections/channels.md"],
         ["**3DS** / protocol versions", "sections/channels.md"],
         ["SCA exemptions · auth hold · quasi-cash · a `pp_*` id", "sections/payin-profiles.md"],
-        ["**pay-to-card** · funds transfer types · payout BIN/CAIC · corridors", "sections/pay-to-card.md"],
+        ["a **CAID / MID** (card acceptor id) · which profile and MCC it belongs to", "sections/payin-profiles.md (pay-in) · sections/pay-to-card.md (payout)"],
+        ["**pay-to-card** · funds transfer types · payout BIN/CAID (MID) · origination and destination countries", "sections/pay-to-card.md"],
         ["**routing rules** · an `rt_*` id · where revenue/fees land", "sections/routing.md"],
         ["settlement · currency accounts · a `ca_*` id · payout schedule", "sections/settlement.md"],
         ["**webhooks** · workflows · events · reporting profiles", "sections/webhooks.md"],
@@ -683,14 +748,13 @@ def _aft_summary(p):
         arows = []
         for x in aftp:
             code, _ind = _aft_code(x.get("aft"))
-            c = _classify_ft(code)
             arows.append([x.get("name") or f"`{x.get('profile_id')}`",
                           x.get("scheme") or "—",
                           _aft_cell(x.get("aft")),
-                          (f"**{c['category_label']}** — {c['description']}" if c
-                           else "not classified here — the code is real config; only its category is absent from this document's table"),
+                          _aft_use_case(code),
                           ", ".join(x.get("currencies") or []) or "not stated",
-                          ", ".join(x.get("merchant_category_codes") or []) or "—",
+                          _mcc_cell(x),
+                          _caid_cell(x),
                           x.get("acquiring_bin") or "—",
                           x.get("card_acceptor_country_code") or "—",
                           ("✅ required" if x.get("enable_recipient_details_submission")
@@ -700,8 +764,8 @@ def _aft_summary(p):
                            else "required" if (x.get("aft") or {}).get("is_skip_recipient_name_enabled") is False
                            else "unknown"),
                           x.get("status") or "—"])
-        out += ["**AFT-enabled pay-in profiles**", "",
-                _tbl(["Profile", "Scheme", "AFT code", "Category", "Currencies", "MCC", "BIN",
+        out += [AFT_REQUIREMENTS_NOTE, "", "**AFT-enabled pay-in profiles**", "",
+                _tbl(["Profile", "Scheme", "AFT code", "Use case", "Currencies", "MCC", "CAID (MID)", "BIN",
                       "Acceptor country", "Recipient details", "Recipient name",
                       "Status"], arows), ""]
 
@@ -721,29 +785,27 @@ def _aft_summary(p):
         for m in (a.get("matches") or [a]):
             pr = profs.get(m.get("profile_id")) or {}
             ft, _ind = _aft_code(m)
-            cls = _classify_ft(ft)
             rows.append([
                 f"{ch.get('name')} `{ch.get('processing_channel_id')}`",
                 m.get("profile_name") or m.get("profile_id") or "—",
                 m.get("scheme") or pr.get("scheme") or "—",
                 _aft_cell(m),
-                (f"**{cls['category_label']}** — {cls['description']}" if cls
-                 else "not classified here — the code is real config; only its category is absent from this document's table"),
+                _aft_use_case(ft),
                 ", ".join(pr.get("currencies") or []) or "not stated on the profile",
                 (f"{m.get('authorization_validity_period')}d"
                  if m.get("authorization_validity_period") is not None else "—"),
             ])
-    out.append(_tbl(["Channel", "Via profile", "Scheme", "AFT code", "Category", "Currencies allowed",
+    out.append(_tbl(["Channel", "Via profile", "Scheme", "AFT code", "Use case", "Currencies allowed",
                      "Auth hold"], rows))
-    out += ["**There are no corridor country lists on a pay-in AFT profile.** Verified "
+    out += ["**There are no origination or destination country lists on a pay-in AFT profile.** Verified "
             "across every profile on this client: `origination_countries` and "
             "`destination_countries` appear only on *payout* profiles (see Pay-to-card). "
             "What a pay-in AFT profile does carry is the acceptor's own country and the two "
             "recipient controls above. AFT destination/recipient **countries** are therefore "
-            "**unknown** from config, not unrestricted. The category column comes from the Checkout.com card payouts "
-            "documentation's funds-transfer-type table, not from CAT; a money transfer requires a `sender` block on the "
-            "request. Codes outside that table (for example Mastercard AFT TTIs such as `P71`) are shown "
-            "unclassified — that is a gap in the table, not a configuration problem.", ""]
+            "**unknown** from config, not unrestricted.", ""] + ([AFT_REQUIREMENTS_NOTE, ""] if not aftp else []) + [
+            "The *Use case* column is a label from this document's code table, not from CAT; codes it "
+            "does not list (for example Mastercard AFT TTIs such as `P71`) are shown as unlisted — that is "
+            "a gap in the table, not a configuration problem.", ""]
     return "\n".join(out)
 
 
@@ -784,7 +846,7 @@ def _channels_table(p):
 
 
 def _p2c_summary(p):
-    """Q3: pay-to-card, stated at entity level with corridors and FT codes."""
+    """Q3: pay-to-card, stated at entity level with origination/destination countries and FT codes."""
     mo = p.get("money_out") or {}
     v = mo.get("pay_to_card") or {}
     fx = mo.get("forex") or {}
@@ -835,8 +897,8 @@ def _p2c_summary(p):
                           "✅ yes" if cls and cls["requires_sender"] else
                           ("no" if cls else "unknown"),
                           x.get("acquiring_bin") or "—",
-                          x.get("card_acceptor_identification_code") or "—",
-                          ", ".join(x.get("merchant_category_codes") or []) or "—",
+                          _caid_cell(x),
+                          _mcc_cell(x),
                           ", ".join(x.get("origination_countries") or []) or "—",
                           ", ".join(x.get("destination_countries") or []) or "—",
                           x.get("acceptance_mode") or "—",
@@ -844,11 +906,13 @@ def _p2c_summary(p):
                           x.get("status") or "—"])
         out += ["**Payout profiles (the pay-to-card processors)**", "",
                 _tbl(["Profile", "Scheme", "FT type", "Category", "`sender` required",
-                      "BIN", "CAIC", "MCC", "Origination", "Destination", "Acceptance",
-                      "Legal entity", "Status"], prows),
-                "Origination and destination are **per profile** — the section summary above "
-                "is the union across profiles, which can hide a profile with a narrower "
-                "corridor.",
+                      "BIN", "CAID (MID)", "MCC", "Origination", "Destination", "Acceptance",
+                      "Legal entity", "Status"], prows)] + _pairs_table(payouts) + [
+                CAID_NOTE, "",
+                "**Origination countries** (where a payout can be funded from) and **destination "
+                "countries** (where it can be sent to) are two distinct lists, set **per profile**. "
+                "Report them separately and per profile — the section summary above is the union "
+                "across profiles, which can hide a profile whose lists are narrower.",
                 "Category comes from the Checkout.com card payouts documentation "
                 "(\"Funds transfer types\"), not from CAT — CAT reports only the code. "
                 "A **money transfer** requires a `sender` block on the payout request; the "
@@ -958,6 +1022,27 @@ def _settlement_summary(p):
     return "\n".join(out)
 
 
+def _scope_desc(r, nm=lambda i: str(i)):
+    """Human line per scoped dimension of a routing rule, from what CAT actually stated.
+    e.g. 'processing channel: BLIK (`pc_…`)' · 'processing currency: 1 currency (not named on
+    the record)'. Never guesses a value the record did not carry."""
+    parts = []
+    for dim, e in (r.get("scope") or {}).items():
+        label = dim.replace("_", " ")
+        vals = e.get("values") or []
+        ids = e.get("processing_channel_ids") or []
+        if vals:
+            shown = ", ".join(f"{v} (`{ids[i]}`)" if dim == "processing_channel" and i < len(ids) and ids[i] != v else f"`{v}`" if v.startswith("pc_") else v
+                              for i, v in enumerate(vals))
+            parts.append(f"{label}: {shown}")
+        elif e.get("count") is not None:
+            n = e["count"]; unit = "currency" if dim == "processing_currency" else label
+            parts.append(f"{label}: {n} {unit}{'' if n == 1 else 's' if not unit.endswith('y') else ''} (not named on the record)")
+        else:
+            parts.append(f"{label}: scoped (values not on the record)")
+    return parts
+
+
 def _routing_summary(p):
     """Q: routing rules — what they match, and where revenue and fees land."""
     rt = p.get("routing") or {}
@@ -982,9 +1067,10 @@ def _routing_summary(p):
             if c and all(c.values()):
                 match = "**all traffic** — every condition unrestricted"
             elif c:
+                desc = _scope_desc(r)
                 narrow = [k.replace("allow_any_", "").replace("_", " ")
                           for k, val in c.items() if not val]
-                match = "restricted by " + ", ".join(narrow)
+                match = ("restricted — " + "; ".join(desc)) if desc else ("restricted by " + ", ".join(narrow))
             else:
                 match = r.get("source_identifier") and f"source `{r['source_identifier']}`" or "—"
             def acct(pfx):
@@ -998,7 +1084,10 @@ def _routing_summary(p):
         out.append(_tbl(["Rule", "Status", "Matches", "Events covered",
                          "Revenue → account", "Fees → account"], rows))
     out.append("Routing rules carry no name in CAT, so they are identified by id and "
-               "described by what they match. `event_types` is one of the conditions: an "
+               "described by what they match. A rule with `allow_any_processing_channel: true` "
+               "applies to **all** of this entity's processing channels; one with it false is "
+               "bound to the channel(s) named in *Matches*, and revenue from other channels "
+               "does not follow this rule. `event_types` is one of the conditions: an "
                "unrestricted rule matches every event type.\n")
     return "\n".join(out)
 
@@ -1306,7 +1395,7 @@ def _entity_structure(p):
                 rows),
            "Sibling rows are listed for orientation only. **Every answer in this document "
            "is about the marked entity.** Sibling entities have their own channels, "
-           "profiles, corridors and capabilities, none of which are captured here — never "
+           "profiles, origination/destination countries and capabilities, none of which are captured here — never "
            "use a sibling's row to infer anything about this entity, and if asked about a "
            "sibling, say that it needs its own snapshot.", ""]
     return "\n".join(out)
@@ -1481,7 +1570,7 @@ def _pi_rules(p):
          "say they are out of scope.\n"
          "- Keep prose to a few short lines: the snapshot date, and at most two or three "
          "observations that are genuinely derived (for example a scheme enabled for "
-         "acceptance but with no AFT profile, or a payout profile with a narrower corridor "
+         "acceptance but with no AFT profile, or a payout profile whose destination countries are narrower "
          "than the summary implies). Put those **after** the tables, not before.\n"
          "- Do not add closing offers, next-step menus, or restatements of what the tables "
          "already say.\n"
@@ -1523,12 +1612,16 @@ def _pi_validation(p):
          "row below is a value in this document that changes what the API requires.",
          "",
          _tbl(["Config value (in this document)", "Selects which documented rule applies"], [
-             ["funds transfer type / BAI — see AFT and Pay-to-card",
-              "which payout codes are legal for this merchant; **money-transfer codes "
-              "require a `sender` block**"],
+             ["funds transfer type (payout profile) — see Pay-to-card",
+              "which **pay-to-card** codes are legal for this merchant; **money-transfer codes "
+              "require a `sender` block** — a payout rule only"],
+             ["AFT code, BAI/TTI (pay-in profile) — see AFT",
+              "selects the AFT **use case** and must be valid for the MCC; it does **not** decide "
+              "`sender`. AFT sender/recipient fields follow scheme + jurisdiction (domestic vs "
+              f"cross-border) + geography — see {AFT_DOCS_URL} via the docs MCP"],
              ["country of incorporation — see the registered business address in Overview",
               "US-incorporated → recipient `billing_address` is mandatory on every card payout"],
-             ["destination corridors — see Pay-to-card",
+             ["destination countries — see Pay-to-card",
               "issuer country AR·BD·CL·CO·EG·IN·MX·SA → `instruction.purpose` becomes mandatory"],
              ["processing channels — see Processing channels",
               "`processing_channel_id` is **required** on card payouts. **Any** Active "
@@ -1731,7 +1824,7 @@ def render_client_document(profiles):
          "config in general\"): for client-level services (Intelligent Acceptance, Network "
          "Tokens, RTAU, webhooks/workflows) answer once and say they apply across the "
          "client; for everything else answer **for each entity in turn, kept separate**. "
-         "Never merge two entities' values into one fact — do not union their corridors, "
+         "Never merge two entities' values into one fact — do not union their origination or destination countries, "
          "currencies, schemes or channels.",
          "   - If it is unclear which entity is meant and the answer differs between them, "
          "give the answer per entity rather than choosing one.",
@@ -1779,7 +1872,7 @@ def render_client_document(profiles):
          "leave it out.",
          "- Keep prose to a few short lines: the snapshot date, and at most two or three "
          "observations that are genuinely derived (for example a scheme enabled for "
-         "acceptance but with no AFT profile, or a payout profile with a narrower corridor "
+         "acceptance but with no AFT profile, or a payout profile whose destination countries are narrower "
          "than the summary implies). Put those **after** the tables, not before.",
          "- Do not add closing offers, next-step menus, or restatements of what the tables "
          "already say.",
@@ -1912,6 +2005,9 @@ def render_llm_bundle(p):
         if pr.get("profile_id"):
             lookup[pr["profile_id"]] = ("sections/pay-to-card.md" if pr.get("type") == "payout"
                                         else "sections/payin-profiles.md")
+        # a CAID/MID is something users search by; route it to the profile's section
+        for c in (pr.get("card_acceptor_identification_codes") or []):
+            lookup.setdefault(f"caid:{c}", "sections/pay-to-card.md" if pr.get("type") == "payout" else "sections/payin-profiles.md")
     for e in (p.get("entity_structure") or {}).get("entities", []):
         if e.get("entity_id"): lookup[e["entity_id"]] = "sections/entities.md"
     for a in (p.get("settlement") or {}).get("currency_accounts", []):

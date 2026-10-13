@@ -44,10 +44,6 @@
   .search input{max-width:120px;text-transform:uppercase}
   .countrybox{max-height:150px;overflow:auto;border:1px solid var(--edge);border-radius:7px;padding:8px;font:11px ui-monospace,monospace;color:var(--mut)}
   code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
-  .picks{display:flex;flex-direction:column;gap:6px;margin:6px 0 14px;max-width:720px}
-  .pick{display:flex;align-items:center;gap:9px;margin:0;padding:7px 11px;border:1px solid var(--edge);border-radius:7px;color:var(--fg);font-size:12.5px;cursor:pointer;background:var(--panel)}
-  .pick.on{border-color:var(--accent)} .pick.all{background:var(--panel2)}
-  .pick input{width:auto;margin:0;accent-color:var(--accent)}
   .toolbar{align-items:center} .toolbar .meta{color:var(--mut);font-size:12px;margin-left:6px}
   /* mode switch: the selected mode is green, the other grey */
   .modes{display:flex;gap:8px;margin-bottom:6px}
@@ -147,12 +143,12 @@ function setMode(m){
   $("cat_token").placeholder=u.ph_tok; $("sk").placeholder=u.ph_sk;
   $("hint_env").innerHTML=u.hint;
   // results belong to the mode they were fetched in; never show one mode's data under the other
-  DATA=null; DOC_CACHE={}; $("result").style.display="none"; $("progress").style.display="none"; $("fetchwarn").style.display="none"; $("empty").style.display="block";
+  DATA=null; DOC_CACHE=null; $("result").style.display="none"; $("progress").style.display="none"; $("fetchwarn").style.display="none"; $("empty").style.display="block";
   $("status").textContent=""; $("status").className="hint"; $("bar").classList.remove("on");
 }
 // Client Markdown tab: which entity indices are ticked, and rendered documents keyed by
 // the sorted selection so re-ticking a previous combination is instant.
-let SEL=new Set(), DOC_CACHE={};
+let DOC_CACHE=null;   // rendered client document for the current DATA
 // Absolute API base so fetch works even when the page is loaded in a preview iframe / file:// context
 const API_BASE=(location.origin && location.origin.startsWith("http")) ? location.origin : "http://localhost:8787";
 const $=id=>document.getElementById(id);
@@ -243,7 +239,7 @@ async function gen(){
     if(final.error){ $("status").innerHTML='<span class="err">'+esc(final.error)+'</span> <span class="mut">— failed after '+el+'</span>';
       $("ptitle").textContent="Fetch failed"; pLog(`<div class="ent err">✗ ${esc(final.error)}</div>`); return; }
     const j=final; DATA=j; cur=0;
-    SEL=new Set(j.entities.map((_,i)=>i)); DOC_CACHE={};   // default: every entity ticked
+    DOC_CACHE=null;
     const n=j.entities.length;
     $("status").innerHTML='<span class="ok">Done</span> — '+n+' '+(n===1?'entity':'entities')
       +' <span class="'+(j.mode==="production"?'warn':'mut')+'">· '+esc(j.mode||MODE)+'</span>'
@@ -283,18 +279,12 @@ function render(){
   const v=$("view"); let h="";
 
   if(tab==="client"){
-    const n=DATA.entities.length, all=SEL.size===n;
-    h+=`<h2>Client Markdown <span class="mut">— one document: the client at the top, each ticked entity as its own section beneath it</span></h2>`;
+    const n=DATA.entities.length;
+    h+=`<h2>Client Markdown <span class="mut">— one document: the client at the top, each of its ${n} ${n===1?'entity':'entities'} as its own section beneath it</span></h2>`;
     h+=`<p class="mut">Paste into a Claude project's instructions. Ask <i>"summarise my config on &lt;entity&gt;"</i> for one entity, or <i>"summarise my config in general"</i> for the client as a whole. Per-entity content is rendered by the same code as the single-entity document.</p>`;
-    h+=`<h3>Entities to include</h3><div class="picks">`;
-    h+=`<label class="pick all ${all?'on':''}"><input type="checkbox" id="pick_all" ${all?'checked':''}/> <b>All entities</b> <span class="mut">(${n})</span></label>`;
-    DATA.entities.forEach((x,i)=>{
-      h+=`<label class="pick ${SEL.has(i)?'on':''}"><input type="checkbox" class="pick_ent" data-i="${i}" ${SEL.has(i)?'checked':''}/> ${esc(x.entity_name||x.entity_id)} <code>${esc(x.entity_id)}</code></label>`;
-    });
-    h+=`</div>`;
     h+=`<div class="toolbar"><button onclick="copyText('clienttext')">Copy</button><button onclick="dlClient()">Download .md</button><span class="meta" id="clientmeta"></span></div>`;
     h+=`<pre id="clienttext" class="mut">Rendering…</pre>`;
-    v.innerHTML=h; wirePicks(); loadClientDoc(); return;
+    v.innerHTML=h; loadClientDoc(); return;
   }
   else if(tab==="bundle"){
     const b=e.bundle;
@@ -354,37 +344,26 @@ function download(name,id){saveText(name,$(id).textContent);}
 function saveText(name,text){const b=new Blob([text],{type:"text/plain"});const a=document.createElement("a");
   a.href=URL.createObjectURL(b);a.download=name.replace(/\//g,"__");a.click();}
 // --- Client Markdown tab helpers ---
-function selKey(){return [...SEL].sort((a,b)=>a-b).join(",");}
-function wirePicks(){
-  const n=DATA.entities.length, a=$("pick_all");
-  a.indeterminate = SEL.size>0 && SEL.size<n;
-  a.onchange=()=>{SEL = a.checked ? new Set(DATA.entities.map((_,i)=>i)) : new Set(); render();};
-  document.querySelectorAll(".pick_ent").forEach(c=>c.onchange=()=>{
-    const i=+c.dataset.i; if(c.checked) SEL.add(i); else SEL.delete(i); render();});
-}
 async function loadClientDoc(){
-  const key=selKey(), idx=key?key.split(",").map(Number):[];
-  const pre=$("clienttext"), meta=$("clientmeta");
-  if(!idx.length){pre.className="mut"; pre.textContent="Tick at least one entity."; meta.textContent=""; return;}
-  if(!DOC_CACHE[key]){
+  const data=DATA, pre=$("clienttext"), meta=$("clientmeta");
+  if(!DOC_CACHE){
     try{
       // re-render only: sends back the profiles already fetched, no CAT call, no credentials
       const r=await fetch(API_BASE+"/api/client-doc",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({profiles:idx.map(i=>DATA.entities[i].profile)})});
+        body:JSON.stringify({profiles:data.entities.map(e=>e.profile)})});
       const j=await r.json(); if(j.error) throw new Error(j.error);
-      DOC_CACHE[key]=j;
-    }catch(e){ if(selKey()===key){pre.className="err"; pre.textContent="Failed to render: "+e;} return; }
+      if(DATA!==data) return;            // a newer fetch replaced the data while we waited
+      DOC_CACHE=j;
+    }catch(e){ if(DATA===data && $("clienttext")){pre.className="err"; pre.textContent="Failed to render: "+e;} return; }
   }
-  if(selKey()!==key) return;   // selection changed while awaiting; a newer call owns the view
-  const j=DOC_CACHE[key];
-  pre.className=""; pre.textContent=j.md;
-  meta.textContent=`≈${j.tokens} tokens · ${idx.length} of ${DATA.entities.length} entities`;
+  if(!$("clienttext")) return;           // user switched tabs while rendering
+  pre.className=""; pre.textContent=DOC_CACHE.md;
+  meta.textContent=`≈${DOC_CACHE.tokens} tokens · ${data.entities.length} ${data.entities.length===1?'entity':'entities'}`;
 }
 function dlClient(){
-  const j=DOC_CACHE[selKey()]; if(!j) return;
-  const first=DATA.entities[[...SEL].sort((a,b)=>a-b)[0]];
-  const snap=((first.profile||{}).envelope||{}).snapshot_id||"snapshot";
-  saveText(`${snap}-${DATA.client_id}.client-instructions.md`, j.md);
+  if(!DOC_CACHE) return;
+  const snap=((DATA.entities[0].profile||{}).envelope||{}).snapshot_id||"snapshot";
+  saveText(`${snap}-${DATA.client_id}.client-instructions.md`, DOC_CACHE.md);
 }
 // --- LLM Markdown tab helpers ---
 function curBundle(){return DATA&&DATA.entities[cur]&&DATA.entities[cur].bundle;}

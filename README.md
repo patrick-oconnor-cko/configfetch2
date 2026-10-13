@@ -87,36 +87,41 @@ Four tabs, all projections of one canonical profile so they cannot drift.
 
 | Tab | What it is |
 |---|---|
-| **Client Markdown** | One document for the **client**, with each ticked entity as its own section beneath it — see below. |
-| **LLM Markdown** | 16 files per entity. `project-instructions.md` is the single-entity artifact — see below. |
+| **Client Markdown** | One document for the **client**, with every entity as its own section beneath it — see below. |
+| **LLM Markdown** | 17 files per entity: `project-instructions.md` (the single-entity artifact — see below), `INDEX.md`, `README.md`, `lookup.json`, 12 `sections/*.md` and `glossary.md`. |
 | **llms.txt** | Single flat ~1–2k-token summary for pasting into a prompt |
 | **JSON** | The canonical profile, validated against `schema/merchant-profile.schema.json` |
 
 ### Client Markdown — several entities in one document
 
-After a fetch, tick the entities to include (one box each, plus **All entities**). The tab
-renders one markdown document with the hierarchy kept explicit: the client (`cli_…`) at the
-top, then a `## Entity:` section per ticked entity, each rendered by **the same functions as
-`project-instructions.md`** and demoted one heading level. Per-entity tables are therefore
-byte-identical to the single-entity document; only heading depth differs.
+After a fetch, the tab renders one markdown document covering every entity under the client,
+with the hierarchy kept explicit: the client (`cli_…`) at the top, then a `## Entity:` section
+per entity, each rendered by **the same functions as `project-instructions.md`** and demoted
+one heading level. Per-entity tables are therefore byte-identical to the single-entity
+document; only heading depth differs. For a single entity, use that entity's
+`project-instructions.md` from the LLM Markdown tab instead.
 
 What changes is the framing. The single-entity rules "this document stands alone" and "never
 mention another entity" are replaced by a *resolve the entity first* rule: a question that
 names an entity (or an id that appears in only one section) is answered from that section
 alone; a question that names none is answered per entity, kept separate, with client-level
 services (IA, network tokens, RTAU, webhooks) stated once. So *"summarise my config on
-ENT 123"* and *"summarise my config in general"* both work from one paste. Entities under the
-client that were **not** ticked are listed as needing their own snapshot. The *Validating a
+ENT 123"* and *"summarise my config in general"* both work from one paste. The *Validating a
 payload* block and test cards appear once at client level; *What this does not cover* stays
 per entity because it is derived per entity.
 
-Ticking calls `POST /api/client-doc`, which re-renders the profiles the browser already holds.
-It makes no CAT call and needs no credentials; results are cached per selection.
+The tab calls `POST /api/client-doc`, which re-renders the profiles the browser already holds.
+It makes no CAT call and needs no credentials. The renderer accepts any subset of a client's
+profiles and lists the ones left out as needing their own snapshot, so a per-entity selection
+can be reinstated without renderer changes.
 
 ### `project-instructions.md` — the artifact you actually use
 
-One self-contained document, ~6,700 tokens, designed to be **pasted into the project
-instructions** of a Claude session that has the sandbox Checkout MCP enabled.
+One self-contained document, roughly 5,000–7,600 tokens depending on the entity (measured
+across the three sample entities after the CAID and AFT additions), designed to be **pasted
+into the project instructions** of a Claude session that has the matching Checkout MCP
+enabled — `checkout-mcp-sandbox` for a sandbox snapshot, `checkout-mcp` for production. The
+document names the right one itself.
 
 It is entity-scoped: one entity per document, no sibling entities mentioned at all. It opens
 with seven rules of engagement (config is authoritative, absent means "unknown", payload
@@ -138,8 +143,8 @@ card matching a named scenario pulled from `checkout-mcp-sandbox`, then these. D
 
 ### The two-tier pack (`INDEX.md` + `sections/*.md`)
 
-Also produced. A small always-in-context "card" (~1,750 tokens) plus 12 section files read on
-demand, ~8,500 tokens in total. This is the better shape **when the consumer can read files**
+Also produced. A small always-in-context "card" (~1,800–2,000 tokens) plus 12 section files
+and a glossary read on demand, ~6,400–9,500 tokens in total depending on the entity. This is the better shape **when the consumer can read files**
 — a repo with Claude Code, or a Claude Project with uploaded files. It does not work pasted,
 because there is no filesystem to route to; use `project-instructions.md` for that.
 
@@ -286,11 +291,36 @@ only readable source of the actual settings.
   pasted document and the section files overlap, they call the *same* function; the only
   difference is front matter and heading level.
 
+### Terminology the documents use — and avoid
+
+The wording in generated documents is deliberate; a reading model repeats whatever label it is
+given, so a wrong label becomes a wrong answer. Keep to these:
+
+| Say | Not | Why |
+|---|---|---|
+| **CAID (MID)** | CAIC | CAT's field is `card_acceptor_identification_code`; merchants and schemes call it the CAID or MID. "CAIC" was an internal abbreviation and has been removed everywhere. |
+| **AFT code — BAI (Visa) / TTI (Mastercard)** | "BAI" for all schemes | Mastercard AFT profiles carry a Payment Transaction Type Identifier, not a BAI. Same role, different name. |
+| **Use case** (for an AFT code) | Category / money transfer | The money-transfer split and its `sender` rule belong to pay-to-card funds transfer types only. |
+| **Origination countries** and **destination countries** | corridor(s) | Two distinct per-profile lists: where a payout can be funded from, and where it can be sent to. "Corridor" is not Checkout terminology and blurred the distinction. |
+| **Funds transfer type** (payout profile) | BAI | Different field, different rules; see the AFT note above. |
+
+### CAID (MID) on processing profiles
+
+`card_acceptor_identification_code` — the **CAID**, which merchants call the **MID** — is the
+identifier a scheme sees for a processing profile. CAT sets it per MCC inside the profile's
+`business_settings`, so a profile can carry several MCC ↔ CAID pairs. The profile keeps every
+pair (`acceptor_ids`) and the distinct code list (`card_acceptor_identification_codes`); the
+pay-in, AFT and pay-to-card tables show a **CAID (MID)** column, profiles with more than one
+pair get a per-pair table so the pairing is never lost, `lookup.json` routes `caid:<code>` to
+the right section, and the documents instruct the reader to state CAID(s) and MCC(s) in any
+answer about a profile. Acceptor legal and trade names are captured alongside.
+
 ### Funds transfer type categories
 
-`cat_profile.FT_CATEGORIES` maps the 14 Visa BAI / Mastercard Send codes to their category, so
-the pack can state whether a code is a **money transfer** (and therefore requires a `sender`
-block) rather than telling the reader to look it up. It is a **three-way** classification:
+`cat_profile.FT_CATEGORIES` maps the 14 Visa / Mastercard Send funds-transfer codes to their
+category, so the pack can state whether a **pay-to-card** code is a **money transfer** (and
+therefore requires a `sender` block) rather than telling the reader to look it up. It is a
+**three-way** classification, and it is a **payout rule only**:
 
 | Category | Codes | `sender` required |
 |---|---|---|
@@ -305,12 +335,18 @@ ever yields the section's opening excerpt, and the docs page is JS-rendered). Un
 codes are never defaulted to a category. If Checkout adds a code, this map needs updating by
 hand.
 
-**Mastercard AFT TTIs are not in this table.** Mastercard pay-in AFT profiles carry a Payment
-Transaction Type Identifier such as `P71` (seen live in production); the table above covers
-payout funds-transfer-type codes only. The documents therefore render such a profile as
-AFT-enabled with its code, and the category column as "not classified here — the code is real
-config; only its category is absent from this document's table". That wording is deliberate:
-an unclassified code must not read as a misconfiguration or as "not AFT".
+**AFTs are different.** A pay-in profile's BAI (Visa) or TTI (Mastercard) identifies the AFT
+*use case* and must be valid for the MCC — it does **not** decide whether `sender` or any other
+field is required. AFT sender/recipient requirements are driven by scheme, transaction
+jurisdiction (domestic vs cross-border) and geography; the source is the docs page *Perform an
+account funding transaction*
+(`https://www.checkout.com/docs/payments/manage-payments/perform-an-account-funding-transaction`),
+which the Checkout MCP can retrieve. The documents therefore show
+an AFT code with a *Use case* label only (taken from this table where the code is listed), never
+a money-transfer category or a `sender` verdict, and they say so explicitly next to every AFT
+table and in the payload-validation rows. Mastercard AFT TTIs such as `P71` are not in the table
+and render as "use case not listed in this document — the code is real config": not a
+misconfiguration, not "not AFT".
 
 ---
 
@@ -319,24 +355,33 @@ an unclassified code must not read as a misconfiguration or as "not AFT".
 | Topic | State |
 |---|---|
 | Velocity limits | Not exposed by the CAT API |
-| AFT destination / recipient countries | Do not exist on a pay-in AFT profile — corridors live only on payout profiles. Verified across every profile on the client. |
-| Pay-to-card corridors per FT type | Not from CAT `pay-to-card-schemes` (503) — derived from payout profile `custom_settings` instead, one FT type per profile |
+| AFT destination / recipient countries | Do not exist on a pay-in AFT profile — origination and destination country lists live only on payout profiles. Verified across every profile on the client. |
+| Pay-to-card origination / destination countries per FT type | Not from CAT `pay-to-card-schemes` (503) — read from payout profile `custom_settings` instead, one FT type per profile. **Origination** (funded from) and **destination** (sent to) are two distinct lists and are always reported separately; the word "corridor" is not Checkout terminology and is not used. |
 | Payout cron timezone | The schedule carries no timezone **as read today** — but see the note below; this may be a gap in `normalize` rather than in CAT |
 | Settlement threshold / balance minimum units | Raw numbers with no currency or minor/major-unit indicator |
-| Mastercard AFT TTI categories | `FT_CATEGORIES` covers payout funds-transfer-type codes; Mastercard AFT identifiers (e.g. `P71`) render as AFT-enabled but unclassified |
+| Mastercard AFT TTI use cases | `FT_CATEGORIES` covers payout funds-transfer-type codes; Mastercard AFT identifiers (e.g. `P71`) render as AFT-enabled with the use case unlisted |
 | Pricing | Excluded — commercially sensitive |
 | Bank account numbers | Redacted **by this app, not by CAT** — `cat_profile.SENSITIVE` strips them and records `redacted_fields`. CAT returns them in full. |
 
 Reporting profiles and the network token provisioning mode **used to be** listed here. Both are
 readable — from merlin and nt-portal respectively — and both are now reported.
 
-**Two known bugs, not gaps.** Both are cases where the data arrives and is dropped:
+**Routing rule scope.** A rule's `allow_any_*` flags say *whether* each dimension is
+restricted; sibling fields say *to what* — the list item carries `processing_channel_name`
+when `allow_any_processing_channel` is false and `processing_currency_count` when the currency
+is scoped, and the detail endpoint can add arrays such as `event_types`. `normalize` used to
+keep only the flags, so a rule bound to the BLIK channel rendered as "restricted by processing
+channel" with the channel never named. It now keeps every dimension's stated values in
+`scope` (resolving channel names to this entity's `pc_*` ids where the name is unique), and
+the routing tables print them. Where the record carries only a count, the document says so
+rather than inventing values. Confirmed from a real production detail: the detail names the
+values as plural arrays (`processing_currencies: ["PLN"]`) and adds the currency-account *ids*
+where the list gives *names*, so the merged rule carries both. The same array pattern is
+expected for `event_types`, `regions`, `card_types`, `processing_channels`,
+`merchant_category_codes`, `banking_partners` and `payment_methods`; the capture matches on
+the dimension stem, so it needs no per-field code.
 
-- **Routing rule event types.** This table and the generated document both used to claim that
-  when `allow_any_event_type` is false, CAT does not enumerate which events. It does — the
-  rule *detail* endpoint returns the full array. `fetch_all` already fetches that detail, but
-  `normalize` keeps only the `allow_any_*` flags and drops the array, so the renderer's
-  "specific event types (not listed on the record)" fallback always fires.
+**One known bug, not a gap.** Data arrives and is dropped:
 - **Payout schedule timezone.** `cat_profile` reads no schedule timezone at all — only the
   entity's own `timezone`. A newer CAT payout-settings response appears to carry
   `schedule_expression_timezone`; if so, the document's "carries no timezone" line is wrong.

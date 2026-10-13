@@ -258,6 +258,15 @@
                   "is_skip_recipient_name_enabled": { "type": "boolean" }
                 }
               },
+              "card_acceptor_identification_code": { "type": "string", "description": "First CAID (MID) on the profile — kept for older readers; prefer card_acceptor_identification_codes." },
+              "card_acceptor_identification_codes": { "type": "array", "items": { "type": "string" }, "description": "Every CAID (Card Acceptor Identification Code, a.k.a. MID) on the profile, from business_settings." },
+              "acceptor_ids": { "type": "array", "description": "MCC <-> CAID pairs exactly as configured in business_settings; a profile can carry several.",
+                "items": { "type": "object", "properties": {
+                  "merchant_category_code": { "type": "string" },
+                  "card_acceptor_identification_code": { "type": "string" },
+                  "force_caid_generation": { "type": "boolean" } } } },
+              "card_acceptor_legal_name": { "type": "string" },
+              "card_acceptor_trade_name": { "type": "string" },
               "authorization_validity_period": { "type": "integer", "description": "Authorization hold validity in days." },
               "is_quasi_cash": { "type": "boolean" },
               "me_2_me_settings": {
@@ -342,7 +351,7 @@
         },
         "pay_to_card": {
           "type": "object",
-          "description": "Pay-to-card is configured via processing profiles with processing_type=payout. Corridors require the pay-to-card-entity config endpoint (may be unavailable).",
+          "description": "Pay-to-card is configured via processing profiles with processing_type=payout. Origination and destination countries are two distinct per-profile lists (from payout profile custom_settings).",
           "properties": {
             "enabled": { "type": "boolean" },
             "enabled_schemes": { "type": "array", "items": { "$ref": "#/$defs/scheme" } },
@@ -361,7 +370,13 @@
                   "scheme": { "$ref": "#/$defs/scheme" },
                   "acquiring_bin": { "type": "string" },
                   "merchant_category_code": { "type": "string" },
+                  "merchant_category_codes": { "type": "array", "items": { "type": "string" } },
                   "card_acceptor_identification_code": { "type": "string" },
+                  "card_acceptor_identification_codes": { "type": "array", "items": { "type": "string" } },
+                  "acceptor_ids": { "type": "array", "items": { "type": "object", "properties": {
+                    "merchant_category_code": { "type": "string" },
+                    "card_acceptor_identification_code": { "type": "string" },
+                    "force_caid_generation": { "type": "boolean" } } } },
                   "funds_transfer_type": { "type": "string" },
                   "business_model": { "type": "string" },
                   "acceptance_mode": { "type": "string" },
@@ -372,7 +387,7 @@
                 }
               }
             },
-            "corridors": {
+            "origination_destination_countries": {
               "type": "array",
               "items": {
                 "type": "object",
@@ -483,7 +498,7 @@
 
     "capabilities_matrix": {
       "type": "object",
-      "description": "DERIVED layer. Pre-computed answers to common 'what can I do' questions so the LLM reads a boolean/corridor instead of inferring from raw config.",
+      "description": "DERIVED layer. Pre-computed answers to common 'what can I do' questions so the LLM reads a boolean or a country list instead of inferring from raw config.",
       "required": ["provenance"],
       "properties": {
         "provenance": { "$ref": "#/$defs/provenance" },
